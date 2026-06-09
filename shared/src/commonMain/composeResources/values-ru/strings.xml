@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_map">Карта</string>
+    <string name="nav_reports">Отчёты</string>
+    <string name="nav_sync">Синхронизация</string>
+    <string name="nav_crisis">Кризис</string>
+    <string name="nav_profile">Профиль</string>
+
+    <!-- Crisis &amp; Safety tab -->
+    <string name="crisis_title">Кризис и безопасность</string>
+    <string name="crisis_started">Начался %1$s</string>
+    <string name="crisis_danger_zones">Опасные зоны — избегайте этих участков</string>
+    <string name="crisis_no_danger">Сейчас опасных зон не отмечено.</string>
+    <string name="danger_caution">Осторожно</string>
+    <string name="danger_warning">Предупреждение</string>
+    <string name="danger_critical">Критично</string>
+    <string name="crisis_alerts_title">Оповещения о кризисах</string>
+    <string name="crisis_alerts_sub">Уведомлять меня при обнаружении кризиса поблизости</string>
+    <string name="crisis_safety_title">Соблюдайте безопасность при составлении отчёта</string>
+    <string name="crisis_safety_tip">Держитесь на безопасном расстоянии от повреждённых конструкций. Никогда не входите в неустойчивые здания ради фото.</string>
+    <string name="crisis_none_nearby">Поблизости нет активных кризисов</string>
+    <string name="crisis_none_nearby_sub">Вы всё равно можете сообщить о повреждённом здании с карты — отчёт будет рассмотрен.</string>
+    <string name="crisis_active_near_you">АКТИВНЫЕ КРИЗИСЫ ПОБЛИЗОСТИ</string>
+
+    <!-- Common -->
+    <string name="common_skip">Пропустить</string>
+    <string name="common_next">Далее</string>
+    <string name="common_continue">Продолжить</string>
+    <string name="common_get_started">Начать</string>
+    <string name="common_close">Закрыть</string>
+
+    <!-- Damage levels -->
+    <string name="damage_none">Нет</string>
+    <string name="damage_slight">Лёгкие</string>
+    <string name="damage_moderate">Средние</string>
+    <string name="damage_severe">Тяжёлые</string>
+    <string name="damage_destroyed">Разрушено</string>
+
+    <!-- Map home -->
+    <string name="map_search_hint">Поиск района или адреса</string>
+    <string name="map_offline_mode">Автономный режим</string>
+    <string name="map_reports_queued">Отчётов в очереди: %1$d</string>
+    <string name="map_crisis_active">Активный кризис</string>
+    <string name="map_crisis_source">UNDP RAPIDA</string>
+    <string name="map_view_details">Подробнее</string>
+    <string name="map_filter_title">Фильтр по повреждениям</string>
+    <string name="hotspots_title">Горячие точки</string>
+    <string name="hotspots_sub">Районы по числу отчётов — реагируйте здесь в первую очередь.</string>
+    <string name="hotspots_reports">Отчётов: %1$d</string>
+
+    <!-- Onboarding -->
+    <string name="ob_s1_eyebrow">Добро пожаловать</string>
+    <string name="ob_s1_title">Каждый отчёт ускоряет восстановление</string>
+    <string name="ob_s1_body">Фиксируйте разрушения в вашем сообществе. Ваши отчёты формируют структурированную карту, которая помогает группам реагирования понять, где находятся повреждения.</string>
+    <string name="ob_s2_eyebrow">Быстро и спокойно</string>
+    <string name="ob_s2_title">Три шага. Без лишних хлопот.</string>
+    <string name="ob_s2_body">Сделайте фото, отметьте повреждения, укажите место на карте. Остальное мы возьмём на себя — даже без сети.</string>
+    <string name="ob_s3_eyebrow">Работает без сети</string>
+    <string name="ob_s3_title">Нет сигнала? Не проблема.</string>
+    <string name="ob_s3_body">Отчёты сохраняются на вашем устройстве и загружаются автоматически, когда связь восстановится.</string>
+    <string name="ob_s4_eyebrow">Конфиденциальность по умолчанию</string>
+    <string name="ob_s4_title">Ваша личность остаётся вашей</string>
+    <string name="ob_s4_body">Без имени и номера телефона — только ваш отчёт. Случайный идентификатор, созданный на этом устройстве, связывает ваши отчёты между собой (для баллов и удаления дубликатов). Метаданные местоположения фото удаляются перед загрузкой.</string>
+
+    <!-- Capture: common -->
+    <string name="step_continue">Продолжить</string>
+    <string name="step_change_later">Это можно изменить позже.</string>
+    <!-- Capture: wizard phases (AI translation — needs native review) -->
+    <string name="capture_phase_damage">Повреждения</string>
+    <string name="capture_phase_location">Местоположение</string>
+    <string name="capture_phase_details">Детали</string>
+
+    <!-- Capture: camera -->
+    <string name="capture_camera_hint">Чётко расположите повреждения в кадре</string>
+    <!-- Camera guide chips (AI translation — needs native review) -->
+    <string name="capture_guide_whole">Сфотографируйте здание целиком.</string>
+    <string name="capture_guide_closeup">Затем добавьте крупный план самых сильных повреждений.</string>
+    <string name="capture_guide_no_people">Пожалуйста, не фотографируйте людей.</string>
+    <string name="capture_capture_btn">Снять повреждения</string>
+    <string name="capture_gallery">Галерея</string>
+    <string name="capture_switch">Переключить</string>
+
+    <!-- Capture: damage -->
+    <string name="capture_damage_q">Каков масштаб повреждений?</string>
+    <string name="capture_damage_sub">Выберите вариант, который лучше всего описывает это сооружение.</string>
+    <string name="damage_none_desc">Видимых повреждений нет — здание выглядит целым.</string>
+    <string name="damage_slight_desc">Незначительные неструктурные трещины. Пригодно к использованию.</string>
+    <string name="damage_moderate_desc">Умеренные повреждения, частичное использование возможно. Входите с осторожностью.</string>
+    <string name="damage_severe_desc">Серьёзные структурные повреждения. Не входить.</string>
+    <string name="damage_destroyed_desc">Обрушено или не подлежит восстановлению.</string>
+    <!-- Capture: damage 3-tier (default scale) -->
+    <string name="damage_tier_minimal">Минимальные / нет повреждений</string>
+    <string name="damage_tier_minimal_desc">Видимых повреждений мало или нет</string>
+    <string name="damage_tier_partial">Частично повреждено</string>
+    <string name="damage_tier_partial_desc">Видимые структурные повреждения; здание стоит</string>
+    <string name="damage_tier_complete">Полностью разрушено</string>
+    <string name="damage_tier_complete_desc">Обрушено или не подлежит восстановлению</string>
+    <!-- Capture: possibly-damaged + life-safety -->
+    <string name="capture_possibly_damaged">Возможно, повреждено</string>
+    <string name="capture_possibly_damaged_desc">Точная степень неясна — отметьте для проверки аналитиком.</string>
+    <string name="capture_lifesafety_q">Есть ли здесь зажатые или раненые люди?</string>
+    <string name="capture_lifesafety_desc">Помечает отчёт как срочный, чтобы проверяющие увидели его первым.</string>
+
+    <!-- Capture: infrastructure -->
+    <string name="capture_infra_q">Какой это тип сооружения?</string>
+    <string name="capture_infra_sub">Выберите все подходящие варианты.</string>
+    <string name="infra_residential">Жилое</string>
+    <string name="infra_residential_desc">Дома, квартиры</string>
+    <string name="infra_commercial">Коммерческое</string>
+    <string name="infra_commercial_desc">Магазины, рынки, отели</string>
+    <string name="infra_government">Государственное</string>
+    <string name="infra_government_desc">Администрация, полиция, пожарные</string>
+    <string name="infra_utility">Коммунальное</string>
+    <string name="infra_utility_desc">Электричество, вода, отходы</string>
+    <string name="infra_transport">Транспортное</string>
+    <string name="infra_transport_desc">Дороги, мосты, вышки</string>
+    <string name="infra_community">Социальное</string>
+    <string name="infra_community_desc">Школы, больницы</string>
+    <string name="infra_public">Общественное пространство</string>
+    <string name="infra_public_desc">Религиозное, рекреационное</string>
+    <string name="infra_other">Другое</string>
+    <string name="infra_other_desc">Укажите ниже</string>
+    <string name="infra_other_hint">Название / тип инфраструктуры</string>
+
+    <!-- Capture: modular Appendix-1 sections -->
+    <string name="capture_modular_q">Ещё несколько вопросов</string>
+    <string name="capture_modular_sub">Необязательно — помогает аналитикам расставить приоритеты по району. Пропустите, если не уверены.</string>
+    <string name="capture_skip_modular">Пропустить эти</string>
+    <string name="modular_electricity">Электроснабжение в вашем сообществе</string>
+    <string name="elec_none">Повреждений не обнаружено</string>
+    <string name="elec_minor">Незначительные — быстрый ремонт</string>
+    <string name="elec_moderate">Умеренные — частичные отключения</string>
+    <string name="elec_severe">Серьёзные — длительные отключения</string>
+    <string name="elec_destroyed">Полностью разрушено</string>
+    <string name="elec_unknown">Неизвестно</string>
+    <string name="modular_health">Медицинские услуги</string>
+    <string name="health_full">Работают в полном объёме</string>
+    <string name="health_partial">Работают частично</string>
+    <string name="health_disrupted">Серьёзно нарушены</string>
+    <string name="health_none">Не работают</string>
+    <string name="health_unknown">Неизвестно</string>
+    <string name="modular_needs">Самые насущные потребности</string>
+    <string name="need_food_water">Еда и вода</string>
+    <string name="need_cash">Денежная помощь</string>
+    <string name="need_healthcare">Медпомощь и лекарства</string>
+    <string name="need_shelter">Кров / жильё</string>
+    <string name="need_livelihoods">Средства к существованию</string>
+    <string name="need_wash">Вода и санитария</string>
+    <string name="need_protection">Защита и поддержка</string>
+    <string name="need_local">Поддержка местных властей</string>
+    <string name="need_other">Другое</string>
+
+    <!-- Capture: crisis nature -->
+    <string name="capture_crisis_q">Что стало причиной?</string>
+    <string name="capture_crisis_sub">Подтвердите характер кризиса. Выберите все подходящие варианты.</string>
+    <string name="crisis_group_natural">Природная опасность</string>
+    <string name="crisis_group_technological">Техногенная</string>
+    <string name="crisis_group_humanmade">Антропогенная</string>
+    <string name="crisis_earthquake">Землетрясение</string>
+    <string name="crisis_flood">Наводнение</string>
+    <string name="crisis_tsunami">Цунами</string>
+    <string name="crisis_hurricane">Ураган</string>
+    <string name="crisis_wildfire">Лесной пожар</string>
+    <string name="crisis_explosion">Взрыв</string>
+    <string name="crisis_chemical">Химическая авария</string>
+    <string name="crisis_conflict">Конфликт</string>
+    <string name="crisis_unrest">Гражданские беспорядки</string>
+
+    <!-- Capture: debris -->
+    <string name="capture_debris_q">Нужно ли расчистить завалы поблизости?</string>
+    <string name="capture_debris_sub">Перекрытые улицы, обломки или опасности в радиусе 50 м от этого сооружения.</string>
+    <string name="debris_yes">Да</string>
+    <string name="debris_yes_desc">Обломки или опасности перекрывают доступ</string>
+    <string name="debris_no">Нет</string>
+    <string name="debris_no_desc">Территория свободна и доступна</string>
+    <string name="debris_unsure">Не уверен(а)</string>
+    <string name="debris_unsure_desc">Отсюда не могу определить</string>
+
+    <!-- Capture: location -->
+    <string name="capture_location_q">Подтвердите местоположение</string>
+    <string name="capture_location_sub">Мы привязываем ваше фото к контуру здания, чтобы отчёт точно указывал на нужное место.</string>
+    <string name="capture_location_confirm">Подтвердить местоположение</string>
+    <string name="capture_w3w_label">Plus Code · офлайн-код места</string>
+    <string name="capture_landmark_hint">Опишите ориентир (необязательно)</string>
+    <string name="capture_no_gps">Нет GPS? Опишите ориентир ниже.</string>
+    <string name="capture_location_required">Отметьте здание на карте или опишите местоположение ниже, чтобы продолжить.</string>
+    <string name="capture_dup_warning">Об этом здании уже сообщали %1$s — отправить как обновление?</string>
+    <string name="capture_locating_you">Определяем ваше местоположение…</string>
+    <string name="capture_location_set">Местоположение задано</string>
+    <string name="capture_locating">Определение…</string>
+    <string name="capture_building_selected">Здание выбрано</string>
+
+    <!-- Capture: describe -->
+    <string name="capture_describe_q">Хотите что-то добавить?</string>
+    <string name="capture_describe_sub">Необязательно. Пишите на любом языке — ваши слова сохранятся вместе с отчётом.</string>
+    <string name="capture_describe_hint">напр. На западной стене есть трещина, но здание не обрушилось.</string>
+    <string name="capture_voice">Голосовая заметка</string>
+    <string name="capture_ai_suggests">Быстрая фраза</string>
+    <string name="capture_ai_cv">Шаблон</string>
+    <string name="capture_ai_text">Готовая фраза — вставьте и отредактируйте под то, что видите.</string>
+    <string name="capture_ai_insert">Добавить фразу</string>
+    <string name="capture_skip_desc">Пропустить описание</string>
+
+    <!-- Capture: review -->
+    <string name="capture_review_q">Проверьте свой отчёт</string>
+    <string name="capture_review_sub">Последняя проверка перед отправкой. Имя и телефон не прикрепляются.</string>
+    <string name="capture_submit">Отправить отчёт</string>
+    <string name="capture_submitting">Отправка…</string>
+    <string name="capture_photo_label">сделанное фото</string>
+    <string name="capture_anon_badge">Без имени и телефона</string>
+    <string name="capture_privacy">Метаданные местоположения фото (EXIF) удалены · Без имени и телефона — случайный идентификатор этой установки связывает ваши отчёты для баллов и удаления дубликатов.</string>
+    <string name="review_row_damage">Повреждения</string>
+    <string name="review_row_type">Тип</string>
+    <string name="review_row_crisis">Кризис</string>
+    <string name="review_row_debris">Завалы</string>
+    <string name="review_row_location">Местоположение</string>
+    <string name="review_row_description">Описание</string>
+
+    <!-- Capture: submitted -->
+    <string name="capture_submitted_title">Спасибо</string>
+    <string name="capture_submitted_offline_title">Сохранено в очередь</string>
+    <string name="capture_submitted_body">Ваш отчёт отправлен на проверку. Он появится на карте после синхронизации.</string>
+    <string name="capture_submitted_offline_body">Вы не в сети. Ваш отчёт загрузится автоматически, когда связь восстановится.</string>
+    <string name="capture_points">+10 баллов сообщества</string>
+    <string name="capture_badge_progress">Прогресс значка помощника</string>
+    <string name="capture_view_map">Показать на карте</string>
+    <string name="capture_new_report">Новый отчёт</string>
+
+    <!-- Reports list -->
+    <string name="reports_title">Отчёты</string>
+    <string name="reports_summary">Отчётов: %1$d · Синхронизировано: %2$d</string>
+    <string name="filter_all">Все</string>
+    <string name="status_synced">Синхронизировано</string>
+    <string name="status_queued">В очереди</string>
+    <string name="reports_empty">Нет отчётов, соответствующих этому фильтру.</string>
+
+    <!-- Report detail -->
+    <string name="report_label">ОТЧЁТ</string>
+    <string name="detail_translated_from">Переведено с языка: %1$s</string>
+    <string name="detail_timeline">Хронология повреждений</string>
+    <string name="detail_this_building">это здание</string>
+    <string name="detail_meta_type">Тип</string>
+    <string name="detail_meta_crisis">Кризис</string>
+    <string name="detail_meta_debris">Завалы</string>
+    <string name="detail_meta_captured">Снято</string>
+    <string name="detail_description">Описание</string>
+    <string name="detail_anonymised">Анонимизировано · EXIF удалён</string>
+
+    <!-- Sync queue -->
+    <string name="sync_title">Очередь синхронизации</string>
+    <string name="sync_offline_msg">Вы не в сети. Отчёты синхронизируются автоматически, когда связь восстановится.</string>
+    <string name="sync_online_msg">Подключено. Идёт загрузка отчётов из очереди.</string>
+    <string name="sync_awaiting">отчётов ожидают загрузки</string>
+    <string name="sync_total_mb">~%1$s МБ всего</string>
+    <string name="sync_online">В сети</string>
+    <string name="sync_offline">Не в сети</string>
+    <string name="sync_all_caught_up">Всё синхронизировано.</string>
+    <string name="sync_waiting">Ожидание соединения</string>
+    <string name="sync_uploading">Загрузка</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_anon">Аноним</string>
+    <string name="profile_add_alias">Нажмите, чтобы добавить псевдоним (необязательно)</string>
+    <string name="profile_reports">Отчёты</string>
+    <string name="profile_buildings">Здания</string>
+    <string name="profile_points">Баллы</string>
+    <string name="profile_recognition">Признание</string>
+    <string name="profile_see_all">Показать все</string>
+    <string name="menu_export">Экспортировать мои отчёты</string>
+    <string name="menu_export_sub">CSV · GeoJSON · Shapefile</string>
+    <string name="export_geojson">Поделиться как GeoJSON</string>
+    <string name="export_csv">Поделиться как CSV</string>
+    <string name="menu_language">Язык</string>
+    <string name="menu_privacy">Конфиденциальность</string>
+    <string name="menu_privacy_sub">Без имени и телефона · EXIF удалён</string>
+    <string name="menu_alerts">Оповещения о кризисах</string>
+    <string name="menu_alerts_sub">Push-уведомление при обнаружении кризиса поблизости</string>
+    <string name="menu_about">О приложении Beacon</string>
+    <string name="menu_about_sub">Открытый код · v 0.9.0</string>
+    <string name="menu_offline">Автономные карты</string>
+    <string name="menu_offline_sub">Заранее загрузить зону кризиса</string>
+
+    <!-- Offline downloads -->
+    <string name="offline_title">Автономные карты</string>
+    <string name="offline_sub">Заранее загрузите зону кризиса, чтобы приложение работало без сигнала.</string>
+    <string name="offline_download_area">Загрузить пакет кризиса Антакья</string>
+    <string name="offline_ready">Готово</string>
+    <string name="offline_downloading">Загрузка</string>
+    <string name="offline_queued">В очереди</string>
+
+    <!-- Language override -->
+    <string name="language_sheet_title">Язык приложения</string>
+    <string name="language_sheet_sub">По умолчанию Beacon использует язык вашего устройства.</string>
+    <string name="language_system">Как в системе</string>
+    <string name="sync_now">Синхронизировать</string>
+    <string name="sync_in_progress">Синхронизация…</string>
+</resources>

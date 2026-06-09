@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_map">الخريطة</string>
+    <string name="nav_reports">البلاغات</string>
+    <string name="nav_sync">المزامنة</string>
+    <string name="nav_crisis">الأزمة</string>
+    <string name="nav_profile">الملف الشخصي</string>
+
+    <!-- Crisis &amp; Safety tab -->
+    <string name="crisis_title">الأزمة والسلامة</string>
+    <string name="crisis_started">بدأت %1$s</string>
+    <string name="crisis_danger_zones">مناطق خطرة — تجنّب هذه المناطق</string>
+    <string name="crisis_no_danger">لا توجد مناطق خطرة مرصودة حاليًا.</string>
+    <string name="danger_caution">احترس</string>
+    <string name="danger_warning">تحذير</string>
+    <string name="danger_critical">حرج</string>
+    <string name="crisis_alerts_title">تنبيهات الأزمات</string>
+    <string name="crisis_alerts_sub">نبّهني عند رصد أزمة قريبة</string>
+    <string name="crisis_safety_title">حافظ على سلامتك أثناء الإبلاغ</string>
+    <string name="crisis_safety_tip">احتفظ بمسافة آمنة عن المنشآت المتضررة. لا تدخل أبدًا مبانٍ غير مستقرة لالتقاط صورة.</string>
+    <string name="crisis_none_nearby">لا توجد أزمة نشطة قريبة منك</string>
+    <string name="crisis_none_nearby_sub">لا يزال بإمكانك الإبلاغ عن مبنى متضرر من الخريطة — وستتم مراجعته.</string>
+    <string name="crisis_active_near_you">أزمات نشطة قريبة منك</string>
+
+    <!-- Common -->
+    <string name="common_skip">تخطٍّ</string>
+    <string name="common_next">التالي</string>
+    <string name="common_continue">متابعة</string>
+    <string name="common_get_started">لنبدأ</string>
+    <string name="common_close">إغلاق</string>
+
+    <!-- Damage levels -->
+    <string name="damage_none">لا يوجد</string>
+    <string name="damage_slight">طفيف</string>
+    <string name="damage_moderate">متوسط</string>
+    <string name="damage_severe">شديد</string>
+    <string name="damage_destroyed">مدمر</string>
+
+    <!-- Map home -->
+    <string name="map_search_hint">ابحث عن منطقة أو عنوان</string>
+    <string name="map_offline_mode">وضع عدم الاتصال</string>
+    <string name="map_reports_queued">%1$d بلاغ في قائمة الانتظار</string>
+    <string name="map_crisis_active">أزمة نشطة</string>
+    <string name="map_crisis_source">UNDP RAPIDA</string>
+    <string name="map_view_details">عرض التفاصيل</string>
+    <string name="map_filter_title">التصفية حسب الضرر</string>
+    <string name="hotspots_title">البؤر الساخنة</string>
+    <string name="hotspots_sub">مناطق مرتّبة حسب حجم البلاغات — أعطِ الأولوية للاستجابة هنا.</string>
+    <string name="hotspots_reports">%1$d بلاغ</string>
+
+    <!-- Onboarding -->
+    <string name="ob_s1_eyebrow">مرحبًا</string>
+    <string name="ob_s1_title">كل بلاغ يدفع عجلة التعافي</string>
+    <string name="ob_s1_body">وثّق الأضرار في مجتمعك. بلاغاتك تبني خريطة منظَّمة تساعد فرق الاستجابة على فهم مواقع الأضرار.</string>
+    <string name="ob_s2_eyebrow">سريع وهادئ</string>
+    <string name="ob_s2_title">ثلاث خطوات. دون تعقيد.</string>
+    <string name="ob_s2_body">التقط صورة، حدّد الضرر، وضعه على الخريطة. ونحن نتولى الباقي — حتى دون اتصال.</string>
+    <string name="ob_s3_eyebrow">يعمل دون اتصال</string>
+    <string name="ob_s3_title">لا توجد إشارة؟ لا مشكلة.</string>
+    <string name="ob_s3_body">تُحفظ البلاغات على جهازك وتُرفع تلقائيًا عند عودة الاتصال.</string>
+    <string name="ob_s4_eyebrow">الخصوصية بالتصميم</string>
+    <string name="ob_s4_title">هويتك تبقى لك</string>
+    <string name="ob_s4_body">لا اسم ولا رقم هاتف — فقط بلاغك. يُنشأ معرّف عشوائي على هذا الجهاز لربط بلاغاتك معًا (لاحتساب النقاط وإزالة التكرارات). تُزال بيانات موقع الصورة قبل الرفع.</string>
+
+    <!-- Capture: common -->
+    <string name="step_continue">متابعة</string>
+    <string name="step_change_later">يمكنك تغيير هذا لاحقًا.</string>
+    <!-- Capture: wizard phases (AI translation — needs native review) -->
+    <string name="capture_phase_damage">الضرر</string>
+    <string name="capture_phase_location">الموقع</string>
+    <string name="capture_phase_details">التفاصيل</string>
+
+    <!-- Capture: camera -->
+    <string name="capture_camera_hint">صوّر الضرر بوضوح</string>
+    <!-- Camera guide chips (AI translation — needs native review) -->
+    <string name="capture_guide_whole">ضمِّن المبنى بأكمله في الصورة.</string>
+    <string name="capture_guide_closeup">ثم أضف لقطة قريبة لأشد الأضرار.</string>
+    <string name="capture_guide_no_people">يُرجى عدم تصوير الأشخاص.</string>
+    <string name="capture_capture_btn">تصوير الضرر</string>
+    <string name="capture_gallery">المعرض</string>
+    <string name="capture_switch">تبديل</string>
+
+    <!-- Capture: damage -->
+    <string name="capture_damage_q">ما مدى الضرر؟</string>
+    <string name="capture_damage_sub">اختر الخيار الذي يصف هذه المنشأة على أفضل وجه.</string>
+    <string name="damage_none_desc">لا ضرر مرئي — يبدو المبنى سليمًا.</string>
+    <string name="damage_slight_desc">شقوق طفيفة غير إنشائية. لا يزال صالحًا للاستخدام.</string>
+    <string name="damage_moderate_desc">ضرر متوسط، يمكن استخدامه جزئيًا. ادخل بحذر.</string>
+    <string name="damage_severe_desc">ضرر إنشائي خطير. لا تدخل.</string>
+    <string name="damage_destroyed_desc">منهار أو يتعذّر إصلاحه.</string>
+    <!-- Capture: damage 3-tier (default scale) -->
+    <string name="damage_tier_minimal">ضرر طفيف / لا ضرر</string>
+    <string name="damage_tier_minimal_desc">ضرر مرئي قليل أو معدوم</string>
+    <string name="damage_tier_partial">متضرر جزئيًا</string>
+    <string name="damage_tier_partial_desc">ضرر إنشائي مرئي؛ لا يزال قائمًا</string>
+    <string name="damage_tier_complete">دُمّر بالكامل</string>
+    <string name="damage_tier_complete_desc">منهار أو يتعذّر إصلاحه</string>
+    <!-- Capture: possibly-damaged + life-safety -->
+    <string name="capture_possibly_damaged">ربما متضرر</string>
+    <string name="capture_possibly_damaged_desc">لست متأكدًا من المستوى الدقيق — ضع علامة ليراجعه محلّل.</string>
+    <string name="capture_lifesafety_q">هل يوجد أشخاص محاصرون أو مصابون هنا؟</string>
+    <string name="capture_lifesafety_desc">يضع هذا البلاغ كعاجل ليطّلع عليه المراجعون أولًا.</string>
+
+    <!-- Capture: infrastructure -->
+    <string name="capture_infra_q">ما نوع المنشأة؟</string>
+    <string name="capture_infra_sub">اختر كل ما ينطبق.</string>
+    <string name="infra_residential">سكنية</string>
+    <string name="infra_residential_desc">منازل، شقق</string>
+    <string name="infra_commercial">تجارية</string>
+    <string name="infra_commercial_desc">متاجر، أسواق، فنادق</string>
+    <string name="infra_government">حكومية</string>
+    <string name="infra_government_desc">إدارات، شرطة، إطفاء</string>
+    <string name="infra_utility">مرافق</string>
+    <string name="infra_utility_desc">كهرباء، مياه، نفايات</string>
+    <string name="infra_transport">نقل</string>
+    <string name="infra_transport_desc">طرق، جسور، أبراج</string>
+    <string name="infra_community">مجتمعية</string>
+    <string name="infra_community_desc">مدارس، مستشفيات</string>
+    <string name="infra_public">مساحة عامة</string>
+    <string name="infra_public_desc">دينية، ترفيهية</string>
+    <string name="infra_other">أخرى</string>
+    <string name="infra_other_desc">حدّد أدناه</string>
+    <string name="infra_other_hint">اسم المنشأة أو طبيعتها</string>
+
+    <!-- Capture: modular Appendix-1 sections -->
+    <string name="capture_modular_q">بضعة أسئلة إضافية</string>
+    <string name="capture_modular_sub">اختياري — يساعد المحلّلين على ترتيب أولويات المنطقة. تخطَّ إن لم تكن متأكدًا.</string>
+    <string name="capture_skip_modular">تخطَّ هذه</string>
+    <string name="modular_electricity">الكهرباء في مجتمعك</string>
+    <string name="elec_none">لا ضرر ملحوظ</string>
+    <string name="elec_minor">طفيف — يسهل إصلاحه</string>
+    <string name="elec_moderate">متوسط — انقطاعات جزئية</string>
+    <string name="elec_severe">شديد — انقطاعات مطوّلة</string>
+    <string name="elec_destroyed">دمار كامل</string>
+    <string name="elec_unknown">غير معروف</string>
+    <string name="modular_health">الخدمات الصحية</string>
+    <string name="health_full">تعمل بكامل طاقتها</string>
+    <string name="health_partial">تعمل جزئيًا</string>
+    <string name="health_disrupted">متعطّلة إلى حد كبير</string>
+    <string name="health_none">لا تعمل</string>
+    <string name="health_unknown">غير معروف</string>
+    <string name="modular_needs">أكثر الاحتياجات إلحاحًا</string>
+    <string name="need_food_water">الغذاء والماء</string>
+    <string name="need_cash">المساعدة النقدية</string>
+    <string name="need_healthcare">الرعاية الصحية والدواء</string>
+    <string name="need_shelter">المأوى / السكن</string>
+    <string name="need_livelihoods">سبل العيش</string>
+    <string name="need_wash">المياه والصرف الصحي</string>
+    <string name="need_protection">الحماية والدعم</string>
+    <string name="need_local">دعم السلطة المحلية</string>
+    <string name="need_other">أخرى</string>
+
+    <!-- Capture: crisis nature -->
+    <string name="capture_crisis_q">ما الذي تسبب في هذا؟</string>
+    <string name="capture_crisis_sub">أكّد طبيعة الأزمة. اختر كل ما ينطبق.</string>
+    <string name="crisis_group_natural">خطر طبيعي</string>
+    <string name="crisis_group_technological">تقني</string>
+    <string name="crisis_group_humanmade">من صنع الإنسان</string>
+    <string name="crisis_earthquake">زلزال</string>
+    <string name="crisis_flood">فيضان</string>
+    <string name="crisis_tsunami">تسونامي</string>
+    <string name="crisis_hurricane">إعصار</string>
+    <string name="crisis_wildfire">حريق غابات</string>
+    <string name="crisis_explosion">انفجار</string>
+    <string name="crisis_chemical">كيميائي</string>
+    <string name="crisis_conflict">نزاع</string>
+    <string name="crisis_unrest">اضطرابات مدنية</string>
+
+    <!-- Capture: debris -->
+    <string name="capture_debris_q">هل توجد أنقاض قريبة تحتاج إلى إزالة؟</string>
+    <string name="capture_debris_sub">شوارع مسدودة أو ركام أو مخاطر ضمن 50 مترًا من هذه المنشأة.</string>
+    <string name="debris_yes">نعم</string>
+    <string name="debris_yes_desc">أنقاض أو مخاطر تسد الوصول</string>
+    <string name="debris_no">لا</string>
+    <string name="debris_no_desc">المنطقة خالية ويمكن الوصول إليها</string>
+    <string name="debris_unsure">غير متأكد</string>
+    <string name="debris_unsure_desc">لا أستطيع التحديد من مكاني</string>
+
+    <!-- Capture: location -->
+    <string name="capture_location_q">أكّد الموقع</string>
+    <string name="capture_location_sub">نربط صورتك بمخطط المبنى ليُحدَّد موقع البلاغ بدقة.</string>
+    <string name="capture_location_confirm">تأكيد الموقع</string>
+    <string name="capture_w3w_label">Plus Code · رمز موقع يعمل دون اتصال</string>
+    <string name="capture_landmark_hint">صِف معلمًا قريبًا (اختياري)</string>
+    <string name="capture_no_gps">لا يوجد GPS؟ صِف معلمًا قريبًا أدناه.</string>
+    <string name="capture_location_required">ثبّت المبنى على الخريطة أو صِف الموقع أدناه للمتابعة.</string>
+    <string name="capture_dup_warning">جرى الإبلاغ عن هذا المبنى %1$s — هل تريد إرساله كتحديث؟</string>
+    <string name="capture_locating_you">جارٍ تحديد موقعك…</string>
+    <string name="capture_location_set">تم تحديد الموقع</string>
+    <string name="capture_locating">جارٍ التحديد…</string>
+    <string name="capture_building_selected">تم اختيار المبنى</string>
+
+    <!-- Capture: describe -->
+    <string name="capture_describe_q">هل تريد إضافة أي شيء آخر؟</string>
+    <string name="capture_describe_sub">اختياري. اكتب بأي لغة — تُحفظ كلماتك مع البلاغ.</string>
+    <string name="capture_describe_hint">مثال: الجدار الغربي به شرخ، لكن المبنى لم ينهَر.</string>
+    <string name="capture_voice">ملاحظة صوتية</string>
+    <string name="capture_ai_suggests">عبارة سريعة</string>
+    <string name="capture_ai_cv">قالب</string>
+    <string name="capture_ai_text">عبارة شائعة يمكنك إدراجها ثم تعديلها لتطابق ما تراه.</string>
+    <string name="capture_ai_insert">إضافة العبارة</string>
+    <string name="capture_skip_desc">تخطّي الوصف</string>
+
+    <!-- Capture: review -->
+    <string name="capture_review_q">راجع بلاغك</string>
+    <string name="capture_review_sub">تحقق أخير قبل الإرسال. لا يُرفق اسم أو رقم هاتف.</string>
+    <string name="capture_submit">إرسال البلاغ</string>
+    <string name="capture_submitting">جارٍ الإرسال…</string>
+    <string name="capture_photo_label">الصورة الملتقطة</string>
+    <string name="capture_anon_badge">بدون اسم أو هاتف</string>
+    <string name="capture_privacy">تمت إزالة بيانات موقع الصورة (EXIF) · بدون اسم أو هاتف — معرّف عشوائي خاص بالتثبيت يربط بلاغاتك لاحتساب النقاط وإزالة التكرارات.</string>
+    <string name="review_row_damage">الضرر</string>
+    <string name="review_row_type">النوع</string>
+    <string name="review_row_crisis">الأزمة</string>
+    <string name="review_row_debris">الأنقاض</string>
+    <string name="review_row_location">الموقع</string>
+    <string name="review_row_description">الوصف</string>
+
+    <!-- Capture: submitted -->
+    <string name="capture_submitted_title">شكرًا لك</string>
+    <string name="capture_submitted_offline_title">حُفظ في قائمة الانتظار</string>
+    <string name="capture_submitted_body">تم إرسال بلاغك للمراجعة. سيظهر على الخريطة بعد المزامنة.</string>
+    <string name="capture_submitted_offline_body">أنت غير متصل. سيُرفع بلاغك تلقائيًا عند عودة الاتصال.</string>
+    <string name="capture_points">+10 نقاط مجتمعية</string>
+    <string name="capture_badge_progress">تقدّم شارة المساعد</string>
+    <string name="capture_view_map">عرض على الخريطة</string>
+    <string name="capture_new_report">بلاغ جديد</string>
+
+    <!-- Reports list -->
+    <string name="reports_title">البلاغات</string>
+    <string name="reports_summary">%1$d بلاغ · تمت مزامنة %2$d</string>
+    <string name="filter_all">الكل</string>
+    <string name="status_synced">تمت المزامنة</string>
+    <string name="status_queued">في قائمة الانتظار</string>
+    <string name="reports_empty">لا توجد بلاغات تطابق هذا الفلتر.</string>
+
+    <!-- Report detail -->
+    <string name="report_label">بلاغ</string>
+    <string name="detail_translated_from">مُترجم من %1$s</string>
+    <string name="detail_timeline">المخطط الزمني للضرر</string>
+    <string name="detail_this_building">هذا المبنى</string>
+    <string name="detail_meta_type">النوع</string>
+    <string name="detail_meta_crisis">الأزمة</string>
+    <string name="detail_meta_debris">الأنقاض</string>
+    <string name="detail_meta_captured">وقت التصوير</string>
+    <string name="detail_description">الوصف</string>
+    <string name="detail_anonymised">مجهول الهوية · تمت إزالة EXIF</string>
+
+    <!-- Sync queue -->
+    <string name="sync_title">قائمة المزامنة</string>
+    <string name="sync_offline_msg">أنت غير متصل. ستتم مزامنة البلاغات تلقائيًا عند عودة الاتصال.</string>
+    <string name="sync_online_msg">متصل. يجري الآن رفع البلاغات المنتظرة.</string>
+    <string name="sync_awaiting">بلاغ بانتظار الرفع</string>
+    <string name="sync_total_mb">~%1$s ميجابايت إجمالًا</string>
+    <string name="sync_online">متصل</string>
+    <string name="sync_offline">غير متصل</string>
+    <string name="sync_all_caught_up">اكتمل كل شيء.</string>
+    <string name="sync_waiting">في انتظار الاتصال</string>
+    <string name="sync_uploading">جارٍ الرفع</string>
+
+    <!-- Profile -->
+    <string name="profile_title">الملف الشخصي</string>
+    <string name="profile_anon">مجهول</string>
+    <string name="profile_add_alias">انقر لإضافة اسم مستعار (اختياري)</string>
+    <string name="profile_reports">البلاغات</string>
+    <string name="profile_buildings">المباني</string>
+    <string name="profile_points">النقاط</string>
+    <string name="profile_recognition">التقدير</string>
+    <string name="profile_see_all">عرض الكل</string>
+    <string name="menu_export">تصدير بلاغاتي</string>
+    <string name="menu_export_sub">CSV · GeoJSON · Shapefile</string>
+    <string name="export_geojson">مشاركة بصيغة GeoJSON</string>
+    <string name="export_csv">مشاركة بصيغة CSV</string>
+    <string name="menu_language">اللغة</string>
+    <string name="menu_privacy">الخصوصية</string>
+    <string name="menu_privacy_sub">بدون اسم أو هاتف · تمت إزالة EXIF</string>
+    <string name="menu_alerts">تنبيهات الأزمات</string>
+    <string name="menu_alerts_sub">إشعار عند رصد أزمة قريبة</string>
+    <string name="menu_about">حول Beacon</string>
+    <string name="menu_about_sub">مفتوح المصدر · v 0.9.0</string>
+    <string name="menu_offline">الخرائط دون اتصال</string>
+    <string name="menu_offline_sub">حمّل منطقة الأزمة مسبقًا</string>
+
+    <!-- Offline downloads -->
+    <string name="offline_title">الخرائط دون اتصال</string>
+    <string name="offline_sub">حمّل منطقة الأزمة مسبقًا ليعمل التطبيق دون إشارة.</string>
+    <string name="offline_download_area">تنزيل حزمة أزمة أنطاكية</string>
+    <string name="offline_ready">جاهز</string>
+    <string name="offline_downloading">جارٍ التنزيل</string>
+    <string name="offline_queued">في قائمة الانتظار</string>
+
+    <!-- Language override -->
+    <string name="language_sheet_title">لغة التطبيق</string>
+    <string name="language_sheet_sub">يتبع Beacon افتراضيًا لغة جهازك.</string>
+    <string name="language_system">اتّباع النظام</string>
+    <string name="sync_now">المزامنة الآن</string>
+    <string name="sync_in_progress">جارٍ المزامنة…</string>
+</resources>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_map">Carte</string>
+    <string name="nav_reports">Signalements</string>
+    <string name="nav_sync">Synchronisation</string>
+    <string name="nav_crisis">Crise</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Crisis &amp; Safety tab -->
+    <string name="crisis_title">Crise et sécurité</string>
+    <string name="crisis_started">Débutée %1$s</string>
+    <string name="crisis_danger_zones">Zones dangereuses — évitez ces secteurs</string>
+    <string name="crisis_no_danger">Aucune zone dangereuse signalée pour le moment.</string>
+    <string name="danger_caution">Prudence</string>
+    <string name="danger_warning">Avertissement</string>
+    <string name="danger_critical">Critique</string>
+    <string name="crisis_alerts_title">Alertes de crise</string>
+    <string name="crisis_alerts_sub">M'avertir lorsqu'une crise est détectée à proximité</string>
+    <string name="crisis_safety_title">Restez en sécurité pendant le signalement</string>
+    <string name="crisis_safety_tip">Gardez une distance de sécurité avec les structures endommagées. N'entrez jamais dans un bâtiment instable pour prendre une photo.</string>
+    <string name="crisis_none_nearby">Aucune crise active à proximité</string>
+    <string name="crisis_none_nearby_sub">Vous pouvez tout de même signaler un bâtiment endommagé depuis la carte — il sera examiné.</string>
+    <string name="crisis_active_near_you">CRISES ACTIVES À PROXIMITÉ</string>
+
+    <!-- Common -->
+    <string name="common_skip">Passer</string>
+    <string name="common_next">Suivant</string>
+    <string name="common_continue">Continuer</string>
+    <string name="common_get_started">Commencer</string>
+    <string name="common_close">Fermer</string>
+
+    <!-- Damage levels -->
+    <string name="damage_none">Aucun</string>
+    <string name="damage_slight">Léger</string>
+    <string name="damage_moderate">Modéré</string>
+    <string name="damage_severe">Grave</string>
+    <string name="damage_destroyed">Détruit</string>
+
+    <!-- Map home -->
+    <string name="map_search_hint">Rechercher une zone ou une adresse</string>
+    <string name="map_offline_mode">Mode hors ligne</string>
+    <string name="map_reports_queued">%1$d signalement(s) en attente</string>
+    <string name="map_crisis_active">Crise en cours</string>
+    <string name="map_crisis_source">UNDP RAPIDA</string>
+    <string name="map_view_details">Voir les détails</string>
+    <string name="map_filter_title">Filtrer par dommages</string>
+    <string name="hotspots_title">Points chauds</string>
+    <string name="hotspots_sub">Zones classées par nombre de signalements — priorisez la réponse ici.</string>
+    <string name="hotspots_reports">%1$d signalements</string>
+
+    <!-- Onboarding -->
+    <string name="ob_s1_eyebrow">Bienvenue</string>
+    <string name="ob_s1_title">Chaque signalement fait avancer le relèvement</string>
+    <string name="ob_s1_body">Recensez les dommages dans votre communauté. Vos signalements forment une carte structurée qui aide les équipes d'intervention à comprendre où se trouvent les dommages.</string>
+    <string name="ob_s2_eyebrow">Rapide et serein</string>
+    <string name="ob_s2_title">Trois étapes. Sans complication.</string>
+    <string name="ob_s2_body">Prenez une photo, indiquez les dommages, placez-les sur la carte. Nous nous occupons du reste — même hors ligne.</string>
+    <string name="ob_s3_eyebrow">Fonctionne hors ligne</string>
+    <string name="ob_s3_title">Pas de réseau ? Aucun souci.</string>
+    <string name="ob_s3_body">Les signalements sont enregistrés sur votre appareil et envoyés automatiquement dès votre retour en ligne.</string>
+    <string name="ob_s4_eyebrow">Confidentiel par conception</string>
+    <string name="ob_s4_title">Votre identité vous appartient</string>
+    <string name="ob_s4_body">Ni nom ni numéro de téléphone — seulement votre signalement. Un identifiant aléatoire créé sur cet appareil relie vos signalements entre eux (pour les points et pour supprimer les doublons). Les métadonnées de localisation de la photo sont supprimées avant l'envoi.</string>
+
+    <!-- Capture: common -->
+    <string name="step_continue">Continuer</string>
+    <string name="step_change_later">Vous pourrez modifier ceci plus tard.</string>
+    <!-- Capture: wizard phases (AI translation — needs native review) -->
+    <string name="capture_phase_damage">Dommages</string>
+    <string name="capture_phase_location">Localisation</string>
+    <string name="capture_phase_details">Détails</string>
+
+    <!-- Capture: camera -->
+    <string name="capture_camera_hint">Cadrez clairement les dommages</string>
+    <!-- Camera guide chips (AI translation — needs native review) -->
+    <string name="capture_guide_whole">Incluez le bâtiment entier dans le cadre.</string>
+    <string name="capture_guide_closeup">Ajoutez ensuite un gros plan des dégâts les plus graves.</string>
+    <string name="capture_guide_no_people">Veuillez ne pas photographier de personnes.</string>
+    <string name="capture_capture_btn">Photographier les dommages</string>
+    <string name="capture_gallery">Galerie</string>
+    <string name="capture_switch">Changer</string>
+
+    <!-- Capture: damage -->
+    <string name="capture_damage_q">Quelle est l'ampleur des dommages ?</string>
+    <string name="capture_damage_sub">Choisissez l'option qui décrit le mieux cette structure.</string>
+    <string name="damage_none_desc">Aucun dommage visible — le bâtiment semble intact.</string>
+    <string name="damage_slight_desc">Fissures mineures, non structurelles. Encore utilisable.</string>
+    <string name="damage_moderate_desc">Dommages modérés, usage partiel possible. Entrez avec prudence.</string>
+    <string name="damage_severe_desc">Graves dommages structurels. N'entrez pas.</string>
+    <string name="damage_destroyed_desc">Effondré ou irréparable.</string>
+    <!-- Capture: damage 3-tier (default scale) -->
+    <string name="damage_tier_minimal">Minimes / aucun dommage</string>
+    <string name="damage_tier_minimal_desc">Peu ou pas de dommages visibles</string>
+    <string name="damage_tier_partial">Partiellement endommagé</string>
+    <string name="damage_tier_partial_desc">Dommages structurels visibles ; toujours debout</string>
+    <string name="damage_tier_complete">Entièrement détruit</string>
+    <string name="damage_tier_complete_desc">Effondré ou irréparable</string>
+    <!-- Capture: possibly-damaged + life-safety -->
+    <string name="capture_possibly_damaged">Peut-être endommagé</string>
+    <string name="capture_possibly_damaged_desc">Niveau exact incertain — signalez-le pour examen par un analyste.</string>
+    <string name="capture_lifesafety_q">Des personnes sont-elles piégées ou blessées ici ?</string>
+    <string name="capture_lifesafety_desc">Marque ce signalement comme urgent pour qu'il soit vu en priorité.</string>
+
+    <!-- Capture: infrastructure -->
+    <string name="capture_infra_q">Quel type de structure ?</string>
+    <string name="capture_infra_sub">Sélectionnez tout ce qui s'applique.</string>
+    <string name="infra_residential">Résidentiel</string>
+    <string name="infra_residential_desc">Maisons, appartements</string>
+    <string name="infra_commercial">Commercial</string>
+    <string name="infra_commercial_desc">Boutiques, marchés, hôtels</string>
+    <string name="infra_government">Administration</string>
+    <string name="infra_government_desc">Services publics, police, pompiers</string>
+    <string name="infra_utility">Services essentiels</string>
+    <string name="infra_utility_desc">Électricité, eau, déchets</string>
+    <string name="infra_transport">Transport</string>
+    <string name="infra_transport_desc">Routes, ponts, pylônes</string>
+    <string name="infra_community">Équipements collectifs</string>
+    <string name="infra_community_desc">Écoles, hôpitaux</string>
+    <string name="infra_public">Espace public</string>
+    <string name="infra_public_desc">Lieux de culte, loisirs</string>
+    <string name="infra_other">Autre</string>
+    <string name="infra_other_desc">Précisez ci-dessous</string>
+    <string name="infra_other_hint">Nom / nature de l'infrastructure</string>
+
+    <!-- Capture: modular Appendix-1 sections -->
+    <string name="capture_modular_q">Quelques questions de plus</string>
+    <string name="capture_modular_sub">Facultatif — aide les analystes à établir les priorités de la zone. Passez si vous n'êtes pas sûr.</string>
+    <string name="capture_skip_modular">Passer ces questions</string>
+    <string name="modular_electricity">Électricité dans votre communauté</string>
+    <string name="elec_none">Aucun dommage observé</string>
+    <string name="elec_minor">Mineurs — réparation rapide</string>
+    <string name="elec_moderate">Modérés — coupures partielles</string>
+    <string name="elec_severe">Graves — coupures prolongées</string>
+    <string name="elec_destroyed">Entièrement détruite</string>
+    <string name="elec_unknown">Inconnu</string>
+    <string name="modular_health">Services de santé</string>
+    <string name="health_full">Pleinement fonctionnels</string>
+    <string name="health_partial">Partiellement fonctionnels</string>
+    <string name="health_disrupted">Fortement perturbés</string>
+    <string name="health_none">Hors service</string>
+    <string name="health_unknown">Inconnu</string>
+    <string name="modular_needs">Besoins les plus urgents</string>
+    <string name="need_food_water">Nourriture et eau</string>
+    <string name="need_cash">Aide financière</string>
+    <string name="need_healthcare">Soins et médicaments</string>
+    <string name="need_shelter">Abri / logement</string>
+    <string name="need_livelihoods">Moyens de subsistance</string>
+    <string name="need_wash">Eau et assainissement</string>
+    <string name="need_protection">Protection et accompagnement</string>
+    <string name="need_local">Soutien des autorités locales</string>
+    <string name="need_other">Autre</string>
+
+    <!-- Capture: crisis nature -->
+    <string name="capture_crisis_q">Quelle en est la cause ?</string>
+    <string name="capture_crisis_sub">Confirmez la nature de la crise. Sélectionnez tout ce qui s'applique.</string>
+    <string name="crisis_group_natural">Aléa naturel</string>
+    <string name="crisis_group_technological">Technologique</string>
+    <string name="crisis_group_humanmade">D'origine humaine</string>
+    <string name="crisis_earthquake">Séisme</string>
+    <string name="crisis_flood">Inondation</string>
+    <string name="crisis_tsunami">Tsunami</string>
+    <string name="crisis_hurricane">Ouragan</string>
+    <string name="crisis_wildfire">Incendie de forêt</string>
+    <string name="crisis_explosion">Explosion</string>
+    <string name="crisis_chemical">Chimique</string>
+    <string name="crisis_conflict">Conflit</string>
+    <string name="crisis_unrest">Troubles civils</string>
+
+    <!-- Capture: debris -->
+    <string name="capture_debris_q">Des débris à dégager à proximité ?</string>
+    <string name="capture_debris_sub">Rues bloquées, décombres ou dangers dans un rayon de 50 m de cette structure.</string>
+    <string name="debris_yes">Oui</string>
+    <string name="debris_yes_desc">Des débris ou des dangers bloquent l'accès</string>
+    <string name="debris_no">Non</string>
+    <string name="debris_no_desc">La zone est dégagée et accessible</string>
+    <string name="debris_unsure">Incertain</string>
+    <string name="debris_unsure_desc">Je ne peux pas le savoir d'où je suis</string>
+
+    <!-- Capture: location -->
+    <string name="capture_location_q">Confirmez l'emplacement</string>
+    <string name="capture_location_sub">Nous rattachons votre photo à l'emprise d'un bâtiment pour que le signalement corresponde à l'endroit exact.</string>
+    <string name="capture_location_confirm">Confirmer l'emplacement</string>
+    <string name="capture_w3w_label">Plus Code · code de localisation hors ligne</string>
+    <string name="capture_landmark_hint">Décrivez un point de repère (facultatif)</string>
+    <string name="capture_no_gps">Pas de GPS ? Décrivez un point de repère ci-dessous.</string>
+    <string name="capture_location_required">Placez le bâtiment sur la carte ou décrivez l'emplacement ci-dessous pour continuer.</string>
+    <string name="capture_dup_warning">Ce bâtiment a été signalé %1$s — envoyer comme mise à jour ?</string>
+    <string name="capture_locating_you">Localisation en cours…</string>
+    <string name="capture_location_set">Emplacement défini</string>
+    <string name="capture_locating">Localisation…</string>
+    <string name="capture_building_selected">Bâtiment sélectionné</string>
+
+    <!-- Capture: describe -->
+    <string name="capture_describe_q">Quelque chose à ajouter ?</string>
+    <string name="capture_describe_sub">Facultatif. Écrivez dans n'importe quelle langue — vos mots sont enregistrés avec le signalement.</string>
+    <string name="capture_describe_hint">ex. Le mur ouest est fissuré, mais le bâtiment ne s'est pas effondré.</string>
+    <string name="capture_voice">Note vocale</string>
+    <string name="capture_ai_suggests">Phrase rapide</string>
+    <string name="capture_ai_cv">Modèle</string>
+    <string name="capture_ai_text">Une phrase courante à insérer, puis à modifier selon ce que vous voyez.</string>
+    <string name="capture_ai_insert">Ajouter la phrase</string>
+    <string name="capture_skip_desc">Passer la description</string>
+
+    <!-- Capture: review -->
+    <string name="capture_review_q">Vérifiez votre signalement</string>
+    <string name="capture_review_sub">Dernière vérification avant l'envoi. Ni nom ni téléphone joints.</string>
+    <string name="capture_submit">Envoyer le signalement</string>
+    <string name="capture_submitting">Envoi en cours…</string>
+    <string name="capture_photo_label">photo prise</string>
+    <string name="capture_anon_badge">Ni nom ni téléphone</string>
+    <string name="capture_privacy">Métadonnées de localisation de la photo (EXIF) supprimées · Ni nom ni téléphone — un identifiant aléatoire propre à l'installation relie vos signalements pour les points et la suppression des doublons.</string>
+    <string name="review_row_damage">Dommages</string>
+    <string name="review_row_type">Type</string>
+    <string name="review_row_crisis">Crise</string>
+    <string name="review_row_debris">Débris</string>
+    <string name="review_row_location">Emplacement</string>
+    <string name="review_row_description">Description</string>
+
+    <!-- Capture: submitted -->
+    <string name="capture_submitted_title">Merci</string>
+    <string name="capture_submitted_offline_title">Enregistré dans la file d'attente</string>
+    <string name="capture_submitted_body">Votre signalement a été envoyé pour vérification. Il apparaîtra sur la carte après la synchronisation.</string>
+    <string name="capture_submitted_offline_body">Vous êtes hors ligne. Votre signalement sera envoyé automatiquement dès votre retour en ligne.</string>
+    <string name="capture_points">+10 points communautaires</string>
+    <string name="capture_badge_progress">Progression du badge Contributeur</string>
+    <string name="capture_view_map">Voir sur la carte</string>
+    <string name="capture_new_report">Nouveau signalement</string>
+
+    <!-- Reports list -->
+    <string name="reports_title">Signalements</string>
+    <string name="reports_summary">%1$d signalements · %2$d synchronisés</string>
+    <string name="filter_all">Tous</string>
+    <string name="status_synced">Synchronisé</string>
+    <string name="status_queued">En attente</string>
+    <string name="reports_empty">Aucun signalement ne correspond à ce filtre.</string>
+
+    <!-- Report detail -->
+    <string name="report_label">SIGNALEMENT</string>
+    <string name="detail_translated_from">Traduit depuis %1$s</string>
+    <string name="detail_timeline">Chronologie des dommages</string>
+    <string name="detail_this_building">ce bâtiment</string>
+    <string name="detail_meta_type">Type</string>
+    <string name="detail_meta_crisis">Crise</string>
+    <string name="detail_meta_debris">Débris</string>
+    <string name="detail_meta_captured">Capturé</string>
+    <string name="detail_description">Description</string>
+    <string name="detail_anonymised">Anonymisé · EXIF supprimé</string>
+
+    <!-- Sync queue -->
+    <string name="sync_title">File de synchronisation</string>
+    <string name="sync_offline_msg">Vous êtes hors ligne. Les signalements seront synchronisés automatiquement dès votre retour en ligne.</string>
+    <string name="sync_online_msg">Connecté. Envoi des signalements en attente en cours.</string>
+    <string name="sync_awaiting">signalements en attente d'envoi</string>
+    <string name="sync_total_mb">~%1$s Mo au total</string>
+    <string name="sync_online">En ligne</string>
+    <string name="sync_offline">Hors ligne</string>
+    <string name="sync_all_caught_up">Tout est à jour.</string>
+    <string name="sync_waiting">En attente de connexion</string>
+    <string name="sync_uploading">Envoi en cours</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profil</string>
+    <string name="profile_anon">Anonyme</string>
+    <string name="profile_add_alias">Touchez pour ajouter un pseudonyme (facultatif)</string>
+    <string name="profile_reports">Signalements</string>
+    <string name="profile_buildings">Bâtiments</string>
+    <string name="profile_points">Points</string>
+    <string name="profile_recognition">Reconnaissance</string>
+    <string name="profile_see_all">Tout voir</string>
+    <string name="menu_export">Exporter mes signalements</string>
+    <string name="menu_export_sub">CSV · GeoJSON · Shapefile</string>
+    <string name="export_geojson">Partager au format GeoJSON</string>
+    <string name="export_csv">Partager au format CSV</string>
+    <string name="menu_language">Langue</string>
+    <string name="menu_privacy">Confidentialité</string>
+    <string name="menu_privacy_sub">Ni nom ni téléphone · EXIF supprimé</string>
+    <string name="menu_alerts">Alertes de crise</string>
+    <string name="menu_alerts_sub">Notification lorsqu'une crise est détectée à proximité</string>
+    <string name="menu_about">À propos de Beacon</string>
+    <string name="menu_about_sub">Open source · v 0.9.0</string>
+    <string name="menu_offline">Cartes hors ligne</string>
+    <string name="menu_offline_sub">Télécharger la zone de crise à l'avance</string>
+
+    <!-- Offline downloads -->
+    <string name="offline_title">Cartes hors ligne</string>
+    <string name="offline_sub">Téléchargez la zone de crise à l'avance pour que l'application fonctionne sans réseau.</string>
+    <string name="offline_download_area">Télécharger le pack de crise d'Antakya</string>
+    <string name="offline_ready">Prêt</string>
+    <string name="offline_downloading">Téléchargement</string>
+    <string name="offline_queued">En attente</string>
+
+    <!-- Language override -->
+    <string name="language_sheet_title">Langue de l'application</string>
+    <string name="language_sheet_sub">Par défaut, Beacon suit la langue de votre appareil.</string>
+    <string name="language_system">Suivre le système</string>
+    <string name="sync_now">Synchroniser</string>
+    <string name="sync_in_progress">Synchronisation…</string>
+</resources>

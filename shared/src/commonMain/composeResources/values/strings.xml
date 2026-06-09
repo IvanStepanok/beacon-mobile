@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_map">Map</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_sync">Sync</string>
+    <string name="nav_crisis">Crisis</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Crisis &amp; Safety tab -->
+    <string name="crisis_title">Crisis &amp; Safety</string>
+    <string name="crisis_started">Started %1$s</string>
+    <string name="crisis_danger_zones">Danger zones — avoid these areas</string>
+    <string name="crisis_no_danger">No danger zones flagged right now.</string>
+    <string name="danger_caution">Caution</string>
+    <string name="danger_warning">Warning</string>
+    <string name="danger_critical">Critical</string>
+    <string name="crisis_alerts_title">Crisis alerts</string>
+    <string name="crisis_alerts_sub">Notify me when a crisis is detected nearby</string>
+    <string name="crisis_safety_title">Stay safe while reporting</string>
+    <string name="crisis_safety_tip">Keep a safe distance from damaged structures. Never enter unstable buildings to take a photo.</string>
+    <string name="crisis_none_nearby">No active crisis near you</string>
+    <string name="crisis_none_nearby_sub">You can still report a damaged building from the map — it’ll be reviewed.</string>
+    <string name="crisis_active_near_you">ACTIVE CRISES NEAR YOU</string>
+
+    <!-- Common -->
+    <string name="common_skip">Skip</string>
+    <string name="common_next">Next</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_get_started">Get started</string>
+    <string name="common_close">Close</string>
+
+    <!-- Damage levels (5-level EMS-98) -->
+    <string name="damage_none">None</string>
+    <string name="damage_slight">Slight</string>
+    <string name="damage_moderate">Moderate</string>
+    <string name="damage_severe">Severe</string>
+    <string name="damage_destroyed">Destroyed</string>
+
+    <!-- Map home -->
+    <string name="map_search_hint">Search area or address</string>
+    <string name="map_offline_mode">Offline mode</string>
+    <string name="map_reports_queued">%1$d report(s) queued</string>
+    <string name="map_crisis_active">Active crisis</string>
+    <string name="map_crisis_source">UNDP RAPIDA</string>
+    <string name="map_view_details">View details</string>
+    <string name="map_filter_title">Filter by damage</string>
+    <string name="hotspots_title">Hotspots</string>
+    <string name="hotspots_sub">Areas ranked by report volume — prioritize response here.</string>
+    <string name="hotspots_reports">%1$d reports</string>
+
+    <!-- Onboarding -->
+    <string name="ob_s1_eyebrow">Welcome</string>
+    <string name="ob_s1_title">Every report drives recovery</string>
+    <string name="ob_s1_body">Capture damage in your community. Your reports build a structured map that helps response teams understand where the damage is.</string>
+    <string name="ob_s2_eyebrow">Quick &amp; calm</string>
+    <string name="ob_s2_title">Three steps. No fuss.</string>
+    <string name="ob_s2_body">Take a photo, mark the damage, place it on the map. We handle the rest — even offline.</string>
+    <string name="ob_s3_eyebrow">Works offline</string>
+    <string name="ob_s3_title">No signal? No problem.</string>
+    <string name="ob_s3_body">Reports are saved on your device and upload automatically when you are back online.</string>
+    <string name="ob_s4_eyebrow">Private by design</string>
+    <string name="ob_s4_title">Your identity stays yours</string>
+    <string name="ob_s4_body">No name or phone number — just your report. A random ID created on this device links your reports together (for points and to remove duplicates). Photo location metadata is stripped before upload.</string>
+
+    <!-- Capture: common -->
+    <string name="step_continue">Continue</string>
+    <string name="step_change_later">You can change this later.</string>
+    <!-- Capture: wizard phases — the 3 visible phases promised by onboarding ("Three steps").
+         The 8 sub-screens group into Damage / Location / Details; the header counter is per-phase. -->
+    <string name="capture_phase_damage">Damage</string>
+    <string name="capture_phase_location">Location</string>
+    <string name="capture_phase_details">Details</string>
+
+    <!-- Capture: camera -->
+    <string name="capture_camera_hint">Frame the damage clearly</string>
+    <string name="capture_guide_whole">Include the whole building in the frame.</string>
+    <string name="capture_guide_closeup">Then add a close-up of the worst damage.</string>
+    <string name="capture_guide_no_people">Please don\'t photograph people.</string>
+    <string name="capture_capture_btn">Capture damage</string>
+    <string name="capture_gallery">Gallery</string>
+    <string name="capture_switch">Switch</string>
+
+    <!-- Capture: damage -->
+    <string name="capture_damage_q">What is the extent of damage?</string>
+    <string name="capture_damage_sub">Pick the option that best describes this structure.</string>
+    <string name="damage_none_desc">No visible damage — the building appears intact.</string>
+    <string name="damage_slight_desc">Minor, non-structural cracks. Still usable.</string>
+    <string name="damage_moderate_desc">Moderate damage, partial use possible. Enter with caution.</string>
+    <string name="damage_severe_desc">Serious structural damage. Do not enter.</string>
+    <string name="damage_destroyed_desc">Collapsed or beyond repair.</string>
+    <!-- Capture: damage 3-tier (default scale) -->
+    <string name="damage_tier_minimal">Minimal / no damage</string>
+    <string name="damage_tier_minimal_desc">Little or no visible damage</string>
+    <string name="damage_tier_partial">Partially damaged</string>
+    <string name="damage_tier_partial_desc">Visible structural damage; still standing</string>
+    <string name="damage_tier_complete">Completely destroyed</string>
+    <string name="damage_tier_complete_desc">Collapsed or beyond repair</string>
+    <!-- Capture: possibly-damaged + life-safety -->
+    <string name="capture_possibly_damaged">Possibly damaged</string>
+    <string name="capture_possibly_damaged_desc">Not sure of the exact level — flag it for an analyst to review.</string>
+    <string name="capture_lifesafety_q">Are people trapped or injured here?</string>
+    <string name="capture_lifesafety_desc">Flags this report as urgent so reviewers see it first.</string>
+
+    <!-- Capture: infrastructure -->
+    <string name="capture_infra_q">What kind of structure?</string>
+    <string name="capture_infra_sub">Pick all that apply.</string>
+    <string name="infra_residential">Residential</string>
+    <string name="infra_residential_desc">Houses, apartments</string>
+    <string name="infra_commercial">Commercial</string>
+    <string name="infra_commercial_desc">Shops, markets, hotels</string>
+    <string name="infra_government">Government</string>
+    <string name="infra_government_desc">Admin, police, fire</string>
+    <string name="infra_utility">Utility</string>
+    <string name="infra_utility_desc">Power, water, waste</string>
+    <string name="infra_transport">Transport</string>
+    <string name="infra_transport_desc">Roads, bridges, towers</string>
+    <string name="infra_community">Community</string>
+    <string name="infra_community_desc">Schools, hospitals</string>
+    <string name="infra_public">Public space</string>
+    <string name="infra_public_desc">Religious, recreational</string>
+    <string name="infra_other">Other</string>
+    <string name="infra_other_desc">Specify below</string>
+    <string name="infra_other_hint">Name / nature of the infrastructure</string>
+
+    <!-- Capture: modular Appendix-1 sections -->
+    <string name="capture_modular_q">A few more questions</string>
+    <string name="capture_modular_sub">Optional — helps analysts prioritize the area. Skip if unsure.</string>
+    <string name="capture_skip_modular">Skip these</string>
+    <string name="modular_electricity">Electricity in your community</string>
+    <string name="elec_none">No damage observed</string>
+    <string name="elec_minor">Minor — quick to repair</string>
+    <string name="elec_moderate">Moderate — partial outages</string>
+    <string name="elec_severe">Severe — prolonged outages</string>
+    <string name="elec_destroyed">Completely destroyed</string>
+    <string name="elec_unknown">Unknown</string>
+    <string name="modular_health">Health services</string>
+    <string name="health_full">Fully functional</string>
+    <string name="health_partial">Partially functional</string>
+    <string name="health_disrupted">Largely disrupted</string>
+    <string name="health_none">Not functioning</string>
+    <string name="health_unknown">Unknown</string>
+    <string name="modular_needs">Most pressing needs</string>
+    <string name="need_food_water">Food &amp; water</string>
+    <string name="need_cash">Cash assistance</string>
+    <string name="need_healthcare">Healthcare &amp; medicine</string>
+    <string name="need_shelter">Shelter / housing</string>
+    <string name="need_livelihoods">Livelihoods</string>
+    <string name="need_wash">Water &amp; sanitation</string>
+    <string name="need_protection">Protection &amp; support</string>
+    <string name="need_local">Local authority support</string>
+    <string name="need_other">Other</string>
+
+    <!-- Capture: crisis nature -->
+    <string name="capture_crisis_q">What caused this?</string>
+    <string name="capture_crisis_sub">Confirm the nature of the crisis. Pick all that apply.</string>
+    <string name="crisis_group_natural">Natural hazard</string>
+    <string name="crisis_group_technological">Technological</string>
+    <string name="crisis_group_humanmade">Human-made</string>
+    <string name="crisis_earthquake">Earthquake</string>
+    <string name="crisis_flood">Flood</string>
+    <string name="crisis_tsunami">Tsunami</string>
+    <string name="crisis_hurricane">Hurricane</string>
+    <string name="crisis_wildfire">Wildfire</string>
+    <string name="crisis_explosion">Explosion</string>
+    <string name="crisis_chemical">Chemical</string>
+    <string name="crisis_conflict">Conflict</string>
+    <string name="crisis_unrest">Civil unrest</string>
+
+    <!-- Capture: debris -->
+    <string name="capture_debris_q">Any debris needs clearing nearby?</string>
+    <string name="capture_debris_sub">Blocked streets, rubble or hazards within 50 m of this structure.</string>
+    <string name="debris_yes">Yes</string>
+    <string name="debris_yes_desc">Debris or hazards block access</string>
+    <string name="debris_no">No</string>
+    <string name="debris_no_desc">Area is clear and reachable</string>
+    <string name="debris_unsure">Not sure</string>
+    <string name="debris_unsure_desc">I cannot tell from where I am</string>
+
+    <!-- Capture: location -->
+    <string name="capture_location_q">Confirm the location</string>
+    <string name="capture_location_sub">We snap your photo to a building footprint so the report maps to the exact place.</string>
+    <string name="capture_location_confirm">Confirm location</string>
+    <string name="capture_w3w_label">Plus Code · offline location code</string>
+    <string name="capture_landmark_hint">Describe a landmark (optional)</string>
+    <string name="capture_no_gps">No GPS? Describe a landmark below.</string>
+    <string name="capture_location_required">Pin the building on the map or describe the location below to continue.</string>
+    <string name="capture_dup_warning">This building was reported %1$s — submit as an update?</string>
+    <string name="capture_locating_you">Locating you…</string>
+    <string name="capture_location_set">Location set</string>
+    <string name="capture_locating">Locating…</string>
+    <string name="capture_building_selected">Building selected</string>
+
+    <!-- Capture: describe -->
+    <string name="capture_describe_q">Anything else to add?</string>
+    <string name="capture_describe_sub">Optional. Write in any language — your words are saved with the report.</string>
+    <string name="capture_describe_hint">e.g. The west wall has a crack, but the building has not collapsed.</string>
+    <string name="capture_voice">Voice note</string>
+    <string name="capture_ai_suggests">Quick phrase</string>
+    <string name="capture_ai_cv">Template</string>
+    <string name="capture_ai_text">A common phrase you can drop in, then edit to match what you see.</string>
+    <string name="capture_ai_insert">Add phrase</string>
+    <string name="capture_skip_desc">Skip description</string>
+
+    <!-- Capture: review -->
+    <string name="capture_review_q">Review your report</string>
+    <string name="capture_review_sub">Last check before sending. No name or phone attached.</string>
+    <string name="capture_submit">Submit report</string>
+    <string name="capture_submitting">Submitting…</string>
+    <string name="capture_photo_label">captured photo</string>
+    <string name="capture_anon_badge">No name or phone</string>
+    <string name="capture_privacy">Photo location metadata (EXIF) removed · No name or phone — a random per-install ID links your reports for points and to remove duplicates.</string>
+    <string name="review_row_damage">Damage</string>
+    <string name="review_row_type">Type</string>
+    <string name="review_row_crisis">Crisis</string>
+    <string name="review_row_debris">Debris</string>
+    <string name="review_row_location">Location</string>
+    <string name="review_row_description">Description</string>
+
+    <!-- Capture: submitted -->
+    <string name="capture_submitted_title">Thank you</string>
+    <string name="capture_submitted_offline_title">Saved to queue</string>
+    <string name="capture_submitted_body">Your report was submitted for review. It will appear on the map once it syncs.</string>
+    <string name="capture_submitted_offline_body">You are offline. Your report will upload automatically when you are back online.</string>
+    <string name="capture_points">+10 community points</string>
+    <string name="capture_badge_progress">Helper badge progress</string>
+    <string name="capture_view_map">View on map</string>
+    <string name="capture_new_report">New report</string>
+
+    <!-- Reports list -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_summary">%1$d reports · %2$d synced</string>
+    <string name="filter_all">All</string>
+    <string name="status_synced">Synced</string>
+    <string name="status_queued">Queued</string>
+    <string name="reports_empty">No reports match this filter.</string>
+
+    <!-- Report detail -->
+    <string name="report_label">REPORT</string>
+    <string name="detail_translated_from">Translated from %1$s</string>
+    <string name="detail_timeline">Damage timeline</string>
+    <string name="detail_this_building">this building</string>
+    <string name="detail_meta_type">Type</string>
+    <string name="detail_meta_crisis">Crisis</string>
+    <string name="detail_meta_debris">Debris</string>
+    <string name="detail_meta_captured">Captured</string>
+    <string name="detail_description">Description</string>
+    <string name="detail_anonymised">Anonymised · EXIF stripped</string>
+    <string name="detail_location_unresolved">Location unresolved · landmark: %1$s</string>
+
+    <!-- Sync queue -->
+    <string name="sync_title">Sync queue</string>
+    <string name="sync_offline_msg">You are offline. Reports will sync automatically when you are back online.</string>
+    <string name="sync_online_msg">Connected. Uploading queued reports now.</string>
+    <string name="sync_awaiting">reports awaiting upload</string>
+    <string name="sync_total_mb">~%1$s MB total</string>
+    <string name="sync_online">Online</string>
+    <string name="sync_offline">Offline</string>
+    <string name="sync_all_caught_up">All caught up.</string>
+    <string name="sync_waiting">Waiting for connection</string>
+    <string name="sync_uploading">Uploading</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_in_progress">Syncing…</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_anon">Anonymous</string>
+    <string name="profile_add_alias">Tap to add an alias (optional)</string>
+    <string name="profile_reports">Reports</string>
+    <string name="profile_buildings">Buildings</string>
+    <string name="profile_points">Points</string>
+    <string name="profile_recognition">Recognition</string>
+    <string name="profile_see_all">See all</string>
+    <string name="menu_export">Export my reports</string>
+    <string name="menu_export_sub">CSV · GeoJSON · Shapefile</string>
+    <string name="export_geojson">Share as GeoJSON</string>
+    <string name="export_csv">Share as CSV</string>
+    <string name="menu_language">Language</string>
+    <string name="menu_privacy">Privacy</string>
+    <string name="menu_privacy_sub">No name or phone · EXIF stripped</string>
+    <string name="menu_alerts">Crisis alerts</string>
+    <string name="menu_alerts_sub">Push when crisis is detected nearby</string>
+    <string name="menu_about">About Beacon</string>
+    <string name="menu_about_sub">Open-source · v 0.9.0</string>
+    <string name="menu_offline">Offline maps</string>
+    <string name="menu_offline_sub">Pre-download the crisis area</string>
+
+    <!-- Offline downloads -->
+    <string name="offline_title">Offline maps</string>
+    <string name="offline_sub">Pre-download the crisis area so the app works with no signal.</string>
+    <string name="offline_download_area">Download Antakya crisis pack</string>
+    <string name="offline_ready">Ready</string>
+    <string name="offline_downloading">Downloading</string>
+    <string name="offline_queued">Queued</string>
+
+    <!-- Language override -->
+    <string name="language_sheet_title">App language</string>
+    <string name="language_sheet_sub">By default Beacon follows your device language.</string>
+    <string name="language_system">Follow system</string>
+</resources>

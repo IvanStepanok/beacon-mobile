@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_map">地图</string>
+    <string name="nav_reports">报告</string>
+    <string name="nav_sync">同步</string>
+    <string name="nav_crisis">危机</string>
+    <string name="nav_profile">个人资料</string>
+
+    <!-- Crisis &amp; Safety tab -->
+    <string name="crisis_title">危机与安全</string>
+    <string name="crisis_started">始于 %1$s</string>
+    <string name="crisis_danger_zones">危险区域——请避开这些区域</string>
+    <string name="crisis_no_danger">目前未标记任何危险区域。</string>
+    <string name="danger_caution">注意</string>
+    <string name="danger_warning">警告</string>
+    <string name="danger_critical">危急</string>
+    <string name="crisis_alerts_title">危机警报</string>
+    <string name="crisis_alerts_sub">检测到附近发生危机时通知我</string>
+    <string name="crisis_safety_title">报告时注意安全</string>
+    <string name="crisis_safety_tip">与受损建筑保持安全距离。切勿为拍照而进入不稳固的建筑。</string>
+    <string name="crisis_none_nearby">您附近没有进行中的危机</string>
+    <string name="crisis_none_nearby_sub">您仍可从地图上报告受损建筑——它会得到审核。</string>
+    <string name="crisis_active_near_you">您附近进行中的危机</string>
+
+    <!-- Common -->
+    <string name="common_skip">跳过</string>
+    <string name="common_next">下一步</string>
+    <string name="common_continue">继续</string>
+    <string name="common_get_started">开始使用</string>
+    <string name="common_close">关闭</string>
+
+    <!-- Damage levels -->
+    <string name="damage_none">无</string>
+    <string name="damage_slight">轻微</string>
+    <string name="damage_moderate">中等</string>
+    <string name="damage_severe">严重</string>
+    <string name="damage_destroyed">损毁</string>
+
+    <!-- Map home -->
+    <string name="map_search_hint">搜索区域或地址</string>
+    <string name="map_offline_mode">离线模式</string>
+    <string name="map_reports_queued">%1$d 份报告待处理</string>
+    <string name="map_crisis_active">危机进行中</string>
+    <string name="map_crisis_source">UNDP RAPIDA</string>
+    <string name="map_view_details">查看详情</string>
+    <string name="map_filter_title">按受损程度筛选</string>
+    <string name="hotspots_title">热点区域</string>
+    <string name="hotspots_sub">按报告数量排序的区域——请优先在此响应。</string>
+    <string name="hotspots_reports">%1$d 份报告</string>
+
+    <!-- Onboarding -->
+    <string name="ob_s1_eyebrow">欢迎</string>
+    <string name="ob_s1_title">每一份报告都推动着恢复</string>
+    <string name="ob_s1_body">记录您所在社区的受损情况。您的报告汇集成一张结构化地图，帮助救援团队了解受损所在。</string>
+    <string name="ob_s2_eyebrow">快捷且从容</string>
+    <string name="ob_s2_title">三个步骤，简单明了。</string>
+    <string name="ob_s2_body">拍一张照片，标记受损情况，再在地图上定位。其余的交给我们处理——即使离线也可以。</string>
+    <string name="ob_s3_eyebrow">支持离线使用</string>
+    <string name="ob_s3_title">没有信号？没关系。</string>
+    <string name="ob_s3_body">报告会保存在您的设备上，并在重新联网后自动上传。</string>
+    <string name="ob_s4_eyebrow">隐私优先设计</string>
+    <string name="ob_s4_title">您的身份始终属于您</string>
+    <string name="ob_s4_body">不需要姓名或电话——只需您的报告。本设备会生成一个随机 ID，用于关联您的多份报告（用于积分和去除重复）。照片的位置信息会在上传前移除。</string>
+
+    <!-- Capture: common -->
+    <string name="step_continue">继续</string>
+    <string name="step_change_later">您之后可以更改此项。</string>
+    <!-- Capture: wizard phases (AI translation — needs native review) -->
+    <string name="capture_phase_damage">受损情况</string>
+    <string name="capture_phase_location">位置</string>
+    <string name="capture_phase_details">详情</string>
+
+    <!-- Capture: camera -->
+    <string name="capture_camera_hint">清晰地拍摄受损部位</string>
+    <!-- Camera guide chips (AI translation — needs native review) -->
+    <string name="capture_guide_whole">请将整栋建筑完整纳入画面。</string>
+    <string name="capture_guide_closeup">然后补拍一张最严重受损处的特写。</string>
+    <string name="capture_guide_no_people">请不要拍摄人物。</string>
+    <string name="capture_capture_btn">拍摄受损情况</string>
+    <string name="capture_gallery">相册</string>
+    <string name="capture_switch">切换</string>
+
+    <!-- Capture: damage -->
+    <string name="capture_damage_q">受损程度如何？</string>
+    <string name="capture_damage_sub">请选择最符合该建筑的选项。</string>
+    <string name="damage_none_desc">无可见损坏——建筑看起来完好。</string>
+    <string name="damage_slight_desc">轻微的非结构性裂缝。仍可使用。</string>
+    <string name="damage_moderate_desc">中度损坏，可部分使用。进入时请小心。</string>
+    <string name="damage_severe_desc">严重的结构性损坏。请勿进入。</string>
+    <string name="damage_destroyed_desc">已倒塌或无法修复。</string>
+    <!-- Capture: damage 3-tier (default scale) -->
+    <string name="damage_tier_minimal">轻微／无损坏</string>
+    <string name="damage_tier_minimal_desc">几乎没有可见损坏</string>
+    <string name="damage_tier_partial">部分受损</string>
+    <string name="damage_tier_partial_desc">有可见的结构性损坏；仍然屹立</string>
+    <string name="damage_tier_complete">完全损毁</string>
+    <string name="damage_tier_complete_desc">已倒塌或无法修复</string>
+    <!-- Capture: possibly-damaged + life-safety -->
+    <string name="capture_possibly_damaged">可能受损</string>
+    <string name="capture_possibly_damaged_desc">不确定具体程度——标记出来交由分析员审核。</string>
+    <string name="capture_lifesafety_q">这里有人被困或受伤吗？</string>
+    <string name="capture_lifesafety_desc">将此报告标记为紧急，以便审核人员优先查看。</string>
+
+    <!-- Capture: infrastructure -->
+    <string name="capture_infra_q">这是哪类建筑？</string>
+    <string name="capture_infra_sub">请选择所有适用项。</string>
+    <string name="infra_residential">住宅</string>
+    <string name="infra_residential_desc">房屋、公寓</string>
+    <string name="infra_commercial">商业</string>
+    <string name="infra_commercial_desc">商店、市场、酒店</string>
+    <string name="infra_government">政府</string>
+    <string name="infra_government_desc">行政、警察、消防</string>
+    <string name="infra_utility">公用设施</string>
+    <string name="infra_utility_desc">电力、供水、废物处理</string>
+    <string name="infra_transport">交通</string>
+    <string name="infra_transport_desc">道路、桥梁、塔架</string>
+    <string name="infra_community">社区设施</string>
+    <string name="infra_community_desc">学校、医院</string>
+    <string name="infra_public">公共空间</string>
+    <string name="infra_public_desc">宗教、休闲</string>
+    <string name="infra_other">其他</string>
+    <string name="infra_other_desc">请在下方说明</string>
+    <string name="infra_other_hint">基础设施的名称／性质</string>
+
+    <!-- Capture: modular Appendix-1 sections -->
+    <string name="capture_modular_q">还有几个问题</string>
+    <string name="capture_modular_sub">可选——有助于分析人员确定该区域的优先次序。不确定可跳过。</string>
+    <string name="capture_skip_modular">跳过这些</string>
+    <string name="modular_electricity">您所在社区的供电情况</string>
+    <string name="elec_none">未发现损坏</string>
+    <string name="elec_minor">轻微——可快速修复</string>
+    <string name="elec_moderate">中度——部分停电</string>
+    <string name="elec_severe">严重——长时间停电</string>
+    <string name="elec_destroyed">完全损毁</string>
+    <string name="elec_unknown">未知</string>
+    <string name="modular_health">医疗服务</string>
+    <string name="health_full">完全正常运转</string>
+    <string name="health_partial">部分正常运转</string>
+    <string name="health_disrupted">大面积中断</string>
+    <string name="health_none">无法运转</string>
+    <string name="health_unknown">未知</string>
+    <string name="modular_needs">最迫切的需求</string>
+    <string name="need_food_water">食物和饮水</string>
+    <string name="need_cash">现金援助</string>
+    <string name="need_healthcare">医疗与药品</string>
+    <string name="need_shelter">避难所／住房</string>
+    <string name="need_livelihoods">生计</string>
+    <string name="need_wash">供水与卫生</string>
+    <string name="need_protection">保护与支持</string>
+    <string name="need_local">地方当局支援</string>
+    <string name="need_other">其他</string>
+
+    <!-- Capture: crisis nature -->
+    <string name="capture_crisis_q">这是什么原因造成的？</string>
+    <string name="capture_crisis_sub">请确认危机的性质。请选择所有适用项。</string>
+    <string name="crisis_group_natural">自然灾害</string>
+    <string name="crisis_group_technological">技术事故</string>
+    <string name="crisis_group_humanmade">人为因素</string>
+    <string name="crisis_earthquake">地震</string>
+    <string name="crisis_flood">洪水</string>
+    <string name="crisis_tsunami">海啸</string>
+    <string name="crisis_hurricane">飓风</string>
+    <string name="crisis_wildfire">野火</string>
+    <string name="crisis_explosion">爆炸</string>
+    <string name="crisis_chemical">化学事故</string>
+    <string name="crisis_conflict">武装冲突</string>
+    <string name="crisis_unrest">社会动荡</string>
+
+    <!-- Capture: debris -->
+    <string name="capture_debris_q">附近有需要清理的废墟吗？</string>
+    <string name="capture_debris_sub">该建筑 50 米范围内被阻断的街道、瓦砾或危险物。</string>
+    <string name="debris_yes">有</string>
+    <string name="debris_yes_desc">废墟或危险物阻断了通行</string>
+    <string name="debris_no">没有</string>
+    <string name="debris_no_desc">区域畅通，可以抵达</string>
+    <string name="debris_unsure">不确定</string>
+    <string name="debris_unsure_desc">从我所在的位置无法判断</string>
+
+    <!-- Capture: location -->
+    <string name="capture_location_q">确认位置</string>
+    <string name="capture_location_sub">我们会将您的照片对齐到建筑轮廓，让报告精确定位到具体地点。</string>
+    <string name="capture_location_confirm">确认位置</string>
+    <string name="capture_w3w_label">Plus Code · 离线位置代码</string>
+    <string name="capture_landmark_hint">描述一处地标（可选）</string>
+    <string name="capture_no_gps">没有 GPS？请在下方描述一处地标。</string>
+    <string name="capture_location_required">在地图上标记建筑，或在下方描述位置以继续。</string>
+    <string name="capture_dup_warning">该建筑已于 %1$s 被报告——是否作为更新提交？</string>
+    <string name="capture_locating_you">正在定位您的位置…</string>
+    <string name="capture_location_set">位置已确定</string>
+    <string name="capture_locating">正在定位…</string>
+    <string name="capture_building_selected">已选择建筑</string>
+
+    <!-- Capture: describe -->
+    <string name="capture_describe_q">还有什么要补充的吗？</string>
+    <string name="capture_describe_sub">可选。可用任何语言书写——您的文字将随报告一起保存。</string>
+    <string name="capture_describe_hint">例如：西墙有一道裂缝，但建筑尚未倒塌。</string>
+    <string name="capture_voice">语音备注</string>
+    <string name="capture_ai_suggests">快捷短语</string>
+    <string name="capture_ai_cv">模板</string>
+    <string name="capture_ai_text">常用短语，可先插入再根据实际情况修改。</string>
+    <string name="capture_ai_insert">添加短语</string>
+    <string name="capture_skip_desc">跳过描述</string>
+
+    <!-- Capture: review -->
+    <string name="capture_review_q">检查您的报告</string>
+    <string name="capture_review_sub">发送前的最后核对。不附带姓名或电话。</string>
+    <string name="capture_submit">提交报告</string>
+    <string name="capture_submitting">正在提交…</string>
+    <string name="capture_photo_label">已拍摄的照片</string>
+    <string name="capture_anon_badge">不含姓名或电话</string>
+    <string name="capture_privacy">已移除照片位置信息（EXIF）· 不含姓名或电话——一个随机的本机 ID 用于关联您的报告，以便积分和去重。</string>
+    <string name="review_row_damage">受损</string>
+    <string name="review_row_type">类型</string>
+    <string name="review_row_crisis">危机</string>
+    <string name="review_row_debris">废墟</string>
+    <string name="review_row_location">位置</string>
+    <string name="review_row_description">描述</string>
+
+    <!-- Capture: submitted -->
+    <string name="capture_submitted_title">谢谢</string>
+    <string name="capture_submitted_offline_title">已保存到队列</string>
+    <string name="capture_submitted_body">您的报告已提交审核，同步后将显示在地图上。</string>
+    <string name="capture_submitted_offline_body">您当前处于离线状态。重新联网后，您的报告将自动上传。</string>
+    <string name="capture_points">+10 社区积分</string>
+    <string name="capture_badge_progress">助力者徽章进度</string>
+    <string name="capture_view_map">在地图上查看</string>
+    <string name="capture_new_report">新建报告</string>
+
+    <!-- Reports list -->
+    <string name="reports_title">报告</string>
+    <string name="reports_summary">%1$d 份报告 · 已同步 %2$d 份</string>
+    <string name="filter_all">全部</string>
+    <string name="status_synced">已同步</string>
+    <string name="status_queued">排队中</string>
+    <string name="reports_empty">没有符合此筛选条件的报告。</string>
+
+    <!-- Report detail -->
+    <string name="report_label">报告</string>
+    <string name="detail_translated_from">译自%1$s</string>
+    <string name="detail_timeline">受损时间线</string>
+    <string name="detail_this_building">这栋建筑</string>
+    <string name="detail_meta_type">类型</string>
+    <string name="detail_meta_crisis">危机</string>
+    <string name="detail_meta_debris">废墟</string>
+    <string name="detail_meta_captured">拍摄时间</string>
+    <string name="detail_description">描述</string>
+    <string name="detail_anonymised">已匿名 · 已移除 EXIF</string>
+
+    <!-- Sync queue -->
+    <string name="sync_title">同步队列</string>
+    <string name="sync_offline_msg">您当前处于离线状态。重新联网后报告将自动同步。</string>
+    <string name="sync_online_msg">已连接。正在上传队列中的报告。</string>
+    <string name="sync_awaiting">份报告等待上传</string>
+    <string name="sync_total_mb">共约 %1$s MB</string>
+    <string name="sync_online">在线</string>
+    <string name="sync_offline">离线</string>
+    <string name="sync_all_caught_up">已全部处理完毕。</string>
+    <string name="sync_waiting">等待连接</string>
+    <string name="sync_uploading">上传中</string>
+
+    <!-- Profile -->
+    <string name="profile_title">个人资料</string>
+    <string name="profile_anon">匿名</string>
+    <string name="profile_add_alias">点按以添加别名（可选）</string>
+    <string name="profile_reports">报告</string>
+    <string name="profile_buildings">建筑</string>
+    <string name="profile_points">积分</string>
+    <string name="profile_recognition">荣誉</string>
+    <string name="profile_see_all">查看全部</string>
+    <string name="menu_export">导出我的报告</string>
+    <string name="menu_export_sub">CSV · GeoJSON · Shapefile</string>
+    <string name="export_geojson">以 GeoJSON 格式分享</string>
+    <string name="export_csv">以 CSV 格式分享</string>
+    <string name="menu_language">语言</string>
+    <string name="menu_privacy">隐私</string>
+    <string name="menu_privacy_sub">不含姓名或电话 · 已移除 EXIF</string>
+    <string name="menu_alerts">危机警报</string>
+    <string name="menu_alerts_sub">检测到附近发生危机时推送通知</string>
+    <string name="menu_about">关于 Beacon</string>
+    <string name="menu_about_sub">开源 · v 0.9.0</string>
+    <string name="menu_offline">离线地图</string>
+    <string name="menu_offline_sub">预先下载危机区域</string>
+
+    <!-- Offline downloads -->
+    <string name="offline_title">离线地图</string>
+    <string name="offline_sub">预先下载危机区域，让应用在没有信号时也能使用。</string>
+    <string name="offline_download_area">下载安塔基亚危机地图包</string>
+    <string name="offline_ready">就绪</string>
+    <string name="offline_downloading">下载中</string>
+    <string name="offline_queued">排队中</string>
+
+    <!-- Language override -->
+    <string name="language_sheet_title">应用语言</string>
+    <string name="language_sheet_sub">默认情况下，Beacon 跟随您的设备语言。</string>
+    <string name="language_system">跟随系统</string>
+    <string name="sync_now">立即同步</string>
+    <string name="sync_in_progress">正在同步…</string>
+</resources>

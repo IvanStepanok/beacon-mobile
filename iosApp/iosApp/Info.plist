@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Beacon uses your location to place damage reports accurately on the crisis map.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Beacon uses the camera so you can photograph building damage for your report.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Beacon lets you attach a photo of the damage from your library to a report.</string>
+</dict>
+</plist>
