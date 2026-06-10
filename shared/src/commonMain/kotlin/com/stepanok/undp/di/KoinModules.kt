@@ -18,8 +18,8 @@ import com.stepanok.undp.domain.repository.DownloadQueue
 import com.stepanok.undp.domain.repository.ProfileRepository
 import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.domain.repository.SyncManager
-import com.stepanok.undp.translation.MockTranslator
-import com.stepanok.undp.translation.Translator
+import com.stepanok.undp.translation.LanguageDetector
+import com.stepanok.undp.translation.ScriptLanguageDetector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,7 +33,7 @@ val coreModule: Module = module {
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     single<ConnectivityObserver> { createConnectivityObserver() }
     single<LocationProvider> { createLocationProvider() }
-    single<Translator> { MockTranslator() }
+    single<LanguageDetector> { ScriptLanguageDetector() }
 }
 
 @OptIn(kotlin.time.ExperimentalTime::class)
@@ -53,10 +53,9 @@ val dataModule: Module = module {
 /** ScreenModel factories are registered here as features are built. */
 val featureModule: Module = module {
     factory { com.stepanok.undp.feature.map.MapScreenModel(get(), get(), get(), get(), get()) }
-    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { com.stepanok.undp.feature.reports.ReportsScreenModel(get(), get(), get(), get()) }
     factory { (id: String) -> com.stepanok.undp.feature.reportdetail.ReportDetailScreenModel(id, get(), get()) }
-    factory { com.stepanok.undp.feature.syncqueue.SyncQueueScreenModel(get(), get(), get(), get()) }
     factory { com.stepanok.undp.feature.profile.ProfileScreenModel(get(), get()) }
     factory { com.stepanok.undp.feature.offline.OfflineDownloadsScreenModel(get(), get(), get()) }
     factory { com.stepanok.undp.feature.crisis.CrisisScreenModel(get(), get(), get()) }

@@ -12,6 +12,10 @@ import com.stepanok.undp.core.location.PlusCode
 import com.stepanok.undp.core.mvi.MviScreenModel
 import com.stepanok.undp.domain.model.Anonymization
 import com.stepanok.undp.domain.model.DebrisState
+import com.stepanok.undp.domain.model.FORM_OTHER_VALUE
+import com.stepanok.undp.domain.model.FormSection
+import com.stepanok.undp.domain.model.FormSectionType
+import com.stepanok.undp.domain.model.InfraType
 import com.stepanok.undp.domain.model.ModularSections
 import com.stepanok.undp.domain.model.PhotoRef
 import com.stepanok.undp.domain.model.Report
@@ -19,11 +23,10 @@ import com.stepanok.undp.domain.model.ReportDescription
 import com.stepanok.undp.domain.model.ReportLocation
 import com.stepanok.undp.domain.model.SyncState
 import com.stepanok.undp.domain.model.representativeLevel
-import com.stepanok.undp.domain.repository.ProfileRepository
 import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.domain.repository.SyncManager
 import com.stepanok.undp.core.format.relativeTime
-import com.stepanok.undp.translation.Translator
+import com.stepanok.undp.translation.LanguageDetector
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -31,9 +34,8 @@ import kotlin.math.abs
 class CaptureFlowScreenModel(
     private val reportRepository: ReportRepository,
     private val syncManager: SyncManager,
-    private val profileRepository: ProfileRepository,
     private val connectivity: ConnectivityObserver,
-    private val translator: Translator,
+    private val languageDetector: LanguageDetector,
     private val clock: AppClock,
     private val ids: IdGenerator,
     private val locationProvider: LocationProvider,
@@ -50,12 +52,18 @@ class CaptureFlowScreenModel(
             val scale = reportRepository.damageScale()
             setState { copy(damageScale = scale) }
         }
+        // Server-driven modular form (cached for offline; built-in Appendix-1 default fallback) —
+        // a section UNDP adds server-side renders + submits without an app update.
+        screenModelScope.launch {
+            val sections = reportRepository.formSections()
+            setState { copy(formSections = sections) }
+        }
     }
 
     override fun onIntent(intent: CaptureIntent) {
         when (intent) {
             is CaptureIntent.PhotoCaptured -> setState {
-                copy(draft = draft.copy(photoCaptured = true, photoPath = intent.path, photoSizeBytes = intent.sizeBytes))
+                copy(draft = draft.copy(photoCaptured = true, photoPath = intent.path, photoSizeBytes = intent.sizeBytes, redaction = intent.redaction))
             }
             is CaptureIntent.SetDamage -> setState { copy(draft = draft.copy(damage = intent.level, damageTier = null)) }
             is CaptureIntent.SetDamageTier -> setState {
@@ -65,7 +73,7 @@ class CaptureFlowScreenModel(
             is CaptureIntent.SetPossiblyDamaged -> setState { copy(draft = draft.copy(possiblyDamaged = intent.flag)) }
             is CaptureIntent.SetLifeSafety -> setState { copy(draft = draft.copy(lifeSafety = intent.flag)) }
             is CaptureIntent.ToggleInfra -> setState { copy(draft = draft.copy(infra = draft.infra.toggle(intent.type))) }
-            is CaptureIntent.SetInfraOther -> setState { copy(draft = draft.copy(infraOther = intent.text)) }
+            is CaptureIntent.SetInfraName -> setState { copy(draft = draft.copy(infraName = intent.text)) }
             is CaptureIntent.ToggleCrisis -> setState { copy(draft = draft.copy(crisis = draft.crisis.toggle(intent.nature))) }
             is CaptureIntent.SetDebris -> setState { copy(draft = draft.copy(debris = intent.debris)) }
             is CaptureIntent.SetBuilding -> setState { copy(draft = draft.copy(buildingId = intent.id)) }
@@ -73,9 +81,20 @@ class CaptureFlowScreenModel(
             CaptureIntent.RequestDeviceLocation -> requestDeviceLocation()
             is CaptureIntent.SetLandmark -> setState { copy(draft = draft.copy(landmark = intent.text)) }
             is CaptureIntent.SetDescription -> setState { copy(draft = draft.copy(description = intent.text)) }
-            is CaptureIntent.SetElectricity -> setState { copy(draft = draft.copy(electricity = intent.value)) }
-            is CaptureIntent.SetHealth -> setState { copy(draft = draft.copy(health = intent.value)) }
-            is CaptureIntent.ToggleNeed -> setState { copy(draft = draft.copy(needs = draft.needs.toggle(intent.value))) }
+            is CaptureIntent.SetModularChoice -> setState {
+                copy(draft = draft.copy(modularAnswers = draft.modularAnswers + (intent.key to setOf(intent.value))))
+            }
+            is CaptureIntent.ToggleModularOption -> setState {
+                val next = draft.modularAnswers[intent.key].orEmpty().toggle(intent.value)
+                copy(
+                    draft = draft.copy(
+                        modularAnswers = if (next.isEmpty()) draft.modularAnswers - intent.key else draft.modularAnswers + (intent.key to next),
+                    ),
+                )
+            }
+            is CaptureIntent.SetModularOther -> setState {
+                copy(draft = draft.copy(modularOther = draft.modularOther + (intent.key to intent.text)))
+            }
             CaptureIntent.Submit -> submit()
         }
     }
@@ -101,9 +120,8 @@ class CaptureFlowScreenModel(
                     lng = lng,
                     gpsAccuracyMeters = accuracy.takeIf { it > 0 } ?: draft.gpsAccuracyMeters,
                     plusCode = PlusCode.encode(lat, lng),
-                    // No footprint was tapped here — a coordinate-derived fallback id, NOT a stable
-                    // building identity (those come from selectBuilding's polygon-derived footprintId).
-                    buildingId = "b-${(lat * 10000).toInt()}-${(lng * 10000).toInt()}",
+                    // No footprint was tapped here — buildingId stays null. Fabricating a
+                    // coordinate-grid id would defeat the server's 25m/10min near-dup guard.
                 ),
             )
         }
@@ -114,9 +132,10 @@ class CaptureFlowScreenModel(
         setState {
             copy(
                 draft = draft.copy(
-                    // Stable id from the tapped polygon (feature id / ring hash). The b-<grid>
-                    // value is only a fallback for bare map taps with no footprint underneath.
-                    buildingId = footprintId ?: "b-${(lat * 10000).toInt()}-${(lng * 10000).toInt()}",
+                    // Stable id from the tapped polygon (feature id / ring hash) ONLY. A bare map
+                    // tap with no footprint underneath carries coords alone — never a fabricated id.
+                    buildingId = footprintId,
+                    buildingSource = footprintId?.let { "footprint" },
                     lat = lat,
                     lng = lng,
                     plusCode = PlusCode.encode(lat, lng),
@@ -150,11 +169,11 @@ class CaptureFlowScreenModel(
         screenModelScope.launch {
             setState { copy(submitting = true) }
             val description = draft.description.ifBlank { null }?.let { text ->
-                // Detect the source language and store the original verbatim. We do NOT fake a
-                // translation — machine translation for responders is a documented roadmap item.
+                // Detect the source language and store the original verbatim. We do NOT translate
+                // on-device — the server (LibreTranslate) translates for analysts after submit.
                 ReportDescription(
                     original = text,
-                    originalLang = translator.detectLanguage(text) ?: "auto",
+                    originalLang = languageDetector.detectLanguage(text) ?: "auto",
                     translated = null,
                     translatedLang = null,
                 )
@@ -169,7 +188,9 @@ class CaptureFlowScreenModel(
                 possiblyDamaged = draft.possiblyDamaged,
                 lifeSafety = draft.lifeSafety,
                 infraTypes = draft.infra,
-                infraOtherDetail = draft.infraOther.ifBlank { null },
+                infraName = draft.infraName.ifBlank { null },
+                // The single name field doubles as the legacy "specify Other" detail when OTHER is picked.
+                infraOtherDetail = draft.infraName.ifBlank { null }.takeIf { InfraType.OTHER in draft.infra },
                 crisisNature = draft.crisis,
                 debris = draft.debris ?: DebrisState.UNSURE,
                 location = ReportLocation(
@@ -180,27 +201,51 @@ class CaptureFlowScreenModel(
                     lng = draft.lng,
                     locationResolved = hasGeoFix,
                     buildingId = draft.buildingId,
-                    what3words = draft.plusCode.ifBlank { null },
+                    buildingSource = draft.buildingSource,
+                    plusCode = draft.plusCode.ifBlank { null },
                     landmark = draft.landmark.ifBlank { null },
                     gpsAccuracyMeters = draft.gpsAccuracyMeters.takeIf { it > 0.0 },
                 ),
                 description = description,
-                modular = takeIf {
-                    draft.electricity != null || draft.health != null || draft.needs.isNotEmpty()
-                }?.let { ModularSections(draft.electricity, draft.health, draft.needs) },
-                anonymization = Anonymization(),
+                modular = buildModular(draft, state.value.formSections),
+                // Honest flags: true only when the on-device redactor actually ran on this photo.
+                anonymization = Anonymization(
+                    facesBlurred = draft.redaction.facesRedacted,
+                    platesBlurred = draft.redaction.platesRedacted,
+                ),
                 capturedAt = clock.now(),
                 buildingId = draft.buildingId,
                 sync = SyncState.Queued,
-                place = "Your location",
+                // No fabricated place label — lists fall back to Plus Code / landmark / coords.
+                place = "",
                 isMine = true,
             )
             reportRepository.submit(report)
-            profileRepository.awardPoints(10, reason = "report submitted")
             if (!state.value.offline) syncManager.flushNow()
             setState { copy(submitting = false) }
             postEffect(CaptureEffect.Submitted)
         }
+    }
+
+    /** Resolve the draft's generic answers against the schema: single-choice sections carry one
+     *  value, multi-select a list (schema option order); an "Other → specify" text only counts
+     *  while the section's "other" option is actually selected. Null when nothing was answered. */
+    private fun buildModular(draft: CaptureDraft, sections: List<FormSection>): ModularSections? {
+        val single = mutableMapOf<String, String>()
+        val multi = mutableMapOf<String, List<String>>()
+        val others = mutableMapOf<String, String>()
+        sections.forEach { section ->
+            val selected = draft.modularAnswers[section.key].orEmpty()
+            if (selected.isEmpty()) return@forEach
+            when (section.type) {
+                FormSectionType.SINGLE -> single[section.key] = selected.first()
+                FormSectionType.MULTI -> multi[section.key] = section.options.map { it.value }.filter { it in selected }
+            }
+            if (section.allowOtherText && FORM_OTHER_VALUE in selected) {
+                draft.modularOther[section.key]?.ifBlank { null }?.let { others[section.key] = it }
+            }
+        }
+        return ModularSections(single, multi, others).takeUnless { it.isEmpty }
     }
 }
 

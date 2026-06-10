@@ -70,13 +70,15 @@ class ReportsScreenModel(
                 val now = clock.now()
                 val rows = mine
                     .filter { f == null || it.damage == f }
-                    .map { ReportRowUi(it.id, it.place, relativeTime(now, it.capturedAt), it.damage, it.isSynced, it.sync, it.photos.firstOrNull()) }
+                    .map { ReportRowUi(it.id, it.placeLabel, relativeTime(now, it.capturedAt), it.damage, it.isSynced, it.sync, it.photos.firstOrNull()) }
                 ReportsUiState(
                     rows = rows.toImmutableList(),
                     filter = f,
                     total = mine.size,
                     syncedCount = mine.count { it.isSynced },
-                    queuedCount = mine.count { !it.isSynced },
+                    // Terminal rejections are NOT waiting to upload — counting them as "queued"
+                    // would promise a sync that will never happen.
+                    queuedCount = mine.count { !it.isSynced && !it.isRejected },
                     damageCounts = mine.groupingBy { it.damage }.eachCount(),
                     online = conn == ConnectivityStatus.ONLINE,
                     isSyncing = syncing,

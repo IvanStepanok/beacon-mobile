@@ -16,7 +16,6 @@ import com.stepanok.undp.domain.repository.CrisisRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 data class CrisisUiState(
@@ -24,14 +23,11 @@ data class CrisisUiState(
     val crisis: Crisis? = null,
     val started: String = "",
     val dangerZones: ImmutableList<DangerZone> = persistentListOf(),
-    val alertsOn: Boolean = true,
     /** Active crises worldwide, nearest first — the "browse" list lives here, not on the map. */
     val activeCrises: ImmutableList<Crisis> = persistentListOf(),
 ) : UiState
 
-sealed interface CrisisIntent : UiIntent {
-    data object ToggleAlerts : CrisisIntent
-}
+sealed interface CrisisIntent : UiIntent
 
 class CrisisScreenModel(
     private val crisisRepository: CrisisRepository,
@@ -39,10 +35,7 @@ class CrisisScreenModel(
     private val locationProvider: LocationProvider,
 ) : MviScreenModel<CrisisUiState, CrisisIntent, UiEffect>(CrisisUiState()) {
 
-    private val alerts = MutableStateFlow(true)
-
     init {
-        screenModelScope.launch { alerts.collect { on -> setState { copy(alertsOn = on) } } }
         resolve()
     }
 
@@ -71,9 +64,5 @@ class CrisisScreenModel(
         const val NEARBY_KM = 300.0
     }
 
-    override fun onIntent(intent: CrisisIntent) {
-        when (intent) {
-            CrisisIntent.ToggleAlerts -> alerts.value = !alerts.value
-        }
-    }
+    override fun onIntent(intent: CrisisIntent) {}
 }

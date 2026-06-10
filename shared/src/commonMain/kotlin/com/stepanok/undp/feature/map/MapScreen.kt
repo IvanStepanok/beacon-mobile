@@ -327,8 +327,8 @@ private fun ReportPreviewSheet(preview: ReportPreview, onDismiss: () -> Unit, on
                         DamageChip(level = preview.damage, label = damageLabel(preview.damage), size = ChipSize.Sm)
                     }
                     Text("${preview.time} · ${preview.place}", style = BeaconTheme.typography.caption, color = colors.ink3)
-                    if (preview.what3words.isNotEmpty() && preview.what3words != "garden.tribe.sparkle") {
-                        Text(preview.what3words, style = BeaconTheme.typography.mono, color = colors.ink2)
+                    if (preview.plusCode.isNotEmpty() && preview.plusCode != "garden.tribe.sparkle") {
+                        Text(preview.plusCode, style = BeaconTheme.typography.mono, color = colors.ink2)
                     }
                 }
             }

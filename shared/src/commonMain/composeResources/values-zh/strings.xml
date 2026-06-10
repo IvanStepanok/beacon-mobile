@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">地图</string>
     <string name="nav_reports">报告</string>
-    <string name="nav_sync">同步</string>
     <string name="nav_crisis">危机</string>
     <string name="nav_profile">个人资料</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">注意</string>
     <string name="danger_warning">警告</string>
     <string name="danger_critical">危急</string>
-    <string name="crisis_alerts_title">危机警报</string>
-    <string name="crisis_alerts_sub">检测到附近发生危机时通知我</string>
     <string name="crisis_safety_title">报告时注意安全</string>
     <string name="crisis_safety_tip">与受损建筑保持安全距离。切勿为拍照而进入不稳固的建筑。</string>
     <string name="crisis_none_nearby">您附近没有进行中的危机</string>
@@ -74,8 +71,7 @@
     <!-- Capture: camera -->
     <string name="capture_camera_hint">清晰地拍摄受损部位</string>
     <!-- Camera guide chips (AI translation — needs native review) -->
-    <string name="capture_guide_whole">请将整栋建筑完整纳入画面。</string>
-    <string name="capture_guide_closeup">然后补拍一张最严重受损处的特写。</string>
+    <string name="capture_guide_whole">请拍摄整栋建筑，并让受损部位清晰可见。</string>
     <string name="capture_guide_no_people">请不要拍摄人物。</string>
     <string name="capture_capture_btn">拍摄受损情况</string>
     <string name="capture_gallery">相册</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">其他</string>
     <string name="infra_other_desc">请在下方说明</string>
     <string name="infra_other_hint">基础设施的名称／性质</string>
+    <string name="infra_name_hint">基础设施的名称／详情（可选）</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">还有几个问题</string>
@@ -141,6 +138,7 @@
     <string name="health_none">无法运转</string>
     <string name="health_unknown">未知</string>
     <string name="modular_needs">最迫切的需求</string>
+    <string name="modular_required_hint">必答——请选择一个答案</string>
     <string name="need_food_water">食物和饮水</string>
     <string name="need_cash">现金援助</string>
     <string name="need_healthcare">医疗与药品</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">供水与卫生</string>
     <string name="need_protection">保护与支持</string>
     <string name="need_local">地方当局支援</string>
+    <string name="need_basic_services">基本服务（电力、道路、学校）</string>
     <string name="need_other">其他</string>
+    <string name="need_other_hint">请描述该需求</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">这是什么原因造成的？</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">可选。可用任何语言书写——您的文字将随报告一起保存。</string>
     <string name="capture_describe_hint">例如：西墙有一道裂缝，但建筑尚未倒塌。</string>
     <string name="capture_voice">语音备注</string>
-    <string name="capture_ai_suggests">快捷短语</string>
-    <string name="capture_ai_cv">模板</string>
-    <string name="capture_ai_text">常用短语，可先插入再根据实际情况修改。</string>
-    <string name="capture_ai_insert">添加短语</string>
     <string name="capture_skip_desc">跳过描述</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">已保存到队列</string>
     <string name="capture_submitted_body">您的报告已提交审核，同步后将显示在地图上。</string>
     <string name="capture_submitted_offline_body">您当前处于离线状态。重新联网后，您的报告将自动上传。</string>
-    <string name="capture_points">+10 社区积分</string>
-    <string name="capture_badge_progress">助力者徽章进度</string>
+    <string name="capture_points">+10 积分，报告通过核实后发放</string>
     <string name="capture_view_map">在地图上查看</string>
     <string name="capture_new_report">新建报告</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">全部</string>
     <string name="status_synced">已同步</string>
     <string name="status_queued">排队中</string>
+    <string name="status_rejected">已拒绝</string>
+    <string name="reject_duplicate">与附近的一份报告重复</string>
+    <string name="reject_rate_limited">提交的报告过多——请稍后再试</string>
+    <string name="reject_invalid">该报告未能被接受</string>
     <string name="reports_empty">没有符合此筛选条件的报告。</string>
 
     <!-- Report detail -->
@@ -246,18 +245,11 @@
     <string name="detail_meta_captured">拍摄时间</string>
     <string name="detail_description">描述</string>
     <string name="detail_anonymised">已匿名 · 已移除 EXIF</string>
+    <string name="detail_location_unresolved">位置未确定 · 地标：%1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">同步队列</string>
-    <string name="sync_offline_msg">您当前处于离线状态。重新联网后报告将自动同步。</string>
-    <string name="sync_online_msg">已连接。正在上传队列中的报告。</string>
-    <string name="sync_awaiting">份报告等待上传</string>
-    <string name="sync_total_mb">共约 %1$s MB</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">在线</string>
     <string name="sync_offline">离线</string>
-    <string name="sync_all_caught_up">已全部处理完毕。</string>
-    <string name="sync_waiting">等待连接</string>
-    <string name="sync_uploading">上传中</string>
 
     <!-- Profile -->
     <string name="profile_title">个人资料</string>
@@ -275,8 +267,6 @@
     <string name="menu_language">语言</string>
     <string name="menu_privacy">隐私</string>
     <string name="menu_privacy_sub">不含姓名或电话 · 已移除 EXIF</string>
-    <string name="menu_alerts">危机警报</string>
-    <string name="menu_alerts_sub">检测到附近发生危机时推送通知</string>
     <string name="menu_about">关于 Beacon</string>
     <string name="menu_about_sub">开源 · v 0.9.0</string>
     <string name="menu_offline">离线地图</string>
@@ -294,6 +284,4 @@
     <string name="language_sheet_title">应用语言</string>
     <string name="language_sheet_sub">默认情况下，Beacon 跟随您的设备语言。</string>
     <string name="language_system">跟随系统</string>
-    <string name="sync_now">立即同步</string>
-    <string name="sync_in_progress">正在同步…</string>
 </resources>

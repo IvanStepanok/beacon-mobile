@@ -24,6 +24,35 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+/**
+ * Non-2xx reply from the backend: the HTTP status plus the parsed {error, message} envelope
+ * (or the raw body when the envelope doesn't parse). Lets the sync layer split TERMINAL
+ * rejections (4xx the server will never accept) from retryable failures (5xx/408/429/network).
+ */
+class BeaconApiException(
+    val status: Int,
+    /** Server envelope code, e.g. "duplicate" | "validation" | "rate_limited"; "" if unparsed. */
+    val errorCode: String,
+    /** Server envelope message, falling back to the raw response body. */
+    val serverMessage: String,
+) : Exception("HTTP $status ${errorCode.ifBlank { "error" }}: $serverMessage") {
+    /** Permanently rejected: any 4xx except 408 (timeout) and 429 (rate-limit), which are
+     *  transient by definition. Retrying a terminal payload can never succeed. */
+    val isTerminalRejection: Boolean get() = status in 400..499 && status != 408 && status != 429
+}
+
+/** Lenient envelope parser — a non-JSON body (proxy error page, truncation) must never throw. */
+private val errorEnvelopeJson = Json { ignoreUnknownKeys = true; isLenient = true }
+
+private fun apiException(status: Int, body: String): BeaconApiException {
+    val envelope = runCatching { errorEnvelopeJson.decodeFromString<ErrorEnvelopeDto>(body) }.getOrNull()
+    return BeaconApiException(
+        status = status,
+        errorCode = envelope?.error.orEmpty(),
+        serverMessage = envelope?.message?.ifBlank { null } ?: body,
+    )
+}
+
 /** Builds the platform HTTP client with JSON negotiation + the anonymous device header. */
 fun beaconHttpClient(): HttpClient = HttpClient(beaconHttpEngine()) {
     expectSuccess = false
@@ -50,7 +79,7 @@ class BeaconApi(
             bbox?.let { parameter("bbox", it) }
         }.body<ItemsDto<ReportDto>>().items
 
-    suspend fun areaGroups(crisisId: String = CRISIS): List<AreaGroupDto> =
+    suspend fun areaGroups(crisisId: String): List<AreaGroupDto> =
         client.get("$v1/reports/area-groups") { parameter("crisisId", crisisId) }
             .body<ItemsDto<AreaGroupDto>>().items
 
@@ -80,7 +109,7 @@ class BeaconApi(
         return if (r.status == HttpStatusCode.OK) r.body() else null
     }
 
-    suspend fun dangerZones(crisisId: String = CRISIS): List<DangerZoneDto> =
+    suspend fun dangerZones(crisisId: String): List<DangerZoneDto> =
         client.get("$v1/crises/$crisisId/danger-zones").body<ItemsDto<DangerZoneDto>>().items
 
     suspend fun profile(): ProfileDto = client.get("$v1/profile").body()
@@ -88,15 +117,28 @@ class BeaconApi(
     /** Global client config — the capture scale (tier3 | ems98). */
     suspend fun config(): ConfigDto = client.get("$v1/config").body()
 
+    /** The modular capture-form definition (PUBLIC, like /crises): the built-in Appendix-1
+     *  sections with [crisisId]'s required/disabled overrides applied; with no crisisId the
+     *  server scopes to the newest active crisis. */
+    suspend fun formSchema(crisisId: String? = null): FormSchemaDto {
+        val r = client.get("$v1/form-schema") { crisisId?.let { parameter("crisisId", it) } }
+        // A non-2xx error envelope would decode into an EMPTY schema (ignoreUnknownKeys) and
+        // silently hide every section — throw so the caller falls back to cache/defaults.
+        if (!r.status.isSuccess()) error("form-schema failed: ${r.status}")
+        return r.body()
+    }
+
     suspend fun submit(req: SubmitReportDto) {
         val response = client.post("$v1/reports") {
             contentType(ContentType.Application.Json)
             setBody(req)
         }
         // expectSuccess = false, so a 4xx/5xx is NOT thrown by Ktor: a swallowed error here would
-        // let the report be marked Synced. Throw so RemoteReportRepository.uploadOne keeps it Queued/Failed.
+        // let the report be marked Synced. Throw a TYPED exception carrying the status + the
+        // server's {error, message} envelope so RemoteReportRepository.uploadOne can park a
+        // terminal 4xx (409 duplicate / 400 validation) as Rejected instead of retrying forever.
         if (!response.status.isSuccess()) {
-            error("submit failed: ${response.status} ${response.bodyAsText()}")
+            throw apiException(response.status.value, response.bodyAsText())
         }
     }
 
@@ -121,15 +163,5 @@ class BeaconApi(
         if (!response.status.isSuccess()) {
             error("photo upload failed: ${response.status} ${response.bodyAsText()}")
         }
-    }
-
-    suspend fun awardPoints(points: Int, reason: String): ProfileDto =
-        client.post("$v1/profile/points") {
-            contentType(ContentType.Application.Json)
-            setBody(PointsRequestDto(points, reason))
-        }.body()
-
-    companion object {
-        const val CRISIS = "crisis-antakya"
     }
 }

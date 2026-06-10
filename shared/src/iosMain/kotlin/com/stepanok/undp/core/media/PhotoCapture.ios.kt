@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import com.stepanok.undp.core.io.capturesDirPath
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSDate
-import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.timeIntervalSince1970
 import platform.Foundation.writeToFile
 import platform.UIKit.UIApplication
@@ -86,12 +86,14 @@ private fun saveJpeg(image: UIImage): CapturedPhoto? {
     // re-encodes (dropping EXIF); UIImage applies its own orientation when drawn.
     val data = UIImageJPEGRepresentation(downscale(image, 1600.0), 0.8) ?: return null
     val stamp = NSDate().timeIntervalSince1970.toString().replace(".", "")
-    val path = NSTemporaryDirectory() + "capture_$stamp.jpg"
+    // Persistent captures dir (same root as the outbox, NOT NSTemporaryDirectory) — a queued
+    // photo must survive OS cache/tmp purges + process death until its upload succeeds.
+    val path = capturesDirPath() + "/capture_$stamp.jpg"
     return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong()) else null
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun downscale(image: UIImage, maxDim: Double): UIImage {
+internal fun downscale(image: UIImage, maxDim: Double): UIImage {
     val (w, h) = image.size.useContents { width to height }
     val longest = maxOf(w, h)
     if (longest <= maxDim || longest <= 0.0) return image

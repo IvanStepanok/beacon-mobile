@@ -33,13 +33,15 @@ import platform.AVFoundation.hasTorch
 import platform.AVFoundation.position
 import platform.AVFoundation.setFlashMode
 import platform.AVFoundation.torchMode
+import com.stepanok.undp.core.io.capturesDirPath
 import platform.CoreGraphics.CGRectMake
 import platform.Foundation.NSData
 import platform.Foundation.NSDate
 import platform.Foundation.NSError
-import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.timeIntervalSince1970
 import platform.Foundation.writeToFile
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
@@ -177,17 +179,24 @@ private class PhotoCaptureDelegate(
         error: NSError?,
     ) {
         val data: NSData? = if (error == null) didFinishProcessingPhoto.fileDataRepresentation() else null
-        val photo = data?.let { writeTempJpeg(it) }
+        val photo = data?.let { writeCaptureJpeg(it) }
         onResult?.invoke(photo)
         onResult = null
         selfRef = null
     }
 }
 
-private fun writeTempJpeg(data: NSData): CapturedPhoto? {
+private fun writeCaptureJpeg(data: NSData): CapturedPhoto? {
+    // Same downscale + recompress as the picker path (UIImageJPEGRepresentation re-encodes,
+    // dropping EXIF) — a full-res AVCapture still would otherwise land in the outbox at
+    // multi-MB size, with device metadata embedded.
+    val image = UIImage.imageWithData(data) ?: return null
+    val jpeg = UIImageJPEGRepresentation(downscale(image, 1600.0), 0.8) ?: return null
+    // Persistent captures dir (same root as the outbox, NOT NSTemporaryDirectory) — a queued
+    // photo must survive OS cache/tmp purges + process death until its upload succeeds.
     val stamp = NSDate().timeIntervalSince1970.toString().replace(".", "")
-    val path = NSTemporaryDirectory() + "capture_$stamp.jpg"
-    return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong()) else null
+    val path = capturesDirPath() + "/capture_$stamp.jpg"
+    return if (jpeg.writeToFile(path, atomically = true)) CapturedPhoto(path, jpeg.length.toLong()) else null
 }
 
 @Composable

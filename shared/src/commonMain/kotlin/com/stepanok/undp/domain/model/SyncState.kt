@@ -26,6 +26,20 @@ sealed interface SyncState {
         val nextRetryAt: Instant,
         val reason: String,
     ) : SyncState
+
+    /**
+     * TERMINAL: the server permanently rejected this report (4xx other than 408/429 — e.g.
+     * 409 near-duplicate, 400 validation). Re-sending the same payload can never succeed,
+     * so it is excluded from flush retries and shown honestly to the reporter with the
+     * server's reason — never rendered as an eternal "Queued".
+     */
+    data class Rejected(
+        /** Server error-envelope code, e.g. "duplicate" | "validation" | "rate_limited". */
+        val code: String,
+        /** Server error-envelope message (or the raw body when the envelope didn't parse). */
+        val reason: String,
+        val httpStatus: Int,
+    ) : SyncState
 }
 
 /** A queued upload tracked by the outbox. */

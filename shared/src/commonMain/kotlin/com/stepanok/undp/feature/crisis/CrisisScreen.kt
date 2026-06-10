@@ -2,7 +2,6 @@ package com.stepanok.undp.feature.crisis
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,6 @@ import com.stepanok.undp.domain.model.DangerSeverity
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
 import undp.shared.generated.resources.crisis_active_near_you
-import undp.shared.generated.resources.crisis_alerts_sub
-import undp.shared.generated.resources.crisis_alerts_title
 import undp.shared.generated.resources.crisis_danger_zones
 import undp.shared.generated.resources.crisis_no_danger
 import undp.shared.generated.resources.crisis_none_nearby
@@ -158,26 +155,6 @@ object CrisisScreen : Screen {
                         }
                     }
                 }
-            }
-
-            // Crisis alerts toggle
-            Row(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(colors.surface)
-                    .border(1.dp, colors.line, RoundedCornerShape(16.dp)).clickable { model.onIntent(CrisisIntent.ToggleAlerts) }
-                    .padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Box(Modifier.size(36.dp).clip(RoundedCornerShape(12.dp)).background(colors.primarySoft), contentAlignment = Alignment.Center) {
-                    Icon(BeaconIcons.Bell, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
-                }
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(Res.string.crisis_alerts_title), style = BeaconTheme.typography.titleS, color = colors.ink)
-                    Text(stringResource(Res.string.crisis_alerts_sub), style = BeaconTheme.typography.caption, color = colors.ink3)
-                }
-                Box(
-                    Modifier.size(width = 40.dp, height = 22.dp).clip(CircleShape).background(if (state.alertsOn) colors.primary else colors.surface3).padding(2.dp),
-                    contentAlignment = if (state.alertsOn) Alignment.CenterEnd else Alignment.CenterStart,
-                ) { Box(Modifier.size(18.dp).clip(CircleShape).background(Color.White)) }
             }
 
             // Safety tip

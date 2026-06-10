@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">الخريطة</string>
     <string name="nav_reports">البلاغات</string>
-    <string name="nav_sync">المزامنة</string>
     <string name="nav_crisis">الأزمة</string>
     <string name="nav_profile">الملف الشخصي</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">احترس</string>
     <string name="danger_warning">تحذير</string>
     <string name="danger_critical">حرج</string>
-    <string name="crisis_alerts_title">تنبيهات الأزمات</string>
-    <string name="crisis_alerts_sub">نبّهني عند رصد أزمة قريبة</string>
     <string name="crisis_safety_title">حافظ على سلامتك أثناء الإبلاغ</string>
     <string name="crisis_safety_tip">احتفظ بمسافة آمنة عن المنشآت المتضررة. لا تدخل أبدًا مبانٍ غير مستقرة لالتقاط صورة.</string>
     <string name="crisis_none_nearby">لا توجد أزمة نشطة قريبة منك</string>
@@ -74,8 +71,7 @@
     <!-- Capture: camera -->
     <string name="capture_camera_hint">صوّر الضرر بوضوح</string>
     <!-- Camera guide chips (AI translation — needs native review) -->
-    <string name="capture_guide_whole">ضمِّن المبنى بأكمله في الصورة.</string>
-    <string name="capture_guide_closeup">ثم أضف لقطة قريبة لأشد الأضرار.</string>
+    <string name="capture_guide_whole">صوِّر المبنى بأكمله مع إظهار الضرر بوضوح.</string>
     <string name="capture_guide_no_people">يُرجى عدم تصوير الأشخاص.</string>
     <string name="capture_capture_btn">تصوير الضرر</string>
     <string name="capture_gallery">المعرض</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">أخرى</string>
     <string name="infra_other_desc">حدّد أدناه</string>
     <string name="infra_other_hint">اسم المنشأة أو طبيعتها</string>
+    <string name="infra_name_hint">اسم المنشأة أو تفاصيلها (اختياري)</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">بضعة أسئلة إضافية</string>
@@ -141,6 +138,7 @@
     <string name="health_none">لا تعمل</string>
     <string name="health_unknown">غير معروف</string>
     <string name="modular_needs">أكثر الاحتياجات إلحاحًا</string>
+    <string name="modular_required_hint">إلزامي — اختر إجابة</string>
     <string name="need_food_water">الغذاء والماء</string>
     <string name="need_cash">المساعدة النقدية</string>
     <string name="need_healthcare">الرعاية الصحية والدواء</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">المياه والصرف الصحي</string>
     <string name="need_protection">الحماية والدعم</string>
     <string name="need_local">دعم السلطة المحلية</string>
+    <string name="need_basic_services">الخدمات الأساسية (كهرباء، طرق، مدارس)</string>
     <string name="need_other">أخرى</string>
+    <string name="need_other_hint">صِف هذه الحاجة</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">ما الذي تسبب في هذا؟</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">اختياري. اكتب بأي لغة — تُحفظ كلماتك مع البلاغ.</string>
     <string name="capture_describe_hint">مثال: الجدار الغربي به شرخ، لكن المبنى لم ينهَر.</string>
     <string name="capture_voice">ملاحظة صوتية</string>
-    <string name="capture_ai_suggests">عبارة سريعة</string>
-    <string name="capture_ai_cv">قالب</string>
-    <string name="capture_ai_text">عبارة شائعة يمكنك إدراجها ثم تعديلها لتطابق ما تراه.</string>
-    <string name="capture_ai_insert">إضافة العبارة</string>
     <string name="capture_skip_desc">تخطّي الوصف</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">حُفظ في قائمة الانتظار</string>
     <string name="capture_submitted_body">تم إرسال بلاغك للمراجعة. سيظهر على الخريطة بعد المزامنة.</string>
     <string name="capture_submitted_offline_body">أنت غير متصل. سيُرفع بلاغك تلقائيًا عند عودة الاتصال.</string>
-    <string name="capture_points">+10 نقاط مجتمعية</string>
-    <string name="capture_badge_progress">تقدّم شارة المساعد</string>
+    <string name="capture_points">+10 نقاط بعد التحقق من بلاغك</string>
     <string name="capture_view_map">عرض على الخريطة</string>
     <string name="capture_new_report">بلاغ جديد</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">الكل</string>
     <string name="status_synced">تمت المزامنة</string>
     <string name="status_queued">في قائمة الانتظار</string>
+    <string name="status_rejected">مرفوض</string>
+    <string name="reject_duplicate">نسخة مكررة من بلاغ قريب</string>
+    <string name="reject_rate_limited">تم إرسال بلاغات كثيرة جدًا — حاول لاحقًا</string>
+    <string name="reject_invalid">تعذّر قبول البلاغ</string>
     <string name="reports_empty">لا توجد بلاغات تطابق هذا الفلتر.</string>
 
     <!-- Report detail -->
@@ -246,18 +245,11 @@
     <string name="detail_meta_captured">وقت التصوير</string>
     <string name="detail_description">الوصف</string>
     <string name="detail_anonymised">مجهول الهوية · تمت إزالة EXIF</string>
+    <string name="detail_location_unresolved">الموقع غير محدد · معلم قريب: %1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">قائمة المزامنة</string>
-    <string name="sync_offline_msg">أنت غير متصل. ستتم مزامنة البلاغات تلقائيًا عند عودة الاتصال.</string>
-    <string name="sync_online_msg">متصل. يجري الآن رفع البلاغات المنتظرة.</string>
-    <string name="sync_awaiting">بلاغ بانتظار الرفع</string>
-    <string name="sync_total_mb">~%1$s ميجابايت إجمالًا</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">متصل</string>
     <string name="sync_offline">غير متصل</string>
-    <string name="sync_all_caught_up">اكتمل كل شيء.</string>
-    <string name="sync_waiting">في انتظار الاتصال</string>
-    <string name="sync_uploading">جارٍ الرفع</string>
 
     <!-- Profile -->
     <string name="profile_title">الملف الشخصي</string>
@@ -275,8 +267,6 @@
     <string name="menu_language">اللغة</string>
     <string name="menu_privacy">الخصوصية</string>
     <string name="menu_privacy_sub">بدون اسم أو هاتف · تمت إزالة EXIF</string>
-    <string name="menu_alerts">تنبيهات الأزمات</string>
-    <string name="menu_alerts_sub">إشعار عند رصد أزمة قريبة</string>
     <string name="menu_about">حول Beacon</string>
     <string name="menu_about_sub">مفتوح المصدر · v 0.9.0</string>
     <string name="menu_offline">الخرائط دون اتصال</string>
@@ -294,6 +284,4 @@
     <string name="language_sheet_title">لغة التطبيق</string>
     <string name="language_sheet_sub">يتبع Beacon افتراضيًا لغة جهازك.</string>
     <string name="language_system">اتّباع النظام</string>
-    <string name="sync_now">المزامنة الآن</string>
-    <string name="sync_in_progress">جارٍ المزامنة…</string>
 </resources>

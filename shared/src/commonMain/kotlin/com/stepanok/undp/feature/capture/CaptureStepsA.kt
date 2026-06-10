@@ -86,6 +86,7 @@ import undp.shared.generated.resources.infra_community
 import undp.shared.generated.resources.infra_community_desc
 import undp.shared.generated.resources.infra_government
 import undp.shared.generated.resources.infra_government_desc
+import undp.shared.generated.resources.infra_name_hint
 import undp.shared.generated.resources.infra_other
 import undp.shared.generated.resources.infra_other_desc
 import undp.shared.generated.resources.infra_other_hint
@@ -221,20 +222,25 @@ fun InfraStep(
                 if (row.size == 1) Spacer(Modifier.weight(1f))
             }
         }
-        if (InfraType.OTHER in draft.infra) {
+        // One optional name/details field for ANY selected type; the hint adapts when OTHER is
+        // picked (the same text then also feeds the legacy "specify Other" wire field).
+        if (draft.infra.isNotEmpty()) {
             val colors = BeaconTheme.colors
+            val hint = stringResource(
+                if (InfraType.OTHER in draft.infra) Res.string.infra_other_hint else Res.string.infra_name_hint,
+            )
             Row(
                 Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(colors.surface).border(1.dp, colors.line, RoundedCornerShape(16.dp)).padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Icon(BeaconIcons.Edit, contentDescription = null, tint = colors.ink3, modifier = Modifier.size(16.dp))
                 Box(Modifier.weight(1f)) {
-                    if (draft.infraOther.isEmpty()) {
-                        Text(stringResource(Res.string.infra_other_hint), style = BeaconTheme.typography.bodyS, color = colors.ink3)
+                    if (draft.infraName.isEmpty()) {
+                        Text(hint, style = BeaconTheme.typography.bodyS, color = colors.ink3)
                     }
                     androidx.compose.foundation.text.BasicTextField(
-                        value = draft.infraOther,
-                        onValueChange = { onIntent(CaptureIntent.SetInfraOther(it)) },
+                        value = draft.infraName,
+                        onValueChange = { onIntent(CaptureIntent.SetInfraName(it)) },
                         textStyle = BeaconTheme.typography.bodyS.copy(color = colors.ink),
                         cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.primary),
                         modifier = Modifier.fillMaxWidth(),

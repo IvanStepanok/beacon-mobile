@@ -7,14 +7,18 @@ import com.stepanok.undp.core.connectivity.ConnectivityObserver
 import com.stepanok.undp.core.connectivity.ConnectivityStatus
 import com.stepanok.undp.core.io.readFileBytes
 import com.stepanok.undp.core.network.DeviceId
+import com.stepanok.undp.core.storage.PrefKeys
+import com.stepanok.undp.core.storage.Prefs
 import com.stepanok.undp.data.outbox.DurableOutbox
 import com.stepanok.undp.domain.model.AreaGroup
 import com.stepanok.undp.domain.model.BuildingTimeline
 import com.stepanok.undp.domain.model.Crisis
 import com.stepanok.undp.domain.model.DangerZone
+import com.stepanok.undp.domain.model.FormSection
 import com.stepanok.undp.domain.model.Profile
 import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.model.SyncState
+import com.stepanok.undp.domain.model.defaultFormSections
 import com.stepanok.undp.domain.repository.CrisisRepository
 import com.stepanok.undp.domain.repository.MapBounds
 import com.stepanok.undp.domain.repository.ProfileRepository
@@ -32,6 +36,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+/** (De)serializes the cached form schema; lenient so a future server field never breaks the cache. */
+private val schemaJson = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
 /**
  * Live ReportRepository + SyncManager over the backend.
@@ -124,13 +133,21 @@ class RemoteReportRepository(
 
     override suspend fun submit(report: Report) {
         // Enqueue optimistically so the report is never lost, then try to upload now.
-        val queued = report.copy(sync = SyncState.Queued, isMine = true)
+        // The crisis pin is stamped HERE from the active map scope (not at flush time, when the
+        // scope may have moved on) — it's what lets a landmark-only report join its crisis.
+        val queued = report.copy(
+            sync = SyncState.Queued,
+            isMine = true,
+            crisisId = report.crisisId ?: scopeCrisisId,
+        )
         upsertMine(queued)
         uploadOne(queued)
     }
 
     /** Real upload of one queued report; updates its visible sync state from the POST result. */
     private suspend fun uploadOne(report: Report) {
+        // Terminal: the server already permanently rejected this exact payload — never re-send.
+        if (report.sync is SyncState.Rejected) return
         if (connectivity.status.value != ConnectivityStatus.ONLINE) {
             // Don't clobber a richer durable state (PhotoPending/Failed) just because we're offline.
             if (report.sync is SyncState.Queued || report.sync is SyncState.Syncing) {
@@ -154,15 +171,32 @@ class RemoteReportRepository(
                 refresh()
             }
             .onFailure { e ->
-                upsertMine(
-                    report.copy(
-                        sync = SyncState.Failed(
-                            attempt = (report.sync as? SyncState.Failed)?.attempt?.plus(1) ?: 1,
-                            nextRetryAt = clock.now(),
-                            reason = e.message ?: "upload failed",
+                val rejection = e as? BeaconApiException
+                if (rejection?.isTerminalRejection == true) {
+                    // 4xx (except 408/429): the server will NEVER accept this payload — e.g.
+                    // 409 near-duplicate or 400 validation. Park it terminally with the server's
+                    // reason instead of showing "Queued" forever and re-sending on every flush.
+                    upsertMine(
+                        report.copy(
+                            sync = SyncState.Rejected(
+                                code = rejection.errorCode,
+                                reason = rejection.serverMessage,
+                                httpStatus = rejection.status,
+                            ),
                         ),
-                    ),
-                )
+                    )
+                } else {
+                    // 5xx / 408 / 429 / network: transient — keep the existing retry behavior.
+                    upsertMine(
+                        report.copy(
+                            sync = SyncState.Failed(
+                                attempt = (report.sync as? SyncState.Failed)?.attempt?.plus(1) ?: 1,
+                                nextRetryAt = clock.now(),
+                                reason = e.message ?: "upload failed",
+                            ),
+                        ),
+                    )
+                }
             }
     }
 
@@ -183,7 +217,8 @@ class RemoteReportRepository(
 
     override suspend fun flushNow() {
         if (connectivity.status.value != ConnectivityStatus.ONLINE) return
-        val pending = _mine.value.filter { !it.isSynced }
+        // Terminal rejections are NOT pending — re-sending them would 409/400 forever.
+        val pending = _mine.value.filter { !it.isSynced && !it.isRejected }
         if (pending.isEmpty()) return
         _isSyncing.value = true
         for (report in pending) uploadOne(report)
@@ -203,6 +238,29 @@ class RemoteReportRepository(
     override suspend fun damageScale(): String =
         runCatching { api.config().damageScale }.getOrDefault("tier3")
 
+    override suspend fun formSections(): List<FormSection> {
+        // Fallback chain: live schema (crisis-scoped) → cache(crisis) → cache(default) → built-in.
+        // A fetched-but-empty schema is honored as-is (a crisis may disable every section).
+        val cid = scopeCrisisId
+        val fetched = runCatching { api.formSchema(cid) }
+            .onSuccess { dto ->
+                runCatching { Prefs.setString(schemaCacheKey(cid), schemaJson.encodeToString(dto)) }
+            }
+            .getOrNull()
+        return (fetched ?: cachedFormSchema(cid))?.toDomain() ?: defaultFormSections()
+    }
+
+    /** Cache key is PER-CRISIS: a stale crisis's required/disabled overrides must never apply
+     *  to another crisis. A null scope uses the shared "default" bucket. */
+    private fun schemaCacheKey(crisisId: String?): String =
+        PrefKeys.FORM_SCHEMA + ":" + (crisisId ?: "default")
+
+    /** Last-good schema persisted in [Prefs] so the capture form renders offline — this crisis's
+     *  cache first, then the unscoped default bucket. */
+    private fun cachedFormSchema(crisisId: String?): FormSchemaDto? =
+        (Prefs.getString(schemaCacheKey(crisisId)) ?: Prefs.getString(schemaCacheKey(null)))
+            ?.let { runCatching { schemaJson.decodeFromString<FormSchemaDto>(it) }.getOrNull() }
+
     private fun upsertMine(report: Report) {
         val updated = _mine.updateAndGet { current ->
             if (current.any { it.id == report.id }) {
@@ -220,8 +278,6 @@ class RemoteReportRepository(
 class RemoteCrisisRepository(private val api: BeaconApi) : CrisisRepository {
     override fun observeActiveCrisis(): Flow<Crisis?> =
         flow { emit(api.activeCrisis()?.toDomain()) }.catch { emit(null) }
-    override fun observeDangerZones(): Flow<List<DangerZone>> =
-        flow { emit(api.dangerZones().map { it.toDomain() }) }.catch { emit(emptyList()) }
     override suspend fun crisesNear(lat: Double, lng: Double, radiusKm: Double): List<Crisis> =
         runCatching { api.crisesNear(lat, lng, radiusKm).map { it.toDomain() } }.getOrDefault(emptyList())
     override suspend fun activeCrises(): List<Crisis> =
@@ -232,22 +288,25 @@ class RemoteCrisisRepository(private val api: BeaconApi) : CrisisRepository {
 
 class RemoteProfileRepository(private val api: BeaconApi) : ProfileRepository {
     override fun observeProfile(): Flow<Profile> =
-        flow { emit(api.profile().toDomain()) }
+        flow { emit(api.profile().toDomain().also(::cachePoints)) }
             // When the profile fetch fails (offline, transient error, or a rate-limit returning a
             // non-JSON body) fall back to the stable per-install identity instead of crashing the
             // collecting ScreenModel (it runs on Dispatchers.Main with no exception handler). The
             // device id IS what the server uses as anonymousId, so the identity card stays correct;
-            // live report/building/point counts are derived from the local outbox upstream.
+            // live report/building counts are derived from the local outbox upstream.
             .catch { emit(offlineProfile()) }
-    override suspend fun awardPoints(points: Int, reason: String) {
-        runCatching { api.awardPoints(points, reason) }
+
+    /** Points are SERVER-AWARDED (+10 only once a report is verified) — persist the last-known
+     *  value so the offline fallback shows it instead of an honest-but-jarring 0. */
+    private fun cachePoints(profile: Profile) {
+        runCatching { Prefs.setString(PrefKeys.PROFILE_POINTS, profile.points.toString()) }
     }
 
     private fun offlineProfile() = Profile(
         anonymousId = DeviceId.get(),
         reportCount = 0,
         buildingCount = 0,
-        points = 0,
+        points = Prefs.getString(PrefKeys.PROFILE_POINTS)?.toIntOrNull() ?: 0,
         badges = emptyList(),
     )
 }

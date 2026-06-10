@@ -1,6 +1,7 @@
 package com.stepanok.undp.data.remote
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 /** Wire DTOs mirroring the Go backend's camelCase JSON. The client uses
  *  ignoreUnknownKeys, so analyst-only fields the mobile doesn't model are dropped. */
@@ -16,15 +17,6 @@ data class ReportDescriptionDto(
     val translatedLang: String? = null,
 )
 
-/** Optional Appendix-1 modular sections on the wire. Keys are EXACTLY electricity /
- *  healthServices / pressingNeeds (camelCase); values are the enum names lowercased. */
-@Serializable
-data class ModularDto(
-    val electricity: String? = null,
-    val healthServices: String? = null,
-    val pressingNeeds: List<String> = emptyList(),
-)
-
 @Serializable
 data class ReportDto(
     val id: String,
@@ -33,14 +25,24 @@ data class ReportDto(
     val damageTier: String = "minimal",
     val possiblyDamaged: Boolean = false,
     val infraTypes: List<String> = emptyList(),
+    val infraName: String? = null,
     val crisisNature: List<String> = emptyList(),
     val debris: String = "unsure",
     val lat: Double? = null,
     val lng: Double? = null,
     val locationResolved: Boolean = true,
-    val accuracyMeters: Double? = null,
+    // The server EMITS gpsAccuracyMeters (accuracyMeters is a submit-only alias it accepts) —
+    // reading the wrong name silently dropped accuracy for every fetched report.
+    val gpsAccuracyMeters: Double? = null,
     val buildingId: String? = null,
+    val buildingSource: String? = null,
+    // Open Location Code. The server emits BOTH plusCode and the legacy misnamed
+    // what3words (same value, kept for compat) — prefer plusCode, fall back to legacy.
+    val plusCode: String? = null,
     val what3words: String? = null,
+    // Flat landmark (the server also nests it under location) — without it a fetched
+    // landmark-only report had no readable locator at all.
+    val landmark: String? = null,
     val place: String = "",
     val version: Int = 1,
     val supersedesReportId: String? = null,
@@ -128,9 +130,15 @@ data class ProfileDto(
 data class SubmitReportDto(
     val id: String,
     val idempotencyKey: String,
+    // Explicit crisis pin from the active map scope — the server keeps it for landmark-only
+    // (no-coords) reports, which spatial assignment could never place. Null/omitted = the
+    // server assigns by space+time (we never fabricate a pin without a scope).
+    val crisisId: String? = null,
     val damage: String,
     val possiblyDamaged: Boolean,
     val infraTypes: List<String>,
+    /** Name/details of the infrastructure (any type), e.g. "Cumhuriyet Primary School". */
+    val infraName: String? = null,
     val infraOtherDetail: String? = null,
     val crisisNature: List<String>,
     val debris: String,
@@ -140,18 +148,48 @@ data class SubmitReportDto(
     val lng: Double? = null,
     val locationResolved: Boolean = true,
     val accuracyMeters: Double? = null,
+    // buildingId only when a real footprint was tapped — buildingSource is then "footprint".
     val buildingId: String? = null,
+    val buildingSource: String? = null,
+    // plusCode is the canonical Open Location Code field; the legacy misnamed what3words
+    // carries the same value so not-yet-migrated servers (and old persisted outbox files)
+    // keep working. The server prefers plusCode, falling back to what3words.
+    val plusCode: String? = null,
     val what3words: String? = null,
     val landmark: String? = null,
-    val place: String,
+    // Null when unknown — the client never fabricates a place label ("Your location").
+    val place: String? = null,
     val description: ReportDescriptionDto? = null,
-    val modular: ModularDto? = null,
+    // The modular blob exactly as the server stores it: single-choice answers as bare strings
+    // (e.g. electricity), multi-select as arrays (pressingNeeds), "<key>Other" free-text
+    // companions (pressingNeedsOther). A raw JsonObject — not a fixed DTO — so answers to
+    // sections UNDP adds server-side flow through untouched.
+    val modular: JsonObject? = null,
     val lifeSafety: Boolean = false,
     val capturedAt: String,
 )
 
 @Serializable
-data class PointsRequestDto(val points: Int, val reason: String)
+data class ConfigDto(val damageScale: String = "tier3")
+
+/** The backend's JSON error envelope, returned with every non-2xx status. */
+@Serializable
+data class ErrorEnvelopeDto(val error: String = "", val message: String = "")
+
+/** GET /form-schema — the resolved modular capture form (built-in Appendix-1 defaults with
+ *  the crisis's required/disabled overrides applied). */
+@Serializable
+data class FormOptionDto(val value: String = "", val label: String = "")
 
 @Serializable
-data class ConfigDto(val damageScale: String = "tier3")
+data class FormSectionDto(
+    val key: String = "",
+    val title: String = "",
+    val type: String = "single", // single | multi
+    val required: Boolean = false,
+    val allowOtherText: Boolean = false,
+    val options: List<FormOptionDto> = emptyList(),
+)
+
+@Serializable
+data class FormSchemaDto(val sections: List<FormSectionDto> = emptyList())

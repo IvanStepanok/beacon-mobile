@@ -4,6 +4,7 @@ import com.stepanok.undp.domain.model.AreaGroup
 import com.stepanok.undp.domain.model.BuildingTimeline
 import com.stepanok.undp.domain.model.Crisis
 import com.stepanok.undp.domain.model.DownloadBundle
+import com.stepanok.undp.domain.model.FormSection
 import com.stepanok.undp.domain.model.OutboxItem
 import com.stepanok.undp.domain.model.Profile
 import com.stepanok.undp.domain.model.Report
@@ -43,6 +44,10 @@ interface ReportRepository {
     suspend fun updateSync(reportId: String, state: SyncState)
     /** Global capture scale set by analysts ("tier3" default | "ems98"). */
     suspend fun damageScale(): String
+    /** The modular capture-form sections — server-driven (GET /form-schema for the current
+     *  crisis scope), cached so the form works offline, with the built-in Appendix-1 default
+     *  as the final fallback. */
+    suspend fun formSections(): List<FormSection>
 }
 
 interface OutboxQueue {
@@ -68,8 +73,6 @@ interface DownloadQueue {
 
 interface CrisisRepository {
     fun observeActiveCrisis(): Flow<Crisis?>
-    /** Hazardous areas to avoid (safety) — shown in the Crisis & Safety tab. */
-    fun observeDangerZones(): Flow<List<com.stepanok.undp.domain.model.DangerZone>>
     /** Active/proposed crises near a point, nearest first (location-first launch). */
     suspend fun crisesNear(lat: Double, lng: Double, radiusKm: Double = 50.0): List<Crisis>
     /** All active crises (for the "browse crises elsewhere" list). */
@@ -79,7 +82,6 @@ interface CrisisRepository {
 }
 
 interface ProfileRepository {
+    /** Points are server-derived from verified reports only — the client never awards itself. */
     fun observeProfile(): Flow<Profile>
-    /** Anti-gaming: points award only for verified / distinct-building coverage, never raw volume. */
-    suspend fun awardPoints(points: Int, reason: String)
 }

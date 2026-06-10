@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -15,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
+import com.stepanok.undp.core.io.capturesDirPath
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -30,8 +33,7 @@ actual fun rememberPhotoCapture(onResult: (CapturedPhoto?) -> Unit): PhotoCaptur
         val file = pending.value
         pending.value = null
         if (ok && file != null && file.length() > 0) {
-            val size = downscaleAndStrip(file.absolutePath)
-            onResult(CapturedPhoto(file.absolutePath, size))
+            deliverProcessed(file.absolutePath, onResult)
         } else {
             onResult(null)
         }
@@ -39,7 +41,7 @@ actual fun rememberPhotoCapture(onResult: (CapturedPhoto?) -> Unit): PhotoCaptur
 
     val pickMedia = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
-    ) { uri -> onResult(uri?.let { copyToCache(context, it) }) }
+    ) { uri -> if (uri != null) copyAndDeliver(context, uri, onResult) else onResult(null) }
 
     val requestCamera = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -69,26 +71,42 @@ private fun launchCamera(
     pending: MutableState<File?>,
     launcher: ManagedActivityResultLauncher<Uri, Boolean>,
 ) {
-    val dir = File(context.cacheDir, "captures").apply { mkdirs() }
-    val file = File(dir, "capture_${java.lang.System.currentTimeMillis()}.jpg")
+    // Persistent captures dir (same root as the outbox; declared as a files-path in
+    // file_paths.xml) — a queued photo must survive OS cache purges until upload.
+    val file = File(capturesDirPath(), "capture_${java.lang.System.currentTimeMillis()}.jpg")
     pending.value = file
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     launcher.launch(uri)
 }
 
-private fun copyToCache(context: Context, uri: Uri): CapturedPhoto? = runCatching {
-    val dir = File(context.cacheDir, "captures").apply { mkdirs() }
-    val file = File(dir, "pick_${java.lang.System.currentTimeMillis()}.jpg")
-    context.contentResolver.openInputStream(uri)?.use { input ->
-        file.outputStream().use { output -> input.copyTo(output) }
-    }
-    if (file.length() > 0) {
-        val size = downscaleAndStrip(file.absolutePath)
-        CapturedPhoto(file.absolutePath, size)
-    } else {
-        null
-    }
-}.getOrNull()
+// Process (downscale + EXIF-strip + on-device face/plate redaction) OFF the main thread —
+// ML Kit's Tasks.await blocks and the launcher/camera callbacks fire on main — then post the
+// CapturedPhoto (carrying its RedactionResult) back to the main thread.
+internal fun deliverProcessed(path: String, onResult: (CapturedPhoto?) -> Unit) {
+    Thread {
+        val p = downscaleAndStrip(path)
+        val photo = if (p.sizeBytes > 0) CapturedPhoto(path, p.sizeBytes, p.redaction) else null
+        Handler(Looper.getMainLooper()).post { onResult(photo) }
+    }.start()
+}
+
+private fun copyAndDeliver(context: Context, uri: Uri, onResult: (CapturedPhoto?) -> Unit) {
+    Thread {
+        val photo = runCatching {
+            val file = File(capturesDirPath(), "pick_${java.lang.System.currentTimeMillis()}.jpg")
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                file.outputStream().use { output -> input.copyTo(output) }
+            }
+            if (file.length() > 0) {
+                val p = downscaleAndStrip(file.absolutePath)
+                CapturedPhoto(file.absolutePath, p.sizeBytes, p.redaction)
+            } else {
+                null
+            }
+        }.getOrNull()
+        Handler(Looper.getMainLooper()).post { onResult(photo) }
+    }.start()
+}
 
 /**
  * Downscale + recompress a JPEG in place: caps the longest side at [MAX_DIM] and
@@ -101,7 +119,10 @@ private fun copyToCache(context: Context, uri: Uri): CapturedPhoto? = runCatchin
 private const val MAX_DIM = 1600
 private const val JPEG_QUALITY = 80
 
-internal fun downscaleAndStrip(path: String): Long = runCatching {
+/** File size + on-device redaction outcome of a processed photo (returned by [downscaleAndStrip]). */
+internal data class ProcessedPhoto(val sizeBytes: Long, val redaction: RedactionResult)
+
+internal fun downscaleAndStrip(path: String): ProcessedPhoto = runCatching {
     val orientation = ExifInterface(path)
         .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
@@ -111,7 +132,7 @@ internal fun downscaleAndStrip(path: String): Long = runCatching {
     while (maxOf(bounds.outWidth, bounds.outHeight) / sample > MAX_DIM * 2) sample *= 2
 
     var bmp = BitmapFactory.decodeFile(path, BitmapFactory.Options().apply { inSampleSize = sample })
-        ?: return@runCatching File(path).length()
+        ?: return@runCatching ProcessedPhoto(File(path).length(), RedactionResult())
 
     val longest = maxOf(bmp.width, bmp.height)
     if (longest > MAX_DIM) {
@@ -127,12 +148,16 @@ internal fun downscaleAndStrip(path: String): Long = runCatching {
     if (!matrix.isIdentity) {
         bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
     }
-    FileOutputStream(path).use { out -> bmp.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out) }
+    // On-device, OFFLINE redaction (faces + plates) on the oriented bitmap, BEFORE encoding —
+    // so the redacted pixels are what gets written (irreversible). Best-effort; never throws.
+    val (redacted, redaction) = redactBitmap(bmp)
+    FileOutputStream(path).use { out -> redacted.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out) }
+    if (redacted !== bmp) redacted.recycle()
     bmp.recycle()
-    File(path).length()
+    ProcessedPhoto(File(path).length(), redaction)
 }.getOrElse {
     stripSensitiveExif(path) // recompress failed → at least strip EXIF on the original
-    File(path).length()
+    ProcessedPhoto(File(path).length(), RedactionResult())
 }
 
 /** Remove location, timestamp and device-identity EXIF tags; keep orientation so photos aren't rotated. */

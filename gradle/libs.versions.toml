@@ -23,12 +23,19 @@ maplibreCompose = "0.13.0"
 lucide = "1.1.0"
 ktor = "3.3.0"
 camerax = "1.6.1"
+# On-device, offline ML Kit (bundled models) — face detection + Latin text recognition (B1 redaction)
+mlkitFace = "16.1.7"
+mlkitText = "16.0.1"
+gmsTasks = "18.2.0"
 
 [libraries]
 androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
+mlkit-face-detection = { module = "com.google.mlkit:face-detection", version.ref = "mlkitFace" }
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitText" }
+gms-tasks = { module = "com.google.android.gms:play-services-tasks", version.ref = "gmsTasks" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }

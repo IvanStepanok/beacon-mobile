@@ -44,9 +44,11 @@ import com.stepanok.undp.designsystem.labels.crisisLabel
 import com.stepanok.undp.designsystem.labels.damageLabel
 import com.stepanok.undp.designsystem.labels.debrisLabel
 import com.stepanok.undp.designsystem.labels.infraLabel
+import com.stepanok.undp.designsystem.labels.rejectionReasonLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.domain.model.BuildingVersion
 import com.stepanok.undp.domain.model.Report
+import com.stepanok.undp.domain.model.SyncState
 import com.stepanok.undp.map.BeaconMap
 import com.stepanok.undp.map.GeoPoint
 import com.stepanok.undp.map.ReportPin
@@ -64,6 +66,7 @@ import undp.shared.generated.resources.detail_this_building
 import undp.shared.generated.resources.detail_timeline
 import undp.shared.generated.resources.detail_translated_from
 import undp.shared.generated.resources.report_label
+import undp.shared.generated.resources.status_rejected
 
 data class ReportDetailScreen(val reportId: String) : Screen {
     @Composable
@@ -100,6 +103,21 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                     DamageChip(level = report.damage, label = damageLabel(report.damage))
                 }
 
+                // The server permanently rejected the reporter's own report — show the honest
+                // outcome + reason here too, not just the list chip.
+                (report.sync as? SyncState.Rejected)?.takeIf { report.isMine }?.let { rejected ->
+                    Row(
+                        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(colors.warnSoft).padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(BeaconIcons.Warning, contentDescription = null, tint = colors.warn, modifier = Modifier.size(16.dp))
+                        Text(
+                            "${stringResource(Res.string.status_rejected)} · ${rejectionReasonLabel(rejected)}",
+                            style = BeaconTheme.typography.label, color = colors.warn,
+                        )
+                    }
+                }
+
                 // Mini-map — only when the report has a resolved point. Landmark-only (unresolved)
                 // reports show a textual placeholder instead of centering the map on 0,0.
                 val loc = report.location
@@ -116,7 +134,7 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                     }
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(BeaconIcons.Pin, contentDescription = null, tint = colors.primary, modifier = Modifier.size(14.dp))
-                        Text(loc.what3words?.takeIf { it.isNotBlank() && it != "garden.tribe.sparkle" } ?: "—", style = BeaconTheme.typography.mono, color = colors.ink2)
+                        Text(loc.plusCode?.takeIf { it.isNotBlank() && it != "garden.tribe.sparkle" } ?: "—", style = BeaconTheme.typography.mono, color = colors.ink2)
                         loc.gpsAccuracyMeters?.let {
                             Text("· ±${it.toInt()} m", style = BeaconTheme.typography.caption, color = colors.ink3)
                         }

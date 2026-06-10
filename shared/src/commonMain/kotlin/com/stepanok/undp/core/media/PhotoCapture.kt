@@ -2,8 +2,13 @@ package com.stepanok.undp.core.media
 
 import androidx.compose.runtime.Composable
 
-/** A photo captured to app-local storage. */
-data class CapturedPhoto(val path: String, val sizeBytes: Long)
+/** A photo captured to app-local storage, with the on-device redaction outcome
+ *  (faces/plates blurred) so the report's Anonymization flags reflect what actually ran. */
+data class CapturedPhoto(
+    val path: String,
+    val sizeBytes: Long,
+    val redaction: RedactionResult = RedactionResult(),
+)
 
 /** Drives a real photo capture (device camera) or a pick from the photo library. */
 interface PhotoCaptureController {

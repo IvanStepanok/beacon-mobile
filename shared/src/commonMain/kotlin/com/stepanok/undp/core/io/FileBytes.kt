@@ -15,3 +15,14 @@ expect fun writeFileBytes(path: String, bytes: ByteArray): Boolean
  * evicted). Android: Context.filesDir; iOS: Application Support directory.
  */
 expect fun outboxFilePath(): String
+
+/**
+ * Absolute path of the persistent "captures" directory for queued photos — the SAME
+ * persistent root as [outboxFilePath] (never a cache/tmp dir, which the OS can purge),
+ * so a queued photo survives until upload across cache eviction + process death.
+ * Implementations create the directory if missing.
+ *
+ * Known trade-off: captures are retained FOREVER (each local file backs its My-Reports
+ * thumbnail after sync) — size-capped pruning of synced captures is roadmap, not implemented.
+ */
+expect fun capturesDirPath(): String

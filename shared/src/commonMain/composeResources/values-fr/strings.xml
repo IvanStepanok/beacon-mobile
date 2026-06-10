@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">Carte</string>
     <string name="nav_reports">Signalements</string>
-    <string name="nav_sync">Synchronisation</string>
     <string name="nav_crisis">Crise</string>
     <string name="nav_profile">Profil</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">Prudence</string>
     <string name="danger_warning">Avertissement</string>
     <string name="danger_critical">Critique</string>
-    <string name="crisis_alerts_title">Alertes de crise</string>
-    <string name="crisis_alerts_sub">M'avertir lorsqu'une crise est détectée à proximité</string>
     <string name="crisis_safety_title">Restez en sécurité pendant le signalement</string>
     <string name="crisis_safety_tip">Gardez une distance de sécurité avec les structures endommagées. N'entrez jamais dans un bâtiment instable pour prendre une photo.</string>
     <string name="crisis_none_nearby">Aucune crise active à proximité</string>
@@ -74,8 +71,7 @@
     <!-- Capture: camera -->
     <string name="capture_camera_hint">Cadrez clairement les dommages</string>
     <!-- Camera guide chips (AI translation — needs native review) -->
-    <string name="capture_guide_whole">Incluez le bâtiment entier dans le cadre.</string>
-    <string name="capture_guide_closeup">Ajoutez ensuite un gros plan des dégâts les plus graves.</string>
+    <string name="capture_guide_whole">Cadrez le bâtiment entier en montrant les dégâts.</string>
     <string name="capture_guide_no_people">Veuillez ne pas photographier de personnes.</string>
     <string name="capture_capture_btn">Photographier les dommages</string>
     <string name="capture_gallery">Galerie</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">Autre</string>
     <string name="infra_other_desc">Précisez ci-dessous</string>
     <string name="infra_other_hint">Nom / nature de l'infrastructure</string>
+    <string name="infra_name_hint">Nom / détails de l'infrastructure (facultatif)</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">Quelques questions de plus</string>
@@ -141,6 +138,7 @@
     <string name="health_none">Hors service</string>
     <string name="health_unknown">Inconnu</string>
     <string name="modular_needs">Besoins les plus urgents</string>
+    <string name="modular_required_hint">Obligatoire — choisissez une réponse</string>
     <string name="need_food_water">Nourriture et eau</string>
     <string name="need_cash">Aide financière</string>
     <string name="need_healthcare">Soins et médicaments</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">Eau et assainissement</string>
     <string name="need_protection">Protection et accompagnement</string>
     <string name="need_local">Soutien des autorités locales</string>
+    <string name="need_basic_services">Services de base (électricité, routes, écoles)</string>
     <string name="need_other">Autre</string>
+    <string name="need_other_hint">Décrivez le besoin</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">Quelle en est la cause ?</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">Facultatif. Écrivez dans n'importe quelle langue — vos mots sont enregistrés avec le signalement.</string>
     <string name="capture_describe_hint">ex. Le mur ouest est fissuré, mais le bâtiment ne s'est pas effondré.</string>
     <string name="capture_voice">Note vocale</string>
-    <string name="capture_ai_suggests">Phrase rapide</string>
-    <string name="capture_ai_cv">Modèle</string>
-    <string name="capture_ai_text">Une phrase courante à insérer, puis à modifier selon ce que vous voyez.</string>
-    <string name="capture_ai_insert">Ajouter la phrase</string>
     <string name="capture_skip_desc">Passer la description</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">Enregistré dans la file d'attente</string>
     <string name="capture_submitted_body">Votre signalement a été envoyé pour vérification. Il apparaîtra sur la carte après la synchronisation.</string>
     <string name="capture_submitted_offline_body">Vous êtes hors ligne. Votre signalement sera envoyé automatiquement dès votre retour en ligne.</string>
-    <string name="capture_points">+10 points communautaires</string>
-    <string name="capture_badge_progress">Progression du badge Contributeur</string>
+    <string name="capture_points">+10 points une fois votre signalement vérifié</string>
     <string name="capture_view_map">Voir sur la carte</string>
     <string name="capture_new_report">Nouveau signalement</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">Tous</string>
     <string name="status_synced">Synchronisé</string>
     <string name="status_queued">En attente</string>
+    <string name="status_rejected">Rejeté</string>
+    <string name="reject_duplicate">Doublon d'un signalement à proximité</string>
+    <string name="reject_rate_limited">Trop de signalements envoyés — réessayez plus tard</string>
+    <string name="reject_invalid">Le signalement n'a pas pu être accepté</string>
     <string name="reports_empty">Aucun signalement ne correspond à ce filtre.</string>
 
     <!-- Report detail -->
@@ -246,18 +245,11 @@
     <string name="detail_meta_captured">Capturé</string>
     <string name="detail_description">Description</string>
     <string name="detail_anonymised">Anonymisé · EXIF supprimé</string>
+    <string name="detail_location_unresolved">Position non résolue · repère : %1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">File de synchronisation</string>
-    <string name="sync_offline_msg">Vous êtes hors ligne. Les signalements seront synchronisés automatiquement dès votre retour en ligne.</string>
-    <string name="sync_online_msg">Connecté. Envoi des signalements en attente en cours.</string>
-    <string name="sync_awaiting">signalements en attente d'envoi</string>
-    <string name="sync_total_mb">~%1$s Mo au total</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">En ligne</string>
     <string name="sync_offline">Hors ligne</string>
-    <string name="sync_all_caught_up">Tout est à jour.</string>
-    <string name="sync_waiting">En attente de connexion</string>
-    <string name="sync_uploading">Envoi en cours</string>
 
     <!-- Profile -->
     <string name="profile_title">Profil</string>
@@ -275,8 +267,6 @@
     <string name="menu_language">Langue</string>
     <string name="menu_privacy">Confidentialité</string>
     <string name="menu_privacy_sub">Ni nom ni téléphone · EXIF supprimé</string>
-    <string name="menu_alerts">Alertes de crise</string>
-    <string name="menu_alerts_sub">Notification lorsqu'une crise est détectée à proximité</string>
     <string name="menu_about">À propos de Beacon</string>
     <string name="menu_about_sub">Open source · v 0.9.0</string>
     <string name="menu_offline">Cartes hors ligne</string>
@@ -294,6 +284,4 @@
     <string name="language_sheet_title">Langue de l'application</string>
     <string name="language_sheet_sub">Par défaut, Beacon suit la langue de votre appareil.</string>
     <string name="language_system">Suivre le système</string>
-    <string name="sync_now">Synchroniser</string>
-    <string name="sync_in_progress">Synchronisation…</string>
 </resources>

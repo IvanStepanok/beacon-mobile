@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <cache-path name="captures" path="captures/" />
+    <!-- Persistent captures dir (filesDir/captures): queued photos must survive OS cache purges. -->
+    <files-path name="captures" path="captures/" />
+    <!-- Legacy location kept readable for photos queued by older builds. -->
+    <cache-path name="captures-legacy" path="captures/" />
 </paths>

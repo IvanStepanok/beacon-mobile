@@ -25,24 +25,31 @@ import com.stepanok.undp.feature.crisis.CrisisScreen
 import com.stepanok.undp.feature.map.MapScreen
 import com.stepanok.undp.feature.profile.ProfileScreen
 import com.stepanok.undp.feature.reports.ReportsScreen
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import undp.shared.generated.resources.Res
+import undp.shared.generated.resources.nav_crisis
+import undp.shared.generated.resources.nav_map
+import undp.shared.generated.resources.nav_profile
+import undp.shared.generated.resources.nav_reports
 
 object MapTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 0u, title = "Map")
+    override val options: TabOptions @Composable get() = TabOptions(index = 0u, title = stringResource(Res.string.nav_map))
     @Composable override fun Content() = Navigator(MapScreen)
 }
 
 object ReportsTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 1u, title = "Reports")
+    override val options: TabOptions @Composable get() = TabOptions(index = 1u, title = stringResource(Res.string.nav_reports))
     @Composable override fun Content() = Navigator(ReportsScreen)
 }
 
 object CrisisTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 2u, title = "Crisis")
+    override val options: TabOptions @Composable get() = TabOptions(index = 2u, title = stringResource(Res.string.nav_crisis))
     @Composable override fun Content() = Navigator(CrisisScreen)
 }
 
 object ProfileTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 3u, title = "Profile")
+    override val options: TabOptions @Composable get() = TabOptions(index = 3u, title = stringResource(Res.string.nav_profile))
     @Composable override fun Content() = Navigator(ProfileScreen)
 }
 
@@ -60,11 +67,12 @@ private fun Tab.toBeaconTab(): BeaconTab = when (this) {
     else -> BeaconTab.Map
 }
 
-private fun BeaconTab.label(): String = when (this) {
-    BeaconTab.Map -> "Map"
-    BeaconTab.Reports -> "My reports"
-    BeaconTab.Crisis -> "Crisis"
-    BeaconTab.Profile -> "Profile"
+/** Localized bottom-tab labels — the nav_* keys exist in all 6 locales. */
+private fun BeaconTab.labelRes(): StringResource = when (this) {
+    BeaconTab.Map -> Res.string.nav_map
+    BeaconTab.Reports -> Res.string.nav_reports
+    BeaconTab.Crisis -> Res.string.nav_crisis
+    BeaconTab.Profile -> Res.string.nav_profile
 }
 
 private val ALL_TABS = listOf(MapTab, ReportsTab, CrisisTab, ProfileTab)
@@ -81,9 +89,11 @@ object MainShellScreen : Screen {
                 // so the Scaffold itself adds none — only the bottom-bar height pads the content.
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 bottomBar = {
+                    // Resolve the localized labels here — BeaconBottomBar's label lambda is not composable.
+                    val labels = BeaconTab.entries.associateWith { stringResource(it.labelRes()) }
                     BeaconBottomBar(
                         active = tabNav.current.toBeaconTab(),
-                        label = { it.label() },
+                        label = { labels.getValue(it) },
                         onSelect = { tabNav.current = it.toTab() },
                         onCapture = { rootNav.push(CaptureFlowScreen) },
                     )

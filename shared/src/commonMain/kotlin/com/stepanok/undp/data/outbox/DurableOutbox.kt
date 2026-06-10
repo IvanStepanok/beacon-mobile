@@ -25,6 +25,9 @@ class DurableOutbox(
     private val json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
+        // Forward-compat: a syncKind written by a NEWER build (unknown enum value here) coerces
+        // to the QUEUED default instead of failing the whole file load and losing the outbox.
+        coerceInputValues = true
     }
 
     /** Load + rebuild reports from disk; empty if no file / unreadable / corrupt. */
@@ -69,8 +72,11 @@ data class OutboxEntry(
     val attempt: Int = 0,
     val nextRetryAtMillis: Long? = null,
     val reason: String? = null,
+    // REJECTED bookkeeping: the server's error code + HTTP status behind the terminal reason.
+    val rejectCode: String? = null,
+    val rejectHttpStatus: Int? = null,
 )
 
 /** Flattened, file-stable representation of [SyncState] (kotlinx sealed-poly avoided on purpose). */
 @Serializable
-enum class SyncKind { QUEUED, SYNCED, PHOTO_PENDING, FAILED }
+enum class SyncKind { QUEUED, SYNCED, PHOTO_PENDING, FAILED, REJECTED }

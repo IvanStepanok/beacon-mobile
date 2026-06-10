@@ -3,17 +3,14 @@
 package com.stepanok.undp.data.outbox
 
 import com.stepanok.undp.data.remote.ReportDescriptionDto
+import com.stepanok.undp.data.remote.modularSectionsOf
 import com.stepanok.undp.data.remote.toSubmitDto
 import com.stepanok.undp.domain.model.CrisisNature
 import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.DebrisState
-import com.stepanok.undp.domain.model.ElectricityCondition
-import com.stepanok.undp.domain.model.HealthServices
 import com.stepanok.undp.domain.model.InfraType
-import com.stepanok.undp.domain.model.ModularSections
 import com.stepanok.undp.domain.model.PhotoRef
-import com.stepanok.undp.domain.model.PressingNeed
 import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.model.ReportDescription
 import com.stepanok.undp.domain.model.ReportLocation
@@ -24,7 +21,7 @@ import kotlin.time.Instant
 // ── domain → persisted entry ───────────────────────────────────────────
 
 fun Report.toOutboxEntry(): OutboxEntry {
-    val (kind, attempt, nextRetry, reason) = sync.toSnapshot()
+    val snap = sync.toSnapshot()
     val photo = photos.firstOrNull()
     return OutboxEntry(
         submit = toSubmitDto(),
@@ -37,10 +34,12 @@ fun Report.toOutboxEntry(): OutboxEntry {
         isMine = isMine,
         version = version,
         supersedesReportId = supersedesReportId,
-        syncKind = kind,
-        attempt = attempt,
-        nextRetryAtMillis = nextRetry,
-        reason = reason,
+        syncKind = snap.kind,
+        attempt = snap.attempt,
+        nextRetryAtMillis = snap.nextRetryMillis,
+        reason = snap.reason,
+        rejectCode = snap.rejectCode,
+        rejectHttpStatus = snap.rejectHttpStatus,
     )
 }
 
@@ -59,6 +58,7 @@ fun OutboxEntry.toReport(): Report {
         possiblyDamaged = s.possiblyDamaged,
         lifeSafety = s.lifeSafety,
         infraTypes = s.infraTypes.mapNotNull(::infraOf).toSet(),
+        infraName = s.infraName,
         infraOtherDetail = s.infraOtherDetail,
         crisisNature = s.crisisNature.mapNotNull(::natureOf).toSet(),
         debris = debrisOf(s.debris),
@@ -67,20 +67,19 @@ fun OutboxEntry.toReport(): Report {
             lng = s.lng,
             locationResolved = s.locationResolved,
             buildingId = s.buildingId,
-            what3words = s.what3words,
+            buildingSource = s.buildingSource,
+            // Entries persisted before the plusCode rename only carry the legacy what3words name.
+            plusCode = s.plusCode ?: s.what3words,
             landmark = s.landmark,
             gpsAccuracyMeters = s.accuracyMeters,
         ),
         description = s.description?.let(::descriptionOf),
-        modular = s.modular?.let { m ->
-            ModularSections(
-                electricity = m.electricity?.let(::electricityOf),
-                healthServices = m.healthServices?.let(::healthServicesOf),
-                pressingNeeds = m.pressingNeeds.mapNotNull(::pressingNeedOf).toSet(),
-            )
-        },
+        // Generic blob → answers; pre-rename files and server-added sections decode identically.
+        modular = s.modular?.let(::modularSectionsOf),
         capturedAt = Instant.fromEpochMilliseconds(capturedAtMillis),
         buildingId = s.buildingId,
+        // Restore the crisis pin so a relaunch's resumed upload still joins the same crisis.
+        crisisId = s.crisisId,
         version = version,
         supersedesReportId = supersedesReportId,
         sync = syncStateOf(),
@@ -96,6 +95,8 @@ private data class SyncSnapshot(
     val attempt: Int,
     val nextRetryMillis: Long?,
     val reason: String?,
+    val rejectCode: String? = null,
+    val rejectHttpStatus: Int? = null,
 )
 
 private fun SyncState.toSnapshot(): SyncSnapshot = when (this) {
@@ -110,6 +111,15 @@ private fun SyncState.toSnapshot(): SyncSnapshot = when (this) {
         nextRetryAt.toEpochMilliseconds(),
         reason,
     )
+    // Terminal server rejection survives relaunch — it must never melt back into Queued.
+    is SyncState.Rejected -> SyncSnapshot(
+        SyncKind.REJECTED,
+        0,
+        null,
+        reason,
+        rejectCode = code,
+        rejectHttpStatus = httpStatus,
+    )
 }
 
 private fun OutboxEntry.syncStateOf(): SyncState = when (syncKind) {
@@ -120,6 +130,11 @@ private fun OutboxEntry.syncStateOf(): SyncState = when (syncKind) {
         attempt = attempt,
         nextRetryAt = Instant.fromEpochMilliseconds(nextRetryAtMillis ?: 0L),
         reason = reason ?: "upload failed",
+    )
+    SyncKind.REJECTED -> SyncState.Rejected(
+        code = rejectCode.orEmpty(),
+        reason = reason ?: "rejected by server",
+        httpStatus = rejectHttpStatus ?: 0,
     )
 }
 
@@ -148,12 +163,6 @@ private fun natureOf(s: String): CrisisNature? = runCatching { CrisisNature.valu
 
 private fun debrisOf(s: String): DebrisState =
     runCatching { DebrisState.valueOf(s.uppercase()) }.getOrDefault(DebrisState.UNSURE)
-
-private fun electricityOf(s: String): ElectricityCondition? = runCatching { ElectricityCondition.valueOf(s.uppercase()) }.getOrNull()
-
-private fun healthServicesOf(s: String): HealthServices? = runCatching { HealthServices.valueOf(s.uppercase()) }.getOrNull()
-
-private fun pressingNeedOf(s: String): PressingNeed? = runCatching { PressingNeed.valueOf(s.uppercase()) }.getOrNull()
 
 private fun descriptionOf(d: ReportDescriptionDto): ReportDescription = ReportDescription(
     original = d.original,

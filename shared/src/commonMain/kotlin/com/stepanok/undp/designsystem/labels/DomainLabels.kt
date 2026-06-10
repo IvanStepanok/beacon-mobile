@@ -5,6 +5,7 @@ import com.stepanok.undp.domain.model.CrisisNature
 import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.InfraType
+import com.stepanok.undp.domain.model.SyncState
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
 import undp.shared.generated.resources.crisis_chemical
@@ -32,6 +33,9 @@ import undp.shared.generated.resources.infra_public
 import undp.shared.generated.resources.infra_residential
 import undp.shared.generated.resources.infra_transport
 import undp.shared.generated.resources.infra_utility
+import undp.shared.generated.resources.reject_duplicate
+import undp.shared.generated.resources.reject_invalid
+import undp.shared.generated.resources.reject_rate_limited
 
 @Composable
 fun damageLabel(level: DamageLevel): String = stringResource(
@@ -81,3 +85,13 @@ fun debrisLabel(debris: DebrisState): String = stringResource(
         DebrisState.UNSURE -> Res.string.debris_unsure
     },
 )
+
+/** Human reason for a terminal server rejection: the common envelope codes get a localized
+ *  line; anything else falls back to the server's own (English) message. */
+@Composable
+fun rejectionReasonLabel(state: SyncState.Rejected): String = when (state.code) {
+    "duplicate" -> stringResource(Res.string.reject_duplicate)
+    "rate_limited" -> stringResource(Res.string.reject_rate_limited)
+    "validation" -> stringResource(Res.string.reject_invalid)
+    else -> state.reason
+}

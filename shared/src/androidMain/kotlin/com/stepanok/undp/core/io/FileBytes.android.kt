@@ -23,3 +23,8 @@ actual fun writeFileBytes(path: String, bytes: ByteArray): Boolean = runCatching
 /** Persistent internal storage (filesDir) — survives app kill; never a cache dir. */
 actual fun outboxFilePath(): String =
     File(AndroidAppContext.require().filesDir, "outbox.json").absolutePath
+
+/** Persistent captures dir (filesDir/captures) — same root as the outbox, so queued
+ *  photos survive OS cache purges until their upload succeeds. */
+actual fun capturesDirPath(): String =
+    File(AndroidAppContext.require().filesDir, "captures").apply { mkdirs() }.absolutePath

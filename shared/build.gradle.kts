@@ -53,6 +53,10 @@ kotlin {
             implementation(libs.androidx.camera.camera2)
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.camera.compose)
+            // On-device, offline redaction (B1): ML Kit face detection + text recognition (bundled models).
+            implementation(libs.mlkit.face.detection)
+            implementation(libs.mlkit.text.recognition)
+            implementation(libs.gms.tasks)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

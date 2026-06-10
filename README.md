@@ -1,31 +1,45 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Beacon Reporter App
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+**Kotlin Multiplatform + Compose Multiplatform** (Android + iOS) reporter client for
+Beacon — the open-source crisis-damage crowdsourcing system. Voyager navigation + MVI +
+Koin, MapLibre maps, Ktor (OkHttp/Darwin) against the live backend.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Built for the person standing in front of a damaged building:
 
-### Running the apps
+- **Offline-first** — optimistic outbox queue with auto-flush on reconnect, offline map
+  packs (MapLibre OfflineManager / MLNOfflineStorage), on-device Plus Codes (Open
+  Location Code — no network, no API key).
+- **Guided capture wizard** — in-app camera (CameraX / AVFoundation; **EXIF GPS/time/device
+  tags stripped on capture**), 5-level EMS-98 damage grade + life-safety question,
+  infrastructure type, building-footprint snap (stable building identity) with GPS and
+  landmark-only fallbacks, modular secondary-impacts questions served by the backend's
+  form schema, review → idempotent submit.
+- **Anonymous** — no account; a random device id (`X-Device-Id`) enables "my reports",
+  sync and server-derived points without name/phone/email.
+- **6 UN languages + Arabic RTL**; on-device GeoJSON/CSV export via the share sheet.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Layout
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- [`/shared`](./shared/src) — common Compose UI + logic (`commonMain`), with
+  `androidMain`/`iosMain` for camera/GPS/connectivity/back-handler actuals.
+- [`/androidApp`](./androidApp) — Android entry point.
+- [`/iosApp`](./iosApp) — iOS entry point (SwiftUI host; MapLibre via SPM).
 
-### Running tests
+## Build & test
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+The path contains a space — quote it.
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+```bash
+./gradlew :shared:compileCommonMainKotlinMetadata    # fast shared-code compile check
+./gradlew :androidApp:assembleDebug                  # Android debug APK
+./gradlew :shared:compileKotlinIosSimulatorArm64     # KMP iOS compile check
+open iosApp/iosApp.xcodeproj                         # full iOS app via Xcode (simulator)
 
----
+./gradlew :shared:testAndroidHostTest                # Android-host tests
+./gradlew :shared:iosSimulatorArm64Test              # iOS simulator tests
+```
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## License
+
+Apache-2.0 — see [`LICENSE`](./LICENSE). Project docs and honest build status live in the
+main Beacon repo (`docs/STATUS.md`).

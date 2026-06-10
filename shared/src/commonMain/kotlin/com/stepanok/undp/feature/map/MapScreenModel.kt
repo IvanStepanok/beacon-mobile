@@ -59,7 +59,7 @@ data class ReportPreview(
     val place: String,
     val time: String,
     val damage: DamageLevel,
-    val what3words: String,
+    val plusCode: String,
 )
 
 class MapScreenModel(
@@ -86,7 +86,7 @@ class MapScreenModel(
     val selectedPreview: StateFlow<ReportPreview?> =
         combine(reportRepository.observeReports(), selectedId) { all, id ->
             all.firstOrNull { it.id == id }?.let {
-                ReportPreview(it.id, it.place, relativeTime(clock.now(), it.capturedAt), it.damage, it.location.what3words.orEmpty())
+                ReportPreview(it.id, it.placeLabel, relativeTime(clock.now(), it.capturedAt), it.damage, it.location.plusCode.orEmpty())
             }
         }.stateIn(screenModelScope, SharingStarted.WhileSubscribed(5000), null)
 
@@ -124,7 +124,8 @@ class MapScreenModel(
                         }.toImmutableList(),
                         damageCounts = merged.groupingBy { it.damage }.eachCount(),
                         offline = conn == ConnectivityStatus.OFFLINE,
-                        queueCount = mine.count { !it.isSynced },
+                        // Terminal rejections are NOT queued — they will never upload.
+                        queueCount = mine.count { !it.isSynced && !it.isRejected },
                     )
                 }
             }

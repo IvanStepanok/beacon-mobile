@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">Map</string>
     <string name="nav_reports">Reports</string>
-    <string name="nav_sync">Sync</string>
     <string name="nav_crisis">Crisis</string>
     <string name="nav_profile">Profile</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">Caution</string>
     <string name="danger_warning">Warning</string>
     <string name="danger_critical">Critical</string>
-    <string name="crisis_alerts_title">Crisis alerts</string>
-    <string name="crisis_alerts_sub">Notify me when a crisis is detected nearby</string>
     <string name="crisis_safety_title">Stay safe while reporting</string>
     <string name="crisis_safety_tip">Keep a safe distance from damaged structures. Never enter unstable buildings to take a photo.</string>
     <string name="crisis_none_nearby">No active crisis near you</string>
@@ -74,8 +71,7 @@
 
     <!-- Capture: camera -->
     <string name="capture_camera_hint">Frame the damage clearly</string>
-    <string name="capture_guide_whole">Include the whole building in the frame.</string>
-    <string name="capture_guide_closeup">Then add a close-up of the worst damage.</string>
+    <string name="capture_guide_whole">Frame the whole building with the damage visible.</string>
     <string name="capture_guide_no_people">Please don\'t photograph people.</string>
     <string name="capture_capture_btn">Capture damage</string>
     <string name="capture_gallery">Gallery</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">Other</string>
     <string name="infra_other_desc">Specify below</string>
     <string name="infra_other_hint">Name / nature of the infrastructure</string>
+    <string name="infra_name_hint">Name / details of the infrastructure (optional)</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">A few more questions</string>
@@ -141,6 +138,7 @@
     <string name="health_none">Not functioning</string>
     <string name="health_unknown">Unknown</string>
     <string name="modular_needs">Most pressing needs</string>
+    <string name="modular_required_hint">Required — pick an answer</string>
     <string name="need_food_water">Food &amp; water</string>
     <string name="need_cash">Cash assistance</string>
     <string name="need_healthcare">Healthcare &amp; medicine</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">Water &amp; sanitation</string>
     <string name="need_protection">Protection &amp; support</string>
     <string name="need_local">Local authority support</string>
+    <string name="need_basic_services">Basic services (electricity, roads, schools)</string>
     <string name="need_other">Other</string>
+    <string name="need_other_hint">Describe the need</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">What caused this?</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">Optional. Write in any language — your words are saved with the report.</string>
     <string name="capture_describe_hint">e.g. The west wall has a crack, but the building has not collapsed.</string>
     <string name="capture_voice">Voice note</string>
-    <string name="capture_ai_suggests">Quick phrase</string>
-    <string name="capture_ai_cv">Template</string>
-    <string name="capture_ai_text">A common phrase you can drop in, then edit to match what you see.</string>
-    <string name="capture_ai_insert">Add phrase</string>
     <string name="capture_skip_desc">Skip description</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">Saved to queue</string>
     <string name="capture_submitted_body">Your report was submitted for review. It will appear on the map once it syncs.</string>
     <string name="capture_submitted_offline_body">You are offline. Your report will upload automatically when you are back online.</string>
-    <string name="capture_points">+10 community points</string>
-    <string name="capture_badge_progress">Helper badge progress</string>
+    <string name="capture_points">+10 points once your report is verified</string>
     <string name="capture_view_map">View on map</string>
     <string name="capture_new_report">New report</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">All</string>
     <string name="status_synced">Synced</string>
     <string name="status_queued">Queued</string>
+    <string name="status_rejected">Rejected</string>
+    <string name="reject_duplicate">Duplicate of a nearby report</string>
+    <string name="reject_rate_limited">Too many reports sent — try again later</string>
+    <string name="reject_invalid">The report could not be accepted</string>
     <string name="reports_empty">No reports match this filter.</string>
 
     <!-- Report detail -->
@@ -248,19 +247,9 @@
     <string name="detail_anonymised">Anonymised · EXIF stripped</string>
     <string name="detail_location_unresolved">Location unresolved · landmark: %1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">Sync queue</string>
-    <string name="sync_offline_msg">You are offline. Reports will sync automatically when you are back online.</string>
-    <string name="sync_online_msg">Connected. Uploading queued reports now.</string>
-    <string name="sync_awaiting">reports awaiting upload</string>
-    <string name="sync_total_mb">~%1$s MB total</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">Online</string>
     <string name="sync_offline">Offline</string>
-    <string name="sync_all_caught_up">All caught up.</string>
-    <string name="sync_waiting">Waiting for connection</string>
-    <string name="sync_uploading">Uploading</string>
-    <string name="sync_now">Sync now</string>
-    <string name="sync_in_progress">Syncing…</string>
 
     <!-- Profile -->
     <string name="profile_title">Profile</string>
@@ -278,8 +267,6 @@
     <string name="menu_language">Language</string>
     <string name="menu_privacy">Privacy</string>
     <string name="menu_privacy_sub">No name or phone · EXIF stripped</string>
-    <string name="menu_alerts">Crisis alerts</string>
-    <string name="menu_alerts_sub">Push when crisis is detected nearby</string>
     <string name="menu_about">About Beacon</string>
     <string name="menu_about_sub">Open-source · v 0.9.0</string>
     <string name="menu_offline">Offline maps</string>

@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">Карта</string>
     <string name="nav_reports">Отчёты</string>
-    <string name="nav_sync">Синхронизация</string>
     <string name="nav_crisis">Кризис</string>
     <string name="nav_profile">Профиль</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">Осторожно</string>
     <string name="danger_warning">Предупреждение</string>
     <string name="danger_critical">Критично</string>
-    <string name="crisis_alerts_title">Оповещения о кризисах</string>
-    <string name="crisis_alerts_sub">Уведомлять меня при обнаружении кризиса поблизости</string>
     <string name="crisis_safety_title">Соблюдайте безопасность при составлении отчёта</string>
     <string name="crisis_safety_tip">Держитесь на безопасном расстоянии от повреждённых конструкций. Никогда не входите в неустойчивые здания ради фото.</string>
     <string name="crisis_none_nearby">Поблизости нет активных кризисов</string>
@@ -74,8 +71,7 @@
     <!-- Capture: camera -->
     <string name="capture_camera_hint">Чётко расположите повреждения в кадре</string>
     <!-- Camera guide chips (AI translation — needs native review) -->
-    <string name="capture_guide_whole">Сфотографируйте здание целиком.</string>
-    <string name="capture_guide_closeup">Затем добавьте крупный план самых сильных повреждений.</string>
+    <string name="capture_guide_whole">Сфотографируйте здание целиком, чтобы повреждения были видны.</string>
     <string name="capture_guide_no_people">Пожалуйста, не фотографируйте людей.</string>
     <string name="capture_capture_btn">Снять повреждения</string>
     <string name="capture_gallery">Галерея</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">Другое</string>
     <string name="infra_other_desc">Укажите ниже</string>
     <string name="infra_other_hint">Название / тип инфраструктуры</string>
+    <string name="infra_name_hint">Название / детали инфраструктуры (необязательно)</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">Ещё несколько вопросов</string>
@@ -141,6 +138,7 @@
     <string name="health_none">Не работают</string>
     <string name="health_unknown">Неизвестно</string>
     <string name="modular_needs">Самые насущные потребности</string>
+    <string name="modular_required_hint">Обязательно — выберите ответ</string>
     <string name="need_food_water">Еда и вода</string>
     <string name="need_cash">Денежная помощь</string>
     <string name="need_healthcare">Медпомощь и лекарства</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">Вода и санитария</string>
     <string name="need_protection">Защита и поддержка</string>
     <string name="need_local">Поддержка местных властей</string>
+    <string name="need_basic_services">Базовые услуги (электричество, дороги, школы)</string>
     <string name="need_other">Другое</string>
+    <string name="need_other_hint">Опишите потребность</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">Что стало причиной?</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">Необязательно. Пишите на любом языке — ваши слова сохранятся вместе с отчётом.</string>
     <string name="capture_describe_hint">напр. На западной стене есть трещина, но здание не обрушилось.</string>
     <string name="capture_voice">Голосовая заметка</string>
-    <string name="capture_ai_suggests">Быстрая фраза</string>
-    <string name="capture_ai_cv">Шаблон</string>
-    <string name="capture_ai_text">Готовая фраза — вставьте и отредактируйте под то, что видите.</string>
-    <string name="capture_ai_insert">Добавить фразу</string>
     <string name="capture_skip_desc">Пропустить описание</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">Сохранено в очередь</string>
     <string name="capture_submitted_body">Ваш отчёт отправлен на проверку. Он появится на карте после синхронизации.</string>
     <string name="capture_submitted_offline_body">Вы не в сети. Ваш отчёт загрузится автоматически, когда связь восстановится.</string>
-    <string name="capture_points">+10 баллов сообщества</string>
-    <string name="capture_badge_progress">Прогресс значка помощника</string>
+    <string name="capture_points">+10 баллов после проверки вашего отчёта</string>
     <string name="capture_view_map">Показать на карте</string>
     <string name="capture_new_report">Новый отчёт</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">Все</string>
     <string name="status_synced">Синхронизировано</string>
     <string name="status_queued">В очереди</string>
+    <string name="status_rejected">Отклонён</string>
+    <string name="reject_duplicate">Дубликат отчёта поблизости</string>
+    <string name="reject_rate_limited">Отправлено слишком много отчётов — попробуйте позже</string>
+    <string name="reject_invalid">Отчёт не удалось принять</string>
     <string name="reports_empty">Нет отчётов, соответствующих этому фильтру.</string>
 
     <!-- Report detail -->
@@ -246,18 +245,11 @@
     <string name="detail_meta_captured">Снято</string>
     <string name="detail_description">Описание</string>
     <string name="detail_anonymised">Анонимизировано · EXIF удалён</string>
+    <string name="detail_location_unresolved">Местоположение не определено · ориентир: %1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">Очередь синхронизации</string>
-    <string name="sync_offline_msg">Вы не в сети. Отчёты синхронизируются автоматически, когда связь восстановится.</string>
-    <string name="sync_online_msg">Подключено. Идёт загрузка отчётов из очереди.</string>
-    <string name="sync_awaiting">отчётов ожидают загрузки</string>
-    <string name="sync_total_mb">~%1$s МБ всего</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">В сети</string>
     <string name="sync_offline">Не в сети</string>
-    <string name="sync_all_caught_up">Всё синхронизировано.</string>
-    <string name="sync_waiting">Ожидание соединения</string>
-    <string name="sync_uploading">Загрузка</string>
 
     <!-- Profile -->
     <string name="profile_title">Профиль</string>
@@ -275,8 +267,6 @@
     <string name="menu_language">Язык</string>
     <string name="menu_privacy">Конфиденциальность</string>
     <string name="menu_privacy_sub">Без имени и телефона · EXIF удалён</string>
-    <string name="menu_alerts">Оповещения о кризисах</string>
-    <string name="menu_alerts_sub">Push-уведомление при обнаружении кризиса поблизости</string>
     <string name="menu_about">О приложении Beacon</string>
     <string name="menu_about_sub">Открытый код · v 0.9.0</string>
     <string name="menu_offline">Автономные карты</string>
@@ -294,6 +284,4 @@
     <string name="language_sheet_title">Язык приложения</string>
     <string name="language_sheet_sub">По умолчанию Beacon использует язык вашего устройства.</string>
     <string name="language_system">Как в системе</string>
-    <string name="sync_now">Синхронизировать</string>
-    <string name="sync_in_progress">Синхронизация…</string>
 </resources>

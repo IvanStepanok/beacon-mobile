@@ -37,11 +37,6 @@ enum class CrisisNature {
 enum class DebrisState { YES, NO, UNSURE }
 
 // ── Modular Appendix-1 sections (optional) ──────────────────────────────────
-
-enum class ElectricityCondition { NONE_OBSERVED, MINOR, MODERATE, SEVERE, DESTROYED, UNKNOWN }
-
-enum class HealthServices { FULLY_FUNCTIONAL, PARTIALLY_FUNCTIONAL, LARGELY_DISRUPTED, NOT_FUNCTIONING, UNKNOWN }
-
-enum class PressingNeed {
-    FOOD_WATER, CASH, HEALTHCARE, SHELTER, LIVELIHOODS, WASH, PROTECTION, LOCAL_SUPPORT, OTHER
-}
+// No longer hardcoded enums: the modular form is schema-driven (GET /form-schema → FormSchema.kt),
+// so sections UNDP adds server-side render + submit without an app update. The wire vocabulary of
+// the built-in sections lives in defaultFormSections(), mirroring the server's defaults.

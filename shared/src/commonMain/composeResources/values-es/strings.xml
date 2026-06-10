@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_map">Mapa</string>
     <string name="nav_reports">Informes</string>
-    <string name="nav_sync">Sincronizar</string>
     <string name="nav_crisis">Crisis</string>
     <string name="nav_profile">Perfil</string>
 
@@ -15,8 +14,6 @@
     <string name="danger_caution">Precaución</string>
     <string name="danger_warning">Advertencia</string>
     <string name="danger_critical">Crítico</string>
-    <string name="crisis_alerts_title">Alertas de crisis</string>
-    <string name="crisis_alerts_sub">Avísame cuando se detecte una crisis cerca</string>
     <string name="crisis_safety_title">Mantente seguro/a al informar</string>
     <string name="crisis_safety_tip">Mantén una distancia segura de las estructuras dañadas. Nunca entres en edificios inestables para tomar una foto.</string>
     <string name="crisis_none_nearby">No hay ninguna crisis activa cerca de ti</string>
@@ -74,8 +71,7 @@
     <!-- Capture: camera -->
     <string name="capture_camera_hint">Encuadra el daño con claridad</string>
     <!-- Camera guide chips (AI translation — needs native review) -->
-    <string name="capture_guide_whole">Incluye el edificio completo en el encuadre.</string>
-    <string name="capture_guide_closeup">Luego añade un primer plano del daño más grave.</string>
+    <string name="capture_guide_whole">Encuadra el edificio completo con el daño visible.</string>
     <string name="capture_guide_no_people">Por favor, no fotografíes a personas.</string>
     <string name="capture_capture_btn">Capturar el daño</string>
     <string name="capture_gallery">Galería</string>
@@ -122,6 +118,7 @@
     <string name="infra_other">Otro</string>
     <string name="infra_other_desc">Especifica abajo</string>
     <string name="infra_other_hint">Nombre / tipo de la infraestructura</string>
+    <string name="infra_name_hint">Nombre / detalles de la infraestructura (opcional)</string>
 
     <!-- Capture: modular Appendix-1 sections -->
     <string name="capture_modular_q">Algunas preguntas más</string>
@@ -141,6 +138,7 @@
     <string name="health_none">No funcionan</string>
     <string name="health_unknown">Se desconoce</string>
     <string name="modular_needs">Necesidades más urgentes</string>
+    <string name="modular_required_hint">Obligatorio — elige una respuesta</string>
     <string name="need_food_water">Alimentos y agua</string>
     <string name="need_cash">Ayuda en efectivo</string>
     <string name="need_healthcare">Atención médica y medicamentos</string>
@@ -149,7 +147,9 @@
     <string name="need_wash">Agua y saneamiento</string>
     <string name="need_protection">Protección y apoyo</string>
     <string name="need_local">Apoyo de las autoridades locales</string>
+    <string name="need_basic_services">Servicios básicos (electricidad, carreteras, escuelas)</string>
     <string name="need_other">Otra</string>
+    <string name="need_other_hint">Describa la necesidad</string>
 
     <!-- Capture: crisis nature -->
     <string name="capture_crisis_q">¿Qué causó esto?</string>
@@ -196,10 +196,6 @@
     <string name="capture_describe_sub">Opcional. Escribe en cualquier idioma — tus palabras se guardan con el informe.</string>
     <string name="capture_describe_hint">p. ej. La pared oeste tiene una grieta, pero el edificio no se ha derrumbado.</string>
     <string name="capture_voice">Nota de voz</string>
-    <string name="capture_ai_suggests">Frase rápida</string>
-    <string name="capture_ai_cv">Plantilla</string>
-    <string name="capture_ai_text">Una frase común que puedes insertar y luego editar según lo que veas.</string>
-    <string name="capture_ai_insert">Añadir frase</string>
     <string name="capture_skip_desc">Omitir descripción</string>
 
     <!-- Capture: review -->
@@ -222,8 +218,7 @@
     <string name="capture_submitted_offline_title">Guardado en la cola</string>
     <string name="capture_submitted_body">Tu informe se envió para revisión. Aparecerá en el mapa cuando se sincronice.</string>
     <string name="capture_submitted_offline_body">Estás sin conexión. Tu informe se enviará automáticamente cuando vuelvas a tener conexión.</string>
-    <string name="capture_points">+10 puntos comunitarios</string>
-    <string name="capture_badge_progress">Progreso de la insignia de colaborador/a</string>
+    <string name="capture_points">+10 puntos cuando se verifique tu informe</string>
     <string name="capture_view_map">Ver en el mapa</string>
     <string name="capture_new_report">Nuevo informe</string>
 
@@ -233,6 +228,10 @@
     <string name="filter_all">Todos</string>
     <string name="status_synced">Sincronizado</string>
     <string name="status_queued">En cola</string>
+    <string name="status_rejected">Rechazado</string>
+    <string name="reject_duplicate">Duplicado de un informe cercano</string>
+    <string name="reject_rate_limited">Se enviaron demasiados informes — inténtalo más tarde</string>
+    <string name="reject_invalid">No se pudo aceptar el informe</string>
     <string name="reports_empty">Ningún informe coincide con este filtro.</string>
 
     <!-- Report detail -->
@@ -246,18 +245,11 @@
     <string name="detail_meta_captured">Capturado</string>
     <string name="detail_description">Descripción</string>
     <string name="detail_anonymised">Anonimizado · EXIF eliminado</string>
+    <string name="detail_location_unresolved">Ubicación sin resolver · punto de referencia: %1$s</string>
 
-    <!-- Sync queue -->
-    <string name="sync_title">Cola de sincronización</string>
-    <string name="sync_offline_msg">Estás sin conexión. Los informes se sincronizarán automáticamente cuando vuelvas a tener conexión.</string>
-    <string name="sync_online_msg">Conectado. Subiendo los informes en cola ahora.</string>
-    <string name="sync_awaiting">informes pendientes de subir</string>
-    <string name="sync_total_mb">~%1$s MB en total</string>
+    <!-- Sync status (Reports list) -->
     <string name="sync_online">En línea</string>
     <string name="sync_offline">Sin conexión</string>
-    <string name="sync_all_caught_up">Todo al día.</string>
-    <string name="sync_waiting">Esperando conexión</string>
-    <string name="sync_uploading">Subiendo</string>
 
     <!-- Profile -->
     <string name="profile_title">Perfil</string>
@@ -275,8 +267,6 @@
     <string name="menu_language">Idioma</string>
     <string name="menu_privacy">Privacidad</string>
     <string name="menu_privacy_sub">Sin nombre ni teléfono · EXIF eliminado</string>
-    <string name="menu_alerts">Alertas de crisis</string>
-    <string name="menu_alerts_sub">Notificación cuando se detecta una crisis cerca</string>
     <string name="menu_about">Acerca de Beacon</string>
     <string name="menu_about_sub">Código abierto · v 0.9.0</string>
     <string name="menu_offline">Mapas sin conexión</string>
@@ -294,6 +284,4 @@
     <string name="language_sheet_title">Idioma de la app</string>
     <string name="language_sheet_sub">De forma predeterminada, Beacon sigue el idioma de tu dispositivo.</string>
     <string name="language_system">Seguir el sistema</string>
-    <string name="sync_now">Sincronizar ahora</string>
-    <string name="sync_in_progress">Sincronizando…</string>
 </resources>

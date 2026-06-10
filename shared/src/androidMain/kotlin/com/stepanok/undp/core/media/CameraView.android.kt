@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
+import com.stepanok.undp.core.io.capturesDirPath
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -77,16 +78,19 @@ class AndroidCameraHandle(private val context: Context) : CameraHandle {
     }
 
     override fun capture(onResult: (CapturedPhoto?) -> Unit) {
-        val dir = File(context.cacheDir, "captures").apply { mkdirs() }
-        val file = File(dir, "capture_${java.lang.System.currentTimeMillis()}.jpg")
+        // Persistent captures dir (same root as the outbox) — a queued photo must survive
+        // OS cache purges + process death until its upload succeeds.
+        val file = File(capturesDirPath(), "capture_${java.lang.System.currentTimeMillis()}.jpg")
         val options = ImageCapture.OutputFileOptions.Builder(file).build()
         imageCapture.takePicture(
             options,
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(results: ImageCapture.OutputFileResults) {
-                    stripSensitiveExif(file.absolutePath)
-                    onResult(if (file.length() > 0) CapturedPhoto(file.absolutePath, file.length()) else null)
+                    // Downscale/recompress (drops ALL EXIF) + on-device face/plate redaction. This
+                    // runs ML Kit (Tasks.await blocks), so deliverProcessed does the work OFF this
+                    // main-thread callback and posts the CapturedPhoto back to the main thread.
+                    deliverProcessed(file.absolutePath, onResult)
                 }
 
                 override fun onError(exception: ImageCaptureException) {

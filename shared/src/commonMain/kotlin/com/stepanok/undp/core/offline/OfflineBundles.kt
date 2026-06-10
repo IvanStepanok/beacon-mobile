@@ -7,8 +7,7 @@ import com.stepanok.undp.domain.repository.DownloadQueue
 
 /**
  * Definitions for the offline materials Beacon can pre-download. The crisis pack is a real
- * MapLibre offline region (style + vector tiles for the affected bbox); building footprints
- * ship bundled with the app, so they are available offline from first launch.
+ * MapLibre offline region (style + vector tiles for the affected bbox).
  */
 object OfflineBundles {
     /** Same basemap the live map uses, so the cached region matches what's on screen. */
@@ -44,18 +43,10 @@ object OfflineBundles {
         ),
     )
 
-    fun footprintsBundle() = DownloadBundle(
-        id = "antakya-footprints",
-        title = "Building footprints",
-        type = DownloadType.FOOTPRINTS,
-        bytesTotal = 4_200_000,
-        state = DownloadState.Done, // ships bundled in the app
-    )
-
     fun region(id: String): Region? = if (id == CRISIS_PACK_ID) ANTAKYA else null
 
-    /** Initial list: footprints are already available offline; the crisis map is downloadable. */
-    fun seed(): List<DownloadBundle> = listOf(footprintsBundle())
+    /** Initial list: empty — only packs the user actually downloads appear here. */
+    fun seed(): List<DownloadBundle> = emptyList()
 }
 
 /** Platform-backed offline download queue (Android OfflineManager / iOS MLNOfflineStorage). */

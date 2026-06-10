@@ -40,6 +40,7 @@ import com.stepanok.undp.designsystem.components.DamageChip
 import com.stepanok.undp.core.media.ReportPhoto
 import com.stepanok.undp.designsystem.icons.BeaconIcons
 import com.stepanok.undp.designsystem.labels.damageLabel
+import com.stepanok.undp.designsystem.labels.rejectionReasonLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.SyncState
@@ -51,6 +52,7 @@ import undp.shared.generated.resources.reports_empty
 import undp.shared.generated.resources.reports_summary
 import undp.shared.generated.resources.reports_title
 import undp.shared.generated.resources.status_queued
+import undp.shared.generated.resources.status_rejected
 import undp.shared.generated.resources.status_synced
 import undp.shared.generated.resources.sync_offline
 import undp.shared.generated.resources.sync_online
@@ -141,13 +143,20 @@ private fun ReportRow(row: ReportRowUi, onClick: () -> Unit) {
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("#${row.id}", style = BeaconTheme.typography.titleS, color = colors.ink)
-                if (row.synced) {
-                    BeaconChip(stringResource(Res.string.status_synced), leadingIcon = BeaconIcons.Check, container = colors.okSoft, contentColor = colors.ok, size = ChipSize.Sm)
-                } else {
-                    BeaconChip(stringResource(Res.string.status_queued), leadingIcon = BeaconIcons.CloudOff, container = colors.surface3, contentColor = colors.ink2, size = ChipSize.Sm)
+                when {
+                    row.synced ->
+                        BeaconChip(stringResource(Res.string.status_synced), leadingIcon = BeaconIcons.Check, container = colors.okSoft, contentColor = colors.ok, size = ChipSize.Sm)
+                    // Terminal server rejection — never "Queued": the honest state + reason below.
+                    row.sync is SyncState.Rejected ->
+                        BeaconChip(stringResource(Res.string.status_rejected), leadingIcon = BeaconIcons.Warning, container = colors.warnSoft, contentColor = colors.warn, size = ChipSize.Sm)
+                    else ->
+                        BeaconChip(stringResource(Res.string.status_queued), leadingIcon = BeaconIcons.CloudOff, container = colors.surface3, contentColor = colors.ink2, size = ChipSize.Sm)
                 }
             }
             Text("${row.time} · ${row.place}", style = BeaconTheme.typography.caption, color = colors.ink3, modifier = Modifier.padding(top = 2.dp))
+            (row.sync as? SyncState.Rejected)?.let { rejected ->
+                Text(rejectionReasonLabel(rejected), style = BeaconTheme.typography.caption, color = colors.warn, modifier = Modifier.padding(top = 2.dp))
+            }
             Spacer(Modifier.height(6.dp))
             DamageChip(level = row.damage, label = damageLabel(row.damage), size = ChipSize.Sm)
             (row.sync as? SyncState.Syncing)?.let { s ->

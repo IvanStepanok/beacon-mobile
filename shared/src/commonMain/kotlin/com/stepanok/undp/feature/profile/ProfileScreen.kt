@@ -51,8 +51,6 @@ import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
 import undp.shared.generated.resources.menu_about
 import undp.shared.generated.resources.menu_about_sub
-import undp.shared.generated.resources.menu_alerts
-import undp.shared.generated.resources.menu_alerts_sub
 import undp.shared.generated.resources.export_csv
 import undp.shared.generated.resources.export_geojson
 import undp.shared.generated.resources.language_sheet_sub
@@ -138,8 +136,6 @@ object ProfileScreen : Screen {
                     MenuRow(BeaconIcons.Language, stringResource(Res.string.menu_language), currentLangLabel, onClick = { showLangSheet = true })
                     Divider()
                     MenuRow(BeaconIcons.Shield, stringResource(Res.string.menu_privacy), stringResource(Res.string.menu_privacy_sub))
-                    Divider()
-                    MenuRow(BeaconIcons.Bell, stringResource(Res.string.menu_alerts), stringResource(Res.string.menu_alerts_sub))
                     Divider()
                     MenuRow(BeaconIcons.Info, stringResource(Res.string.menu_about), stringResource(Res.string.menu_about_sub))
                 }

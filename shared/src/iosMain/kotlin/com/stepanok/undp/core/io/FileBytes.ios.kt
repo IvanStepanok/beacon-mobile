@@ -40,7 +40,7 @@ actual fun writeFileBytes(path: String, bytes: ByteArray): Boolean {
 }
 
 /** Application Support directory — persistent, NOT purgeable like the caches dir. */
-actual fun outboxFilePath(): String {
+private fun applicationSupportDir(): String {
     val dirs = NSSearchPathForDirectoriesInDomains(
         directory = NSApplicationSupportDirectory,
         domainMask = NSUserDomainMask,
@@ -55,5 +55,24 @@ actual fun outboxFilePath(): String {
         attributes = null,
         error = null,
     )
+    return base
+}
+
+actual fun outboxFilePath(): String {
+    val base = applicationSupportDir()
     return if (base.endsWith("/")) "${base}outbox.json" else "$base/outbox.json"
+}
+
+/** Persistent captures dir (Application Support/captures) — same root as the outbox, so
+ *  queued photos survive OS cache purges until their upload succeeds. */
+actual fun capturesDirPath(): String {
+    val base = applicationSupportDir()
+    val dir = if (base.endsWith("/")) "${base}captures" else "$base/captures"
+    NSFileManager.defaultManager.createDirectoryAtPath(
+        path = dir,
+        withIntermediateDirectories = true,
+        attributes = null,
+        error = null,
+    )
+    return dir
 }

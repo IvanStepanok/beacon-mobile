@@ -37,6 +37,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.stepanok.undp.core.media.BeaconBackHandler
 import com.stepanok.undp.core.media.CameraPreview
+import com.stepanok.undp.core.media.CapturedPhoto
 import com.stepanok.undp.core.media.RequestCameraPermission
 import com.stepanok.undp.core.media.rememberCameraHandle
 import com.stepanok.undp.core.media.rememberPhotoCapture
@@ -46,19 +47,16 @@ import com.stepanok.undp.designsystem.components.BeaconButtonSize
 import com.stepanok.undp.designsystem.safeBottomPadding
 import com.stepanok.undp.designsystem.safeTopPadding
 import com.stepanok.undp.designsystem.components.BeaconButtonVariant
-import com.stepanok.undp.designsystem.components.BeaconProgressBar
 import com.stepanok.undp.designsystem.components.BeaconStepper
 import com.stepanok.undp.designsystem.components.PhotoPlaceholder
 import com.stepanok.undp.designsystem.icons.BeaconIcons
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.designsystem.theme.beaconPopShadow
+import com.stepanok.undp.domain.model.FormSection
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
-import undp.shared.generated.resources.capture_badge_progress
 import undp.shared.generated.resources.capture_camera_hint
-import undp.shared.generated.resources.capture_capture_btn
-import undp.shared.generated.resources.capture_guide_closeup
 import undp.shared.generated.resources.capture_guide_no_people
 import undp.shared.generated.resources.capture_guide_whole
 import undp.shared.generated.resources.capture_new_report
@@ -121,8 +119,8 @@ object CaptureFlowScreen : Screen {
 
         when (step) {
             "camera" -> CameraStep(
-                onCaptured = { path, size ->
-                    model.onIntent(CaptureIntent.PhotoCaptured(path, size)); step = "damage"
+                onCaptured = { photo ->
+                    model.onIntent(CaptureIntent.PhotoCaptured(photo.path, photo.sizeBytes, photo.redaction)); step = "damage"
                 },
                 onClose = { nav.pop() },
             )
@@ -140,6 +138,7 @@ object CaptureFlowScreen : Screen {
                         total = CAPTURE_ORDER.size,
                         draft = state.draft,
                         damageScale = state.damageScale,
+                        formSections = state.formSections,
                         duplicateWarning = state.duplicateWarning,
                         onIntent = model::onIntent,
                         onBack = onBack,
@@ -170,6 +169,7 @@ private fun CaptureStep(
     total: Int,
     draft: CaptureDraft,
     damageScale: String,
+    formSections: List<FormSection>,
     duplicateWarning: String?,
     onIntent: (CaptureIntent) -> Unit,
     onBack: () -> Unit,
@@ -182,7 +182,7 @@ private fun CaptureStep(
         "debris" -> DebrisStep(draft, onIntent, current, total, onBack, onContinue)
         "location" -> LocationStep(draft, duplicateWarning, onIntent, current, total, onBack, onContinue)
         "describe" -> DescribeStep(draft, onIntent, current, total, onBack, onContinue)
-        "modular" -> ModularStep(draft, onIntent, current, total, onBack, onContinue)
+        "modular" -> ModularStep(draft, formSections, onIntent, current, total, onBack, onContinue)
         "review" -> ReviewStep(draft, current, total, onBack, onContinue)
     }
 }
@@ -258,10 +258,10 @@ fun StepHeading(title: String, subtitle: String) {
 // ── Camera ──────────────────────────────────────────────────────────────────
 
 @Composable
-private fun CameraStep(onCaptured: (String, Long) -> Unit, onClose: () -> Unit) {
+private fun CameraStep(onCaptured: (CapturedPhoto) -> Unit, onClose: () -> Unit) {
     // Live in-app camera (CameraX / AVFoundation). The gallery icon still falls back to the OS picker.
     val photoCapture = rememberPhotoCapture { photo ->
-        if (photo != null) onCaptured(photo.path, photo.sizeBytes)
+        if (photo != null) onCaptured(photo)
     }
     var granted by remember { mutableStateOf(false) }
     RequestCameraPermission { granted = it }
@@ -314,9 +314,8 @@ private fun CameraStep(onCaptured: (String, Long) -> Unit, onClose: () -> Unit) 
                     Text(stringResource(Res.string.capture_camera_hint), style = BeaconTheme.typography.caption, color = Color.White)
                 }
             }
-            // Capture guidance — whole building first, then a close-up; never people (privacy).
+            // Capture guidance — one photo per report, so frame it whole; never people (privacy).
             CameraGuideChip(stringResource(Res.string.capture_guide_whole))
-            CameraGuideChip(stringResource(Res.string.capture_guide_closeup))
             CameraGuideChip(stringResource(Res.string.capture_guide_no_people))
         }
 
@@ -330,7 +329,7 @@ private fun CameraStep(onCaptured: (String, Long) -> Unit, onClose: () -> Unit) 
                 Modifier.size(78.dp).clip(CircleShape)
                     .background(if (live) BeaconTheme.colors.primary else BeaconTheme.colors.primary.copy(alpha = 0.4f))
                     .clickable(enabled = live) {
-                        camera.capture { photo -> if (photo != null) onCaptured(photo.path, photo.sizeBytes) }
+                        camera.capture { photo -> if (photo != null) onCaptured(photo) }
                     },
                 contentAlignment = Alignment.Center,
             ) { Icon(BeaconIcons.Camera, contentDescription = "Capture", tint = Color.White, modifier = Modifier.size(30.dp)) }
@@ -396,7 +395,7 @@ private fun SubmittedStep(offline: Boolean, onDone: () -> Unit) {
             style = BeaconTheme.typography.body, color = colors.ink2, textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(22.dp))
-        // Reward card
+        // Reward card — points land once the report is verified; no fabricated badge progress.
         Row(
             Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(colors.surface).padding(16.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -405,12 +404,11 @@ private fun SubmittedStep(offline: Boolean, onDone: () -> Unit) {
                 Modifier.size(46.dp).clip(RoundedCornerShape(14.dp)).background(colors.warn),
                 contentAlignment = Alignment.Center,
             ) { Icon(BeaconIcons.Medal, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp)) }
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(Res.string.capture_points), style = BeaconTheme.typography.titleS, color = colors.ink)
-                Text("${stringResource(Res.string.capture_badge_progress)} · 60%", style = BeaconTheme.typography.caption, color = colors.ink3)
-                Spacer(Modifier.height(6.dp))
-                BeaconProgressBar(progress = 0.6f, color = colors.warn)
-            }
+            Text(
+                stringResource(Res.string.capture_points),
+                style = BeaconTheme.typography.titleS, color = colors.ink,
+                modifier = Modifier.weight(1f),
+            )
         }
         Spacer(Modifier.height(22.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
