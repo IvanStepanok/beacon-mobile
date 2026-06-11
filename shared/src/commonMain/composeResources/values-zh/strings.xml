@@ -74,6 +74,9 @@
     <string name="damage_tier_partial_desc">有可见的结构性损坏；仍然屹立</string>
     <string name="damage_tier_complete">完全损毁</string>
     <string name="damage_tier_complete_desc">已倒塌或无法修复</string>
+    <!-- Capture: on-device advisory AI suggestion (B2) -->
+    <string name="capture_ai_suggestion_prefix">设备端 AI 建议</string>
+    <string name="capture_ai_suggestion_hint">仅供参考——请确认或另选。</string>
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">可能受损</string>
     <string name="capture_possibly_damaged_desc">不确定具体程度——标记出来交由分析员审核。</string>

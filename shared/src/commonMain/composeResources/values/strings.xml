@@ -74,6 +74,9 @@
     <string name="damage_tier_partial_desc">Visible structural damage; still standing</string>
     <string name="damage_tier_complete">Completely destroyed</string>
     <string name="damage_tier_complete_desc">Collapsed or beyond repair</string>
+    <!-- Capture: on-device advisory AI suggestion (B2) -->
+    <string name="capture_ai_suggestion_prefix">On-device AI suggests</string>
+    <string name="capture_ai_suggestion_hint">Advisory only — confirm or choose another.</string>
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Possibly damaged</string>
     <string name="capture_possibly_damaged_desc">Not sure of the exact level — flag it for an analyst to review.</string>

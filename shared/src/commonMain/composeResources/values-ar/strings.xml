@@ -74,6 +74,9 @@
     <string name="damage_tier_partial_desc">ضرر إنشائي مرئي؛ لا يزال قائمًا</string>
     <string name="damage_tier_complete">دُمّر بالكامل</string>
     <string name="damage_tier_complete_desc">منهار أو يتعذّر إصلاحه</string>
+    <!-- Capture: on-device advisory AI suggestion (B2) -->
+    <string name="capture_ai_suggestion_prefix">يقترح الذكاء الاصطناعي على الجهاز</string>
+    <string name="capture_ai_suggestion_hint">للإرشاد فقط — أكِّد أو اختر خياراً آخر.</string>
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">ربما متضرر</string>
     <string name="capture_possibly_damaged_desc">لست متأكدًا من المستوى الدقيق — ضع علامة ليراجعه محلّل.</string>

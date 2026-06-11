@@ -126,6 +126,11 @@ data class SubmitReportDto(
     val crisisId: String? = null,
     val damage: String,
     val possiblyDamaged: Boolean,
+    /** Advisory, on-device classifier suggestion (B2): the model's tier + confidence (0–100),
+     *  stored ALONGSIDE the human [damage]. Omitted when the model abstained / no model. The
+     *  backend already validates + persists ai_level / ai_confidence. */
+    val aiLevel: String? = null,
+    val aiConfidence: Int? = null,
     val infraTypes: List<String>,
     /** Name/details of the infrastructure (any type), e.g. "Cumhuriyet Primary School". */
     val infraName: String? = null,

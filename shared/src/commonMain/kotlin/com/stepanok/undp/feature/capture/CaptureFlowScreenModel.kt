@@ -9,6 +9,7 @@ import com.stepanok.undp.core.connectivity.ConnectivityObserver
 import com.stepanok.undp.core.connectivity.ConnectivityStatus
 import com.stepanok.undp.core.location.LocationProvider
 import com.stepanok.undp.core.location.PlusCode
+import com.stepanok.undp.core.ml.DamageClassifier
 import com.stepanok.undp.core.mvi.MviScreenModel
 import com.stepanok.undp.domain.model.Anonymization
 import com.stepanok.undp.domain.model.DebrisState
@@ -26,6 +27,7 @@ import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.domain.repository.SyncManager
 import com.stepanok.undp.core.format.relativeTime
 import com.stepanok.undp.translation.LanguageDetector
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -38,6 +40,7 @@ class CaptureFlowScreenModel(
     private val clock: AppClock,
     private val ids: IdGenerator,
     private val locationProvider: LocationProvider,
+    private val damageClassifier: DamageClassifier,
 ) : MviScreenModel<CaptureState, CaptureIntent, CaptureEffect>(CaptureState()) {
 
     init {
@@ -56,8 +59,9 @@ class CaptureFlowScreenModel(
 
     override fun onIntent(intent: CaptureIntent) {
         when (intent) {
-            is CaptureIntent.PhotoCaptured -> setState {
-                copy(draft = draft.copy(photoCaptured = true, photoPath = intent.path, photoSizeBytes = intent.sizeBytes, redaction = intent.redaction))
+            is CaptureIntent.PhotoCaptured -> onPhotoCaptured(intent)
+            is CaptureIntent.DamageSuggested -> setState {
+                copy(draft = draft.copy(suggesting = false, suggestedTier = intent.tier, suggestedConfidence = intent.confidence))
             }
             is CaptureIntent.SetDamageTier -> setState { copy(draft = draft.copy(damageTier = intent.tier)) }
             is CaptureIntent.SetPossiblyDamaged -> setState { copy(draft = draft.copy(possiblyDamaged = intent.flag)) }
@@ -90,6 +94,34 @@ class CaptureFlowScreenModel(
 
     /** True once the reporter taps a building — auto-GPS must then never move the pin. */
     private var userPinned = false
+
+    /** In-flight advisory classification (cancelled if the reporter re-captures). */
+    private var classifyJob: Job? = null
+
+    /** Store the photo, then fire on-device, OFFLINE advisory classification (B2). Inference runs
+     *  while the reporter reads the Damage step (the next step); the result pre-highlights a tier
+     *  but never auto-selects. Cancels any prior run; never blocks the flow (classify never throws). */
+    private fun onPhotoCaptured(intent: CaptureIntent.PhotoCaptured) {
+        setState {
+            copy(
+                draft = draft.copy(
+                    photoCaptured = true,
+                    photoPath = intent.path,
+                    photoSizeBytes = intent.sizeBytes,
+                    redaction = intent.redaction,
+                    // Reset any prior suggestion — inference for THIS photo starts now.
+                    suggesting = true,
+                    suggestedTier = null,
+                    suggestedConfidence = 0,
+                ),
+            )
+        }
+        classifyJob?.cancel()
+        classifyJob = screenModelScope.launch {
+            val s = damageClassifier.classify(intent.path)
+            onIntent(CaptureIntent.DamageSuggested(s.tier, s.confidencePercent))
+        }
+    }
 
     /** Pre-fill the draft with the device fix: the cached last-known INSTANTLY (so the
      *  map snaps to the user, no Antakya flash / 8 s wait), then the precise fresh fix. */
@@ -173,6 +205,10 @@ class CaptureFlowScreenModel(
                 photos = draft.photoPath?.let { listOf(PhotoRef(localPath = it, sizeBytes = draft.photoSizeBytes)) }
                     ?: emptyList(),
                 damage = tier,
+                // Advisory on-device classifier (B2): store the model's suggestion alongside the
+                // human grade (both, so analysts see agreement). Null when the model abstained.
+                aiLevel = draft.suggestedTier,
+                aiConfidence = draft.suggestedTier?.let { draft.suggestedConfidence },
                 possiblyDamaged = draft.possiblyDamaged,
                 infraTypes = draft.infra,
                 infraName = draft.infraName.ifBlank { null },

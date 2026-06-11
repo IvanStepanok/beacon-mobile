@@ -52,6 +52,10 @@ fun OutboxEntry.toReport(): Report {
         photos = photos,
         // Reconstruct the tier from either stored field (tolerant of pre-migration 5-level names).
         damage = tierOf(damageTier ?: damageLevel),
+        // Advisory classifier suggestion (B2) survives the outbox round-trip so an offline report's
+        // resumed upload still carries aiLevel/aiConfidence (re-derived via report.toSubmitDto()).
+        aiLevel = s.aiLevel?.let { tierOf(it) },
+        aiConfidence = s.aiConfidence,
         possiblyDamaged = s.possiblyDamaged,
         infraTypes = s.infraTypes.mapNotNull(::infraOf).toSet(),
         infraName = s.infraName,

@@ -8,6 +8,8 @@ import com.stepanok.undp.core.connectivity.ConnectivityObserver
 import com.stepanok.undp.core.connectivity.createConnectivityObserver
 import com.stepanok.undp.core.location.LocationProvider
 import com.stepanok.undp.core.location.createLocationProvider
+import com.stepanok.undp.core.ml.DamageClassifier
+import com.stepanok.undp.core.ml.createDamageClassifier
 import com.stepanok.undp.core.offline.createDownloadQueue
 import com.stepanok.undp.data.remote.BeaconApi
 import com.stepanok.undp.data.remote.RemoteCrisisRepository
@@ -33,6 +35,7 @@ val coreModule: Module = module {
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     single<ConnectivityObserver> { createConnectivityObserver() }
     single<LocationProvider> { createLocationProvider() }
+    single<DamageClassifier> { createDamageClassifier() }
     single<LanguageDetector> { ScriptLanguageDetector() }
 }
 
@@ -53,7 +56,7 @@ val dataModule: Module = module {
 /** ScreenModel factories are registered here as features are built. */
 val featureModule: Module = module {
     factory { com.stepanok.undp.feature.map.MapScreenModel(get(), get(), get(), get(), get()) }
-    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { com.stepanok.undp.feature.reports.ReportsScreenModel(get(), get(), get(), get()) }
     factory { (id: String) -> com.stepanok.undp.feature.reportdetail.ReportDetailScreenModel(id, get(), get()) }
     factory { com.stepanok.undp.feature.profile.ProfileScreenModel(get(), get()) }

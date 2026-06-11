@@ -33,6 +33,8 @@ import com.stepanok.undp.domain.model.InfraType
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
+import undp.shared.generated.resources.capture_ai_suggestion_hint
+import undp.shared.generated.resources.capture_ai_suggestion_prefix
 import undp.shared.generated.resources.capture_crisis_q
 import undp.shared.generated.resources.capture_crisis_sub
 import undp.shared.generated.resources.capture_damage_q
@@ -105,6 +107,39 @@ fun DamageStep(
         footer = { Text(stringResource(Res.string.step_change_later), style = BeaconTheme.typography.caption, color = colors.ink3) },
     ) {
         StepHeading(stringResource(Res.string.capture_damage_q), stringResource(Res.string.capture_damage_sub))
+        // Advisory, on-device AI suggestion (B2). NON-BINDING: it names the tier the offline model
+        // proposed + its confidence, but never selects it — Continue stays gated on a real tap
+        // (human-in-the-loop). Shown only when the model produced a suggestion above its floor.
+        draft.suggestedTier?.let { suggested ->
+            val labelRes = when (suggested) {
+                DamageTier.MINIMAL -> Res.string.damage_tier_minimal
+                DamageTier.PARTIAL -> Res.string.damage_tier_partial
+                DamageTier.COMPLETE -> Res.string.damage_tier_complete
+            }
+            Row(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                    .background(colors.primarySoft)
+                    .border(1.dp, colors.primary.copy(alpha = 0.35f), RoundedCornerShape(14.dp))
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Icon(BeaconIcons.Bolt, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "${stringResource(Res.string.capture_ai_suggestion_prefix)}: ${stringResource(labelRes)} · ${draft.suggestedConfidence}%",
+                        style = BeaconTheme.typography.titleS,
+                        color = colors.ink,
+                    )
+                    Text(
+                        stringResource(Res.string.capture_ai_suggestion_hint),
+                        style = BeaconTheme.typography.caption,
+                        color = colors.ink3,
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+        }
         // The mandated 3-tier classification (minimal / partial / complete).
         val tiers = listOf(
             DamageTier.MINIMAL to (Res.string.damage_tier_minimal to Res.string.damage_tier_minimal_desc),

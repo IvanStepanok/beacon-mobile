@@ -21,6 +21,12 @@ data class CaptureDraft(
     val redaction: RedactionResult = RedactionResult(),
     /** The reporter's chosen damage tier (null until they pick one). */
     val damageTier: DamageTier? = null,
+    /** On-device advisory classifier (B2): true while inference runs, then the suggested tier +
+     *  confidence (0–100). [suggestedTier] == null = the model abstained (below floor / no model).
+     *  ADVISORY — the Damage step pre-highlights it but never auto-selects (human-in-the-loop). */
+    val suggesting: Boolean = false,
+    val suggestedTier: DamageTier? = null,
+    val suggestedConfidence: Int = 0,
     val possiblyDamaged: Boolean = false,
     val infra: Set<InfraType> = emptySet(),
     /** Optional name/details of the infrastructure — one field for ANY selected type. When
@@ -61,6 +67,9 @@ data class CaptureState(
 sealed interface CaptureIntent : UiIntent {
     /** A real photo was captured/picked and saved to [path] ([sizeBytes] on disk). */
     data class PhotoCaptured(val path: String, val sizeBytes: Long, val redaction: RedactionResult = RedactionResult()) : CaptureIntent
+    /** The on-device advisory classifier finished: [tier] = suggestion (null = abstained),
+     *  [confidence] 0–100. Fired from the async classify kicked off on PhotoCaptured. */
+    data class DamageSuggested(val tier: DamageTier?, val confidence: Int) : CaptureIntent
     data class SetDamageTier(val tier: DamageTier) : CaptureIntent
     data class SetPossiblyDamaged(val flag: Boolean) : CaptureIntent
     data class ToggleInfra(val type: InfraType) : CaptureIntent

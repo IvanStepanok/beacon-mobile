@@ -74,6 +74,9 @@
     <string name="damage_tier_partial_desc">Видимые структурные повреждения; здание стоит</string>
     <string name="damage_tier_complete">Полностью разрушено</string>
     <string name="damage_tier_complete_desc">Обрушено или не подлежит восстановлению</string>
+    <!-- Capture: on-device advisory AI suggestion (B2) -->
+    <string name="capture_ai_suggestion_prefix">ИИ на устройстве предлагает</string>
+    <string name="capture_ai_suggestion_hint">Только подсказка — подтвердите или выберите другое.</string>
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Возможно, повреждено</string>
     <string name="capture_possibly_damaged_desc">Точная степень неясна — отметьте для проверки аналитиком.</string>

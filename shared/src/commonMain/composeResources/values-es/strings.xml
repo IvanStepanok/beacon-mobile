@@ -74,6 +74,9 @@
     <string name="damage_tier_partial_desc">Daño estructural visible; aún en pie</string>
     <string name="damage_tier_complete">Completamente destruido</string>
     <string name="damage_tier_complete_desc">Derrumbado o irreparable</string>
+    <!-- Capture: on-device advisory AI suggestion (B2) -->
+    <string name="capture_ai_suggestion_prefix">La IA del dispositivo sugiere</string>
+    <string name="capture_ai_suggestion_hint">Solo orientativo: confirma o elige otra opción.</string>
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Posiblemente dañado</string>
     <string name="capture_possibly_damaged_desc">No estás seguro/a del nivel exacto — márcalo para que lo revise un analista.</string>

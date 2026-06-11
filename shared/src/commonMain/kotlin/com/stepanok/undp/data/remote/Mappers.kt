@@ -56,6 +56,9 @@ fun ReportDto.toDomain(): Report = Report(
     id = id,
     idempotencyKey = idempotencyKey.ifBlank { "idem-$id" },
     damage = tier(damage),
+    // Advisory on-device classifier suggestion (B2), if the server stored one.
+    aiLevel = aiLevel?.let { tier(it) },
+    aiConfidence = aiConfidence,
     possiblyDamaged = possiblyDamaged,
     infraTypes = infraTypes.mapNotNull(::infra).toSet(),
     infraName = infraName,
@@ -165,6 +168,9 @@ fun Report.toSubmitDto(): SubmitReportDto = SubmitReportDto(
     // The mandated 3-tier classification (minimal|partial|complete).
     damage = damage.name.lowercase(),
     possiblyDamaged = possiblyDamaged,
+    // Advisory on-device classifier suggestion (B2) — same tier vocabulary, lowercased.
+    aiLevel = aiLevel?.name?.lowercase(),
+    aiConfidence = aiConfidence,
     infraTypes = infraTypes.map { it.name.lowercase() },
     infraName = infraName,
     infraOtherDetail = infraOtherDetail,

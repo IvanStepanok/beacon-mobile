@@ -13,8 +13,13 @@ data class Report(
     val id: String,
     val idempotencyKey: String,
     val photos: List<PhotoRef> = emptyList(),
-    /** The mandated 3-tier damage classification (minimal/partial/complete). */
+    /** The mandated 3-tier damage classification (minimal/partial/complete) — the HUMAN grade. */
     val damage: DamageTier,
+    /** Optional on-device, OFFLINE advisory classifier suggestion (B2): the tier the model proposed
+     *  and its confidence (0–100). ADVISORY ONLY — the human [damage] is authoritative; both are
+     *  stored so analysts can see model-vs-human agreement. Null when the model abstained / no model. */
+    val aiLevel: DamageTier? = null,
+    val aiConfidence: Int? = null,
     /** Reporter unsure of the exact grade (resolves the satellite "possibly damaged" class). */
     val possiblyDamaged: Boolean = false,
     val infraTypes: Set<InfraType> = emptySet(),
