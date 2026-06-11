@@ -81,6 +81,10 @@ kotlin {
             implementation(libs.mlkit.face.detection)
             implementation(libs.mlkit.text.recognition)
             implementation(libs.gms.tasks)
+            // On-device, offline advisory damage classifier (B2): LiteRT runtime (the TF 2.17-era
+            // rebrand of TFLite — same org.tensorflow.lite.Interpreter API; the older 2.16.1 runtime
+            // can't run our model's FULLY_CONNECTED v12 op).
+            implementation("com.google.ai.edge.litert:litert:1.0.1")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
