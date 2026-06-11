@@ -97,9 +97,16 @@ fun LocationStep(
     // A report must carry a REAL location: a GPS fix / tapped footprint, or a non-blank landmark.
     // Block Continue until one of those exists so we never submit a fabricated point.
     val hasLocation = fix != null || draft.landmark.isNotBlank()
-    // Recenter the map on the real GPS fix as soon as it arrives.
+    // Recenter the map ONCE, on the first real fix (the GPS arrival). Tapping a building must
+    // NOT move the camera: recentering on every draft.lat/lng change made a tap lurch the map,
+    // sliding a different building under the centre marker so it looked like the wrong one was
+    // selected. A footprint tap now highlights the polygon in place, leaving the camera put.
+    var centeredOnce by remember { mutableStateOf(false) }
     LaunchedEffect(fix) {
-        if (fix != null) mapController.recenter(fix, MapDefaults.BUILDING_ZOOM)
+        if (fix != null && !centeredOnce) {
+            mapController.recenter(fix, MapDefaults.BUILDING_ZOOM)
+            centeredOnce = true
+        }
     }
     StepShell(current, total, onBack, onContinue, canContinue = hasLocation, continueLabel = stringResource(Res.string.capture_location_confirm)) {
         StepHeading(stringResource(Res.string.capture_location_q), stringResource(Res.string.capture_location_sub))
@@ -116,8 +123,12 @@ fun LocationStep(
                 onFootprintTap = { p, id -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng, id)) },
                 modifier = Modifier.fillMaxWidth().height(420.dp),
             )
-            // center "your location" marker
-            Icon(BeaconIcons.Pin, contentDescription = null, tint = colors.primary, modifier = Modifier.align(Alignment.Center).size(34.dp))
+            // Centre "your location" crosshair — shown ONLY while no specific building is tapped.
+            // Once a footprint is selected, the highlighted polygon (not the centre) is the pinned
+            // location, so a centre pin there would point at the wrong building.
+            if (draft.buildingId == null) {
+                Icon(BeaconIcons.Pin, contentDescription = null, tint = colors.primary, modifier = Modifier.align(Alignment.Center).size(34.dp))
+            }
             // GPS status chip — shows "Locating…" until a real fix arrives, then the live accuracy.
             Row(
                 Modifier.align(Alignment.TopStart).padding(10.dp).clip(CircleShape).background(colors.surface.copy(alpha = 0.95f)).padding(horizontal = 10.dp, vertical = 5.dp),
