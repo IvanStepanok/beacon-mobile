@@ -264,4 +264,9 @@
     <string name="language_sheet_title">Langue de l'application</string>
     <string name="language_sheet_sub">Par défaut, Beacon suit la langue de votre appareil.</string>
     <string name="language_system">Suivre le système</string>
+    <string name="withdraw_action">Retirer le signalement</string>
+    <string name="withdraw_confirm_title">Retirer ce signalement ?</string>
+    <string name="withdraw_confirm_body">Cela efface définitivement votre signalement et sa photo du serveur. Action irréversible.</string>
+    <string name="withdraw_confirm">Retirer</string>
+    <string name="withdraw_cancel">Annuler</string>
 </resources>

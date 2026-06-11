@@ -264,4 +264,9 @@
     <string name="language_sheet_title">Idioma de la app</string>
     <string name="language_sheet_sub">De forma predeterminada, Beacon sigue el idioma de tu dispositivo.</string>
     <string name="language_system">Seguir el sistema</string>
+    <string name="withdraw_action">Retirar informe</string>
+    <string name="withdraw_confirm_title">¿Retirar este informe?</string>
+    <string name="withdraw_confirm_body">Esto borra de forma permanente tu informe y su foto del servidor. No se puede deshacer.</string>
+    <string name="withdraw_confirm">Retirar</string>
+    <string name="withdraw_cancel">Cancelar</string>
 </resources>

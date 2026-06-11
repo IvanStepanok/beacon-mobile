@@ -264,4 +264,9 @@
     <string name="language_sheet_title">Язык приложения</string>
     <string name="language_sheet_sub">По умолчанию Beacon использует язык вашего устройства.</string>
     <string name="language_system">Как в системе</string>
+    <string name="withdraw_action">Отозвать отчёт</string>
+    <string name="withdraw_confirm_title">Отозвать этот отчёт?</string>
+    <string name="withdraw_confirm_body">Ваш отчёт и его фото будут безвозвратно удалены с сервера. Это действие нельзя отменить.</string>
+    <string name="withdraw_confirm">Отозвать</string>
+    <string name="withdraw_cancel">Отмена</string>
 </resources>

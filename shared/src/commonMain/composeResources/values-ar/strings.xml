@@ -264,4 +264,9 @@
     <string name="language_sheet_title">لغة التطبيق</string>
     <string name="language_sheet_sub">يتبع Beacon افتراضيًا لغة جهازك.</string>
     <string name="language_system">اتّباع النظام</string>
+    <string name="withdraw_action">سحب التقرير</string>
+    <string name="withdraw_confirm_title">سحب هذا التقرير؟</string>
+    <string name="withdraw_confirm_body">سيؤدي ذلك إلى حذف تقريرك وصورته نهائيًا من الخادم. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="withdraw_confirm">سحب</string>
+    <string name="withdraw_cancel">إلغاء</string>
 </resources>

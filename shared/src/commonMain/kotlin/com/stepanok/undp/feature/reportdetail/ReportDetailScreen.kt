@@ -20,11 +20,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,6 +73,11 @@ import undp.shared.generated.resources.detail_timeline
 import undp.shared.generated.resources.detail_translated_from
 import undp.shared.generated.resources.report_label
 import undp.shared.generated.resources.status_rejected
+import undp.shared.generated.resources.withdraw_action
+import undp.shared.generated.resources.withdraw_cancel
+import undp.shared.generated.resources.withdraw_confirm
+import undp.shared.generated.resources.withdraw_confirm_body
+import undp.shared.generated.resources.withdraw_confirm_title
 
 data class ReportDetailScreen(val reportId: String) : Screen {
     @Composable
@@ -75,6 +86,8 @@ data class ReportDetailScreen(val reportId: String) : Screen {
         val state by model.state.collectAsState()
         val colors = BeaconTheme.colors
         val nav = LocalNavigator.currentOrThrow
+        // The report was erased server-side (withdrawn) → leave the now-empty detail screen.
+        LaunchedEffect(state.withdrawn) { if (state.withdrawn) nav.pop() }
         val report = state.report ?: return
 
         Column(Modifier.fillMaxSize().background(colors.bg).verticalScroll(rememberScrollState())) {
@@ -182,6 +195,11 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                     }
                 }
 
+                // Withdraw (data-subject takedown) — only on the reporter's OWN report.
+                if (report.isMine) {
+                    WithdrawReportButton(withdrawing = state.withdrawing, onConfirm = { model.withdraw() })
+                }
+
                 // Damage timeline
                 state.timeline?.takeIf { it.versions.size > 1 }?.let { tl ->
                     Column {
@@ -199,6 +217,40 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun WithdrawReportButton(withdrawing: Boolean, onConfirm: () -> Unit) {
+    val colors = BeaconTheme.colors
+    var confirm by remember { mutableStateOf(false) }
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+            .border(1.dp, colors.complete.copy(alpha = 0.4f), RoundedCornerShape(14.dp))
+            .clickable(enabled = !withdrawing) { confirm = true }
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Icon(BeaconIcons.Warning, contentDescription = null, tint = colors.complete, modifier = Modifier.size(18.dp))
+        Text(stringResource(Res.string.withdraw_action), style = BeaconTheme.typography.label, color = colors.complete)
+    }
+    if (confirm) {
+        AlertDialog(
+            onDismissRequest = { confirm = false },
+            title = { Text(stringResource(Res.string.withdraw_confirm_title)) },
+            text = { Text(stringResource(Res.string.withdraw_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = { confirm = false; onConfirm() }) {
+                    Text(stringResource(Res.string.withdraw_confirm), color = colors.complete)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirm = false }) {
+                    Text(stringResource(Res.string.withdraw_cancel))
+                }
+            },
+        )
     }
 }
 

@@ -234,6 +234,13 @@ class RemoteReportRepository(
         upsertMine(report.copy(sync = state)) // persist the new state to disk too
     }
 
+    override suspend fun withdraw(reportId: String): Boolean {
+        // The server erases the report (+ photo) and 403s anyone but the creating device.
+        val ok = runCatching { api.withdrawReport(reportId) }.getOrDefault(false)
+        if (ok) removeMine(reportId) // drop it from My Reports + the persisted outbox
+        return ok
+    }
+
     override suspend fun formSections(): List<FormSection> {
         // Fallback chain: live schema (crisis-scoped) → cache(crisis) → cache(default) → built-in.
         // A fetched-but-empty schema is honored as-is (a crisis may disable every section).
@@ -267,6 +274,12 @@ class RemoteReportRepository(
         }
         // Persist the whole outbox on every mutation so a Queued/Failed/PhotoPending item
         // survives the app being killed. Atomic write; best-effort (ignore IO failure).
+        runCatching { outbox.save(updated) }
+    }
+
+    /** Drop a report from My Reports + the persisted outbox (after a confirmed withdrawal). */
+    private fun removeMine(reportId: String) {
+        val updated = _mine.updateAndGet { current -> current.filterNot { it.id == reportId } }
         runCatching { outbox.save(updated) }
     }
 }

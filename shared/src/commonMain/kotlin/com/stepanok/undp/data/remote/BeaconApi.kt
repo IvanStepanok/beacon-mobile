@@ -99,6 +99,12 @@ class BeaconApi(
         return if (r.status.isSuccess()) r.body() else null
     }
 
+    /** Reporter-initiated takedown of their OWN report (data-subject erasure). Anonymous,
+     *  bound to the X-Device-Id the client always sends; the server erases the report +
+     *  its photo and 403s anyone else. Returns true only on a confirmed erasure. */
+    suspend fun withdrawReport(id: String): Boolean =
+        client.post("$v1/reports/$id/withdraw").status.isSuccess()
+
     suspend fun buildingTimeline(buildingId: String): BuildingTimelineDto? {
         val r = client.get("$v1/buildings/$buildingId/timeline")
         return if (r.status.isSuccess()) r.body() else null

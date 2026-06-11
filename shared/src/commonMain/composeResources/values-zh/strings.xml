@@ -264,4 +264,9 @@
     <string name="language_sheet_title">应用语言</string>
     <string name="language_sheet_sub">默认情况下，Beacon 跟随您的设备语言。</string>
     <string name="language_system">跟随系统</string>
+    <string name="withdraw_action">撤回报告</string>
+    <string name="withdraw_confirm_title">撤回此报告？</string>
+    <string name="withdraw_confirm_body">这将从服务器永久删除您的报告及其照片。此操作无法撤销。</string>
+    <string name="withdraw_confirm">撤回</string>
+    <string name="withdraw_cancel">取消</string>
 </resources>

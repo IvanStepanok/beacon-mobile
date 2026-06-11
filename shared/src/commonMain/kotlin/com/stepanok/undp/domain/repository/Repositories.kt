@@ -42,6 +42,9 @@ interface ReportRepository {
     suspend fun submit(report: Report)
     /** Update one report's sync state (driven by [SyncManager]). */
     suspend fun updateSync(reportId: String, state: SyncState)
+    /** Reporter-initiated takedown of their OWN report (data-subject erasure). Returns true
+     *  when the server confirms erasure; the report is then removed from My Reports + outbox. */
+    suspend fun withdraw(reportId: String): Boolean
     /** The modular capture-form sections — server-driven (GET /form-schema for the current
      *  crisis scope), cached so the form works offline, with the built-in Appendix-1 default
      *  as the final fallback. */

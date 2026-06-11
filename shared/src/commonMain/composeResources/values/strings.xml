@@ -264,4 +264,9 @@
     <string name="language_sheet_title">App language</string>
     <string name="language_sheet_sub">By default Beacon follows your device language.</string>
     <string name="language_system">Follow system</string>
+    <string name="withdraw_action">Withdraw report</string>
+    <string name="withdraw_confirm_title">Withdraw this report?</string>
+    <string name="withdraw_confirm_body">This permanently erases your report and its photo from the server. This cannot be undone.</string>
+    <string name="withdraw_confirm">Withdraw</string>
+    <string name="withdraw_cancel">Cancel</string>
 </resources>

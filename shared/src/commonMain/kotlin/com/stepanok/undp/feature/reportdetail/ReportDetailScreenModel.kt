@@ -19,13 +19,17 @@ import kotlinx.coroutines.launch
 data class ReportDetailUiState(
     val report: Report? = null,
     val timeline: BuildingTimeline? = null,
+    /** A withdrawal request is in flight (disables the button). */
+    val withdrawing: Boolean = false,
+    /** The report was erased server-side → the screen should close. */
+    val withdrawn: Boolean = false,
 ) : UiState
 
 sealed interface ReportDetailIntent : UiIntent
 
 class ReportDetailScreenModel(
-    reportId: String,
-    reportRepository: ReportRepository,
+    private val reportId: String,
+    private val reportRepository: ReportRepository,
     private val clock: AppClock,
 ) : MviScreenModel<ReportDetailUiState, ReportDetailIntent, UiEffect>(ReportDetailUiState()) {
 
@@ -47,6 +51,18 @@ class ReportDetailScreenModel(
     }
 
     fun now() = clock.now()
+
+    /** Reporter-initiated takedown of their own report. On a confirmed server erasure the
+     *  report is removed from My Reports and [ReportDetailUiState.withdrawn] flips so the
+     *  screen closes; a failure just clears the in-flight flag (the report stays). */
+    fun withdraw() {
+        if (state.value.withdrawing || state.value.withdrawn) return
+        screenModelScope.launch {
+            setState { copy(withdrawing = true) }
+            val ok = reportRepository.withdraw(reportId)
+            setState { if (ok) copy(withdrawn = true) else copy(withdrawing = false) }
+        }
+    }
 
     override fun onIntent(intent: ReportDetailIntent) {}
 }
