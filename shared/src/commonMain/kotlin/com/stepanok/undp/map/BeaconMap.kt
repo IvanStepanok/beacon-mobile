@@ -88,19 +88,26 @@ fun BeaconMap(
     }
 
     val featuresJson = remember(reports) { reports.toGeoJson() }
+    // Footprint highlight is hoisted here (not inside the `footprints` block) so a tap
+    // on EMPTY map — handled in onMapClick below — can clear it. Previously the
+    // highlight was set on a footprint tap and never reset, so once you picked a
+    // building the selection visually "stuck" and could not be moved or removed.
+    var selectedFootprint by remember { mutableStateOf<Geometry?>(null) }
 
     MaplibreMap(
         modifier = modifier,
         baseStyle = BaseStyle.Uri(styleUri),
         cameraState = cameraState,
         onMapClick = { position, _ ->
+            // Empty-area tap: drop the building highlight (the screen model also clears
+            // buildingId via onMapTap) and pin the free point the user tapped instead.
+            selectedFootprint = null
             onMapTap?.invoke(GeoPoint(position.latitude, position.longitude))
             ClickResult.Pass
         },
     ) {
         // Real building footprints from the basemap's OpenMapTiles "building" source-layer.
         if (footprints) {
-            var selectedFootprint by remember { mutableStateOf<Geometry?>(null) }
             getBaseSource("openmaptiles")?.let { tiles ->
                 FillLayer(
                     id = "beacon-footprints",
