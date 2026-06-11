@@ -317,7 +317,12 @@ private fun ReportPreviewSheet(preview: ReportPreview, onDismiss: () -> Unit, on
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("#${preview.id}", style = BeaconTheme.typography.titleS, color = colors.ink)
+                        // weight(fill=false): an unweighted full-UUID id would starve the chip
+                        // to 0dp width (its label then stacks one char per line).
+                        Text(
+                            "#${preview.id}", style = BeaconTheme.typography.titleS, color = colors.ink,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false),
+                        )
                         DamageChip(tier = preview.damage, label = damageLabel(preview.damage), size = ChipSize.Sm)
                     }
                     Text("${preview.time} · ${preview.place}", style = BeaconTheme.typography.caption, color = colors.ink3)

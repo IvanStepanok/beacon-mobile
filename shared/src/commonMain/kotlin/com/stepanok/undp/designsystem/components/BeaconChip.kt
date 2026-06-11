@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stepanok.undp.designsystem.theme.BeaconTheme
@@ -48,7 +49,13 @@ fun BeaconChip(
         if (leadingIcon != null) {
             Icon(leadingIcon, contentDescription = null, tint = contentColor, modifier = Modifier.size((fontSize.value + 2f).dp))
         }
-        Text(text, color = contentColor, style = BeaconTheme.typography.caption.copy(fontSize = fontSize, fontWeight = FontWeight.SemiBold))
+        // maxLines=1 is load-bearing: if a sibling (e.g. a long UUID Text) starves the chip
+        // of width, an unconstrained label wraps one character per line and the chip becomes
+        // an invisible ~250dp-tall column that inflates its whole row.
+        Text(
+            text, color = contentColor, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            style = BeaconTheme.typography.caption.copy(fontSize = fontSize, fontWeight = FontWeight.SemiBold),
+        )
     }
 }
 

@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -142,7 +143,12 @@ private fun ReportRow(row: ReportRowUi, onClick: () -> Unit) {
         ReportPhoto(photo = row.photo, modifier = Modifier.size(56.dp).clip(RoundedCornerShape(14.dp)))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("#${row.id}", style = BeaconTheme.typography.titleS, color = colors.ink)
+                // weight(fill=false): an unweighted full-UUID id grabs the whole row width and
+                // starves the status chip to 0dp (its label then stacks one char per line).
+                Text(
+                    "#${row.id}", style = BeaconTheme.typography.titleS, color = colors.ink,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false),
+                )
                 when {
                     row.synced ->
                         BeaconChip(stringResource(Res.string.status_synced), leadingIcon = BeaconIcons.Check, container = colors.okSoft, contentColor = colors.ok, size = ChipSize.Sm)

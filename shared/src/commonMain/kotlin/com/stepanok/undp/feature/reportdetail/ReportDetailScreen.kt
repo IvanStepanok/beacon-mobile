@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -108,10 +109,13 @@ data class ReportDetailScreen(val reportId: String) : Screen {
             }
 
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column {
+                // The id column MUST be weighted: an unweighted long UUID Text grabs the whole
+                // row width, starves the chip to 0dp, and the chip's label then wraps one
+                // character per line — an invisible ~250dp-tall column that blew the row up.
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(Modifier.weight(1f)) {
                         Text(stringResource(Res.string.report_label), style = BeaconTheme.typography.micro, color = colors.ink3)
-                        Text("#${report.id}", style = BeaconTheme.typography.titleM, color = colors.ink)
+                        Text("#${report.id}", style = BeaconTheme.typography.titleM, color = colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                     DamageChip(tier = report.damage, label = damageLabel(report.damage))
                 }
