@@ -198,7 +198,7 @@ private fun RequiredHint() {
     val colors = BeaconTheme.colors
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Icon(BeaconIcons.Info, contentDescription = null, tint = colors.warn, modifier = Modifier.size(12.dp))
-        Text(stringResource(Res.string.modular_required_hint), style = BeaconTheme.typography.caption, color = colors.warn)
+        Text(stringResource(Res.string.modular_required_hint), style = BeaconTheme.typography.caption, color = colors.ink2)
     }
     Spacer(Modifier.height(8.dp))
 }

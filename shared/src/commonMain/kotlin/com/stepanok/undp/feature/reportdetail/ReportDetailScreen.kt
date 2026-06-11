@@ -126,7 +126,7 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                         Icon(BeaconIcons.Warning, contentDescription = null, tint = colors.warn, modifier = Modifier.size(16.dp))
                         Text(
                             "${stringResource(Res.string.status_rejected)} · ${rejectionReasonLabel(rejected)}",
-                            style = BeaconTheme.typography.label, color = colors.warn,
+                            style = BeaconTheme.typography.label, color = colors.ink2,
                         )
                     }
                 }

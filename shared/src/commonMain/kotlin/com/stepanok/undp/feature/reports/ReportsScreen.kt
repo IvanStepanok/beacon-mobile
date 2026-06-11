@@ -148,14 +148,14 @@ private fun ReportRow(row: ReportRowUi, onClick: () -> Unit) {
                         BeaconChip(stringResource(Res.string.status_synced), leadingIcon = BeaconIcons.Check, container = colors.okSoft, contentColor = colors.ok, size = ChipSize.Sm)
                     // Terminal server rejection — never "Queued": the honest state + reason below.
                     row.sync is SyncState.Rejected ->
-                        BeaconChip(stringResource(Res.string.status_rejected), leadingIcon = BeaconIcons.Warning, container = colors.warnSoft, contentColor = colors.warn, size = ChipSize.Sm)
+                        BeaconChip(stringResource(Res.string.status_rejected), leadingIcon = BeaconIcons.Warning, container = colors.warnSoft, contentColor = colors.ink, size = ChipSize.Sm)
                     else ->
                         BeaconChip(stringResource(Res.string.status_queued), leadingIcon = BeaconIcons.CloudOff, container = colors.surface3, contentColor = colors.ink2, size = ChipSize.Sm)
                 }
             }
             Text("${row.time} · ${row.place}", style = BeaconTheme.typography.caption, color = colors.ink3, modifier = Modifier.padding(top = 2.dp))
             (row.sync as? SyncState.Rejected)?.let { rejected ->
-                Text(rejectionReasonLabel(rejected), style = BeaconTheme.typography.caption, color = colors.warn, modifier = Modifier.padding(top = 2.dp))
+                Text(rejectionReasonLabel(rejected), style = BeaconTheme.typography.caption, color = colors.ink2, modifier = Modifier.padding(top = 2.dp))
             }
             Spacer(Modifier.height(6.dp))
             DamageChip(tier = row.damage, label = damageLabel(row.damage), size = ChipSize.Sm)

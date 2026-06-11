@@ -115,7 +115,7 @@ object ProfileScreen : Screen {
                 // Stats grid
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     StatCard("${profile.reportCount}", stringResource(Res.string.profile_reports), colors.primary, Modifier.weight(1f))
-                    StatCard("${profile.buildingCount}", stringResource(Res.string.profile_buildings), colors.warn, Modifier.weight(1f))
+                    StatCard("${profile.buildingCount}", stringResource(Res.string.profile_buildings), colors.ink, Modifier.weight(1f))
                     StatCard("${profile.points}", stringResource(Res.string.profile_points), colors.ok, Modifier.weight(1f))
                 }
 

@@ -190,7 +190,7 @@ fun LocationStep(
             Text(
                 stringResource(Res.string.capture_location_required),
                 style = BeaconTheme.typography.caption,
-                color = colors.warn,
+                color = colors.ink2,
             )
         }
     }

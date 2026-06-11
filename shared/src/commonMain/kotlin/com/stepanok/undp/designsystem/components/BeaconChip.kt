@@ -52,7 +52,9 @@ fun BeaconChip(
     }
 }
 
-/** Convenience chip for the 3-tier damage classification using the theme's trauma-informed colors. */
+/** Convenience chip for the 3-tier damage classification (UNDP tag pattern: dark
+ *  ink label + a colored status dot on a soft tint — so yellow-600 partial stays
+ *  legible, never colored text on a pale background). */
 @Composable
 fun DamageChip(tier: DamageTier, label: String, modifier: Modifier = Modifier, size: ChipSize = ChipSize.Md) {
     val colors = BeaconTheme.colors
@@ -60,7 +62,7 @@ fun DamageChip(tier: DamageTier, label: String, modifier: Modifier = Modifier, s
         text = label,
         modifier = modifier,
         container = colors.damageSoft(tier),
-        contentColor = colors.damageColor(tier),
+        contentColor = colors.ink,
         dotColor = colors.damageColor(tier),
         size = size,
     )
