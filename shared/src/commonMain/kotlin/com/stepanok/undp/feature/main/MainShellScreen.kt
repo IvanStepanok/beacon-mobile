@@ -21,14 +21,12 @@ import com.stepanok.undp.designsystem.components.BeaconBottomBar
 import com.stepanok.undp.designsystem.components.BeaconTab
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.feature.capture.CaptureFlowScreen
-import com.stepanok.undp.feature.crisis.CrisisScreen
 import com.stepanok.undp.feature.map.MapScreen
 import com.stepanok.undp.feature.profile.ProfileScreen
 import com.stepanok.undp.feature.reports.ReportsScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
-import undp.shared.generated.resources.nav_crisis
 import undp.shared.generated.resources.nav_map
 import undp.shared.generated.resources.nav_profile
 import undp.shared.generated.resources.nav_reports
@@ -43,26 +41,19 @@ object ReportsTab : Tab {
     @Composable override fun Content() = Navigator(ReportsScreen)
 }
 
-object CrisisTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 2u, title = stringResource(Res.string.nav_crisis))
-    @Composable override fun Content() = Navigator(CrisisScreen)
-}
-
 object ProfileTab : Tab {
-    override val options: TabOptions @Composable get() = TabOptions(index = 3u, title = stringResource(Res.string.nav_profile))
+    override val options: TabOptions @Composable get() = TabOptions(index = 2u, title = stringResource(Res.string.nav_profile))
     @Composable override fun Content() = Navigator(ProfileScreen)
 }
 
 private fun BeaconTab.toTab(): Tab = when (this) {
     BeaconTab.Map -> MapTab
     BeaconTab.Reports -> ReportsTab
-    BeaconTab.Crisis -> CrisisTab
     BeaconTab.Profile -> ProfileTab
 }
 
 private fun Tab.toBeaconTab(): BeaconTab = when (this) {
     ReportsTab -> BeaconTab.Reports
-    CrisisTab -> BeaconTab.Crisis
     ProfileTab -> BeaconTab.Profile
     else -> BeaconTab.Map
 }
@@ -71,11 +62,10 @@ private fun Tab.toBeaconTab(): BeaconTab = when (this) {
 private fun BeaconTab.labelRes(): StringResource = when (this) {
     BeaconTab.Map -> Res.string.nav_map
     BeaconTab.Reports -> Res.string.nav_reports
-    BeaconTab.Crisis -> Res.string.nav_crisis
     BeaconTab.Profile -> Res.string.nav_profile
 }
 
-private val ALL_TABS = listOf(MapTab, ReportsTab, CrisisTab, ProfileTab)
+private val ALL_TABS = listOf(MapTab, ReportsTab, ProfileTab)
 
 object MainShellScreen : Screen {
     @Composable

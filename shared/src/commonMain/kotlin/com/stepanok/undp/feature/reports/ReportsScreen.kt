@@ -42,7 +42,7 @@ import com.stepanok.undp.designsystem.icons.BeaconIcons
 import com.stepanok.undp.designsystem.labels.damageLabel
 import com.stepanok.undp.designsystem.labels.rejectionReasonLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.SyncState
 import com.stepanok.undp.feature.reportdetail.ReportDetailScreen
 import org.jetbrains.compose.resources.stringResource
@@ -89,9 +89,9 @@ object ReportsScreen : Screen {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     FilterChip(stringResource(Res.string.filter_all), state.total, state.filter == null) { model.onIntent(ReportsIntent.SetFilter(null)) }
-                    DamageLevel.entries.forEach { level ->
-                        FilterChip(damageLabel(level), state.damageCounts[level] ?: 0, state.filter == level) {
-                            model.onIntent(ReportsIntent.SetFilter(level))
+                    DamageTier.entries.forEach { tier ->
+                        FilterChip(damageLabel(tier), state.damageCounts[tier] ?: 0, state.filter == tier) {
+                            model.onIntent(ReportsIntent.SetFilter(tier))
                         }
                     }
                 }
@@ -158,7 +158,7 @@ private fun ReportRow(row: ReportRowUi, onClick: () -> Unit) {
                 Text(rejectionReasonLabel(rejected), style = BeaconTheme.typography.caption, color = colors.warn, modifier = Modifier.padding(top = 2.dp))
             }
             Spacer(Modifier.height(6.dp))
-            DamageChip(level = row.damage, label = damageLabel(row.damage), size = ChipSize.Sm)
+            DamageChip(tier = row.damage, label = damageLabel(row.damage), size = ChipSize.Sm)
             (row.sync as? SyncState.Syncing)?.let { s ->
                 Spacer(Modifier.height(6.dp))
                 BeaconProgressBar(progress = s.fraction, color = colors.damageColor(row.damage), height = 3.dp)

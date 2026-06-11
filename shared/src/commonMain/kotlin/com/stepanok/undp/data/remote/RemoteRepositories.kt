@@ -13,7 +13,6 @@ import com.stepanok.undp.data.outbox.DurableOutbox
 import com.stepanok.undp.domain.model.AreaGroup
 import com.stepanok.undp.domain.model.BuildingTimeline
 import com.stepanok.undp.domain.model.Crisis
-import com.stepanok.undp.domain.model.DangerZone
 import com.stepanok.undp.domain.model.FormSection
 import com.stepanok.undp.domain.model.Profile
 import com.stepanok.undp.domain.model.Report
@@ -235,9 +234,6 @@ class RemoteReportRepository(
         upsertMine(report.copy(sync = state)) // persist the new state to disk too
     }
 
-    override suspend fun damageScale(): String =
-        runCatching { api.config().damageScale }.getOrDefault("tier3")
-
     override suspend fun formSections(): List<FormSection> {
         // Fallback chain: live schema (crisis-scoped) → cache(crisis) → cache(default) → built-in.
         // A fetched-but-empty schema is honored as-is (a crisis may disable every section).
@@ -282,8 +278,6 @@ class RemoteCrisisRepository(private val api: BeaconApi) : CrisisRepository {
         runCatching { api.crisesNear(lat, lng, radiusKm).map { it.toDomain() } }.getOrDefault(emptyList())
     override suspend fun activeCrises(): List<Crisis> =
         runCatching { api.crises("active").map { it.toDomain() } }.getOrDefault(emptyList())
-    override suspend fun dangerZones(crisisId: String): List<DangerZone> =
-        runCatching { api.dangerZones(crisisId).map { it.toDomain() } }.getOrDefault(emptyList())
 }
 
 class RemoteProfileRepository(private val api: BeaconApi) : ProfileRepository {

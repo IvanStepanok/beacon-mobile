@@ -3,19 +3,11 @@
     <!-- Navigation -->
     <string name="nav_map">Mapa</string>
     <string name="nav_reports">Informes</string>
-    <string name="nav_crisis">Crisis</string>
     <string name="nav_profile">Perfil</string>
 
     <!-- Crisis &amp; Safety tab -->
     <string name="crisis_title">Crisis y seguridad</string>
     <string name="crisis_started">Inició %1$s</string>
-    <string name="crisis_danger_zones">Zonas peligrosas — evita estas áreas</string>
-    <string name="crisis_no_danger">No hay zonas peligrosas marcadas en este momento.</string>
-    <string name="danger_caution">Precaución</string>
-    <string name="danger_warning">Advertencia</string>
-    <string name="danger_critical">Crítico</string>
-    <string name="crisis_safety_title">Mantente seguro/a al informar</string>
-    <string name="crisis_safety_tip">Mantén una distancia segura de las estructuras dañadas. Nunca entres en edificios inestables para tomar una foto.</string>
     <string name="crisis_none_nearby">No hay ninguna crisis activa cerca de ti</string>
     <string name="crisis_none_nearby_sub">Aun así puedes informar de un edificio dañado desde el mapa — será revisado.</string>
     <string name="crisis_active_near_you">CRISIS ACTIVAS CERCA DE TI</string>
@@ -28,11 +20,6 @@
     <string name="common_close">Cerrar</string>
 
     <!-- Damage levels -->
-    <string name="damage_none">Ninguno</string>
-    <string name="damage_slight">Leve</string>
-    <string name="damage_moderate">Moderado</string>
-    <string name="damage_severe">Grave</string>
-    <string name="damage_destroyed">Destruido</string>
 
     <!-- Map home -->
     <string name="map_search_hint">Buscar zona o dirección</string>
@@ -80,11 +67,6 @@
     <!-- Capture: damage -->
     <string name="capture_damage_q">¿Cuál es el alcance del daño?</string>
     <string name="capture_damage_sub">Elige la opción que mejor describa esta estructura.</string>
-    <string name="damage_none_desc">Sin daños visibles — el edificio parece intacto.</string>
-    <string name="damage_slight_desc">Grietas menores, no estructurales. Aún utilizable.</string>
-    <string name="damage_moderate_desc">Daño moderado, uso parcial posible. Entra con precaución.</string>
-    <string name="damage_severe_desc">Daño estructural grave. No entrar.</string>
-    <string name="damage_destroyed_desc">Derrumbado o irreparable.</string>
     <!-- Capture: damage 3-tier (default scale) -->
     <string name="damage_tier_minimal">Mínimo / sin daños</string>
     <string name="damage_tier_minimal_desc">Pocos o ningún daño visible</string>
@@ -95,8 +77,6 @@
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Posiblemente dañado</string>
     <string name="capture_possibly_damaged_desc">No estás seguro/a del nivel exacto — márcalo para que lo revise un analista.</string>
-    <string name="capture_lifesafety_q">¿Hay personas atrapadas o heridas aquí?</string>
-    <string name="capture_lifesafety_desc">Marca este informe como urgente para que los revisores lo vean primero.</string>
 
     <!-- Capture: infrastructure -->
     <string name="capture_infra_q">¿Qué tipo de estructura?</string>

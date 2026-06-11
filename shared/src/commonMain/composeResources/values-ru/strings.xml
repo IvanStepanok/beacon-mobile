@@ -3,19 +3,11 @@
     <!-- Navigation -->
     <string name="nav_map">Карта</string>
     <string name="nav_reports">Отчёты</string>
-    <string name="nav_crisis">Кризис</string>
     <string name="nav_profile">Профиль</string>
 
     <!-- Crisis &amp; Safety tab -->
     <string name="crisis_title">Кризис и безопасность</string>
     <string name="crisis_started">Начался %1$s</string>
-    <string name="crisis_danger_zones">Опасные зоны — избегайте этих участков</string>
-    <string name="crisis_no_danger">Сейчас опасных зон не отмечено.</string>
-    <string name="danger_caution">Осторожно</string>
-    <string name="danger_warning">Предупреждение</string>
-    <string name="danger_critical">Критично</string>
-    <string name="crisis_safety_title">Соблюдайте безопасность при составлении отчёта</string>
-    <string name="crisis_safety_tip">Держитесь на безопасном расстоянии от повреждённых конструкций. Никогда не входите в неустойчивые здания ради фото.</string>
     <string name="crisis_none_nearby">Поблизости нет активных кризисов</string>
     <string name="crisis_none_nearby_sub">Вы всё равно можете сообщить о повреждённом здании с карты — отчёт будет рассмотрен.</string>
     <string name="crisis_active_near_you">АКТИВНЫЕ КРИЗИСЫ ПОБЛИЗОСТИ</string>
@@ -28,11 +20,6 @@
     <string name="common_close">Закрыть</string>
 
     <!-- Damage levels -->
-    <string name="damage_none">Нет</string>
-    <string name="damage_slight">Лёгкие</string>
-    <string name="damage_moderate">Средние</string>
-    <string name="damage_severe">Тяжёлые</string>
-    <string name="damage_destroyed">Разрушено</string>
 
     <!-- Map home -->
     <string name="map_search_hint">Поиск района или адреса</string>
@@ -80,11 +67,6 @@
     <!-- Capture: damage -->
     <string name="capture_damage_q">Каков масштаб повреждений?</string>
     <string name="capture_damage_sub">Выберите вариант, который лучше всего описывает это сооружение.</string>
-    <string name="damage_none_desc">Видимых повреждений нет — здание выглядит целым.</string>
-    <string name="damage_slight_desc">Незначительные неструктурные трещины. Пригодно к использованию.</string>
-    <string name="damage_moderate_desc">Умеренные повреждения, частичное использование возможно. Входите с осторожностью.</string>
-    <string name="damage_severe_desc">Серьёзные структурные повреждения. Не входить.</string>
-    <string name="damage_destroyed_desc">Обрушено или не подлежит восстановлению.</string>
     <!-- Capture: damage 3-tier (default scale) -->
     <string name="damage_tier_minimal">Минимальные / нет повреждений</string>
     <string name="damage_tier_minimal_desc">Видимых повреждений мало или нет</string>
@@ -95,8 +77,6 @@
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Возможно, повреждено</string>
     <string name="capture_possibly_damaged_desc">Точная степень неясна — отметьте для проверки аналитиком.</string>
-    <string name="capture_lifesafety_q">Есть ли здесь зажатые или раненые люди?</string>
-    <string name="capture_lifesafety_desc">Помечает отчёт как срочный, чтобы проверяющие увидели его первым.</string>
 
     <!-- Capture: infrastructure -->
     <string name="capture_infra_q">Какой это тип сооружения?</string>

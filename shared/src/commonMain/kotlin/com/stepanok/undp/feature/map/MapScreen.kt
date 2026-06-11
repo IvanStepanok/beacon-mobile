@@ -39,8 +39,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import com.stepanok.undp.feature.main.CrisisTab
 import com.stepanok.undp.designsystem.components.BeaconBottomSheet
 import com.stepanok.undp.designsystem.components.BeaconButton
 import com.stepanok.undp.designsystem.components.ChipSize
@@ -53,7 +51,7 @@ import com.stepanok.undp.designsystem.labels.damageLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.designsystem.theme.beaconCardShadow
 import com.stepanok.undp.domain.model.AreaGroup
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.feature.reportdetail.ReportDetailScreen
 import com.stepanok.undp.core.location.LocationProvider
 import com.stepanok.undp.core.location.RequestLocationPermission
@@ -88,7 +86,6 @@ object MapScreen : Screen {
         val hotspots by model.hotspots.collectAsState()
         val colors = BeaconTheme.colors
         val nav = LocalNavigator.currentOrThrow
-        val tabNav = LocalTabNavigator.current
         val mapController = rememberBeaconMapController()
         val locationProvider = koinInject<LocationProvider>()
         val scope = rememberCoroutineScope()
@@ -178,7 +175,6 @@ object MapScreen : Screen {
                     CrisisBanner(
                         title = state.crisisTitle!!,
                         subtitle = state.crisisSubtitle.orEmpty(),
-                        onClick = { tabNav.current = CrisisTab },
                         onDismiss = { model.onIntent(MapIntent.DismissCrisis) },
                     )
                 }
@@ -275,7 +271,7 @@ private fun NoCrisisCard() {
 }
 
 @Composable
-private fun CrisisBanner(title: String, subtitle: String, onClick: () -> Unit, onDismiss: () -> Unit) {
+private fun CrisisBanner(title: String, subtitle: String, onDismiss: () -> Unit) {
     val colors = BeaconTheme.colors
     Row(
         modifier = Modifier
@@ -283,7 +279,6 @@ private fun CrisisBanner(title: String, subtitle: String, onClick: () -> Unit, o
             .clip(RoundedCornerShape(14.dp))
             .background(colors.completeSoft)
             .border(1.dp, colors.complete.copy(alpha = 0.4f), RoundedCornerShape(14.dp))
-            .clickable(onClick = onClick)
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -304,7 +299,6 @@ private fun CrisisBanner(title: String, subtitle: String, onClick: () -> Unit, o
             )
             Text(subtitle, style = BeaconTheme.typography.caption, color = colors.ink2, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        Icon(BeaconIcons.ChevronRight, contentDescription = null, tint = colors.complete, modifier = Modifier.size(16.dp))
         Box(Modifier.size(28.dp).clip(CircleShape).clickable(onClick = onDismiss), contentAlignment = Alignment.Center) {
             Icon(BeaconIcons.Close, contentDescription = "Dismiss", tint = colors.ink3, modifier = Modifier.size(16.dp))
         }
@@ -324,7 +318,7 @@ private fun ReportPreviewSheet(preview: ReportPreview, onDismiss: () -> Unit, on
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("#${preview.id}", style = BeaconTheme.typography.titleS, color = colors.ink)
-                        DamageChip(level = preview.damage, label = damageLabel(preview.damage), size = ChipSize.Sm)
+                        DamageChip(tier = preview.damage, label = damageLabel(preview.damage), size = ChipSize.Sm)
                     }
                     Text("${preview.time} · ${preview.place}", style = BeaconTheme.typography.caption, color = colors.ink3)
                     if (preview.plusCode.isNotEmpty() && preview.plusCode != "garden.tribe.sparkle") {
@@ -344,22 +338,22 @@ private fun ReportPreviewSheet(preview: ReportPreview, onDismiss: () -> Unit, on
 }
 
 @Composable
-private fun FilterSheet(current: DamageLevel?, onSelect: (DamageLevel?) -> Unit, onDismiss: () -> Unit) {
+private fun FilterSheet(current: DamageTier?, onSelect: (DamageTier?) -> Unit, onDismiss: () -> Unit) {
     val colors = BeaconTheme.colors
     BeaconBottomSheet(onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp)) {
             Text(stringResource(Res.string.map_filter_title), style = BeaconTheme.typography.titleM, color = colors.ink)
             Spacer(Modifier.height(8.dp))
             FilterRow(stringResource(Res.string.filter_all), null, current, onSelect)
-            DamageLevel.entries.forEach { level ->
-                FilterRow(damageLabel(level), level, current, onSelect)
+            DamageTier.entries.forEach { tier ->
+                FilterRow(damageLabel(tier), tier, current, onSelect)
             }
         }
     }
 }
 
 @Composable
-private fun FilterRow(label: String, level: DamageLevel?, current: DamageLevel?, onSelect: (DamageLevel?) -> Unit) {
+private fun FilterRow(label: String, level: DamageTier?, current: DamageTier?, onSelect: (DamageTier?) -> Unit) {
     val colors = BeaconTheme.colors
     Row(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onSelect(level) }.padding(horizontal = 6.dp, vertical = 12.dp),
@@ -392,7 +386,7 @@ private fun HotspotsSheet(groups: List<AreaGroup>, onDismiss: () -> Unit) {
                             Text(g.area, style = BeaconTheme.typography.titleS, color = colors.ink)
                             Text(stringResource(Res.string.hotspots_reports, g.count), style = BeaconTheme.typography.caption, color = colors.ink3)
                         }
-                        DamageChip(level = g.worst, label = damageLabel(g.worst), size = ChipSize.Sm)
+                        DamageChip(tier = g.worst, label = damageLabel(g.worst), size = ChipSize.Sm)
                     }
                 }
             }

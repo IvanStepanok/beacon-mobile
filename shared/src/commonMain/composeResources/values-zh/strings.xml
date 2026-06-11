@@ -3,19 +3,11 @@
     <!-- Navigation -->
     <string name="nav_map">地图</string>
     <string name="nav_reports">报告</string>
-    <string name="nav_crisis">危机</string>
     <string name="nav_profile">个人资料</string>
 
     <!-- Crisis &amp; Safety tab -->
     <string name="crisis_title">危机与安全</string>
     <string name="crisis_started">始于 %1$s</string>
-    <string name="crisis_danger_zones">危险区域——请避开这些区域</string>
-    <string name="crisis_no_danger">目前未标记任何危险区域。</string>
-    <string name="danger_caution">注意</string>
-    <string name="danger_warning">警告</string>
-    <string name="danger_critical">危急</string>
-    <string name="crisis_safety_title">报告时注意安全</string>
-    <string name="crisis_safety_tip">与受损建筑保持安全距离。切勿为拍照而进入不稳固的建筑。</string>
     <string name="crisis_none_nearby">您附近没有进行中的危机</string>
     <string name="crisis_none_nearby_sub">您仍可从地图上报告受损建筑——它会得到审核。</string>
     <string name="crisis_active_near_you">您附近进行中的危机</string>
@@ -28,11 +20,6 @@
     <string name="common_close">关闭</string>
 
     <!-- Damage levels -->
-    <string name="damage_none">无</string>
-    <string name="damage_slight">轻微</string>
-    <string name="damage_moderate">中等</string>
-    <string name="damage_severe">严重</string>
-    <string name="damage_destroyed">损毁</string>
 
     <!-- Map home -->
     <string name="map_search_hint">搜索区域或地址</string>
@@ -80,11 +67,6 @@
     <!-- Capture: damage -->
     <string name="capture_damage_q">受损程度如何？</string>
     <string name="capture_damage_sub">请选择最符合该建筑的选项。</string>
-    <string name="damage_none_desc">无可见损坏——建筑看起来完好。</string>
-    <string name="damage_slight_desc">轻微的非结构性裂缝。仍可使用。</string>
-    <string name="damage_moderate_desc">中度损坏，可部分使用。进入时请小心。</string>
-    <string name="damage_severe_desc">严重的结构性损坏。请勿进入。</string>
-    <string name="damage_destroyed_desc">已倒塌或无法修复。</string>
     <!-- Capture: damage 3-tier (default scale) -->
     <string name="damage_tier_minimal">轻微／无损坏</string>
     <string name="damage_tier_minimal_desc">几乎没有可见损坏</string>
@@ -95,8 +77,6 @@
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">可能受损</string>
     <string name="capture_possibly_damaged_desc">不确定具体程度——标记出来交由分析员审核。</string>
-    <string name="capture_lifesafety_q">这里有人被困或受伤吗？</string>
-    <string name="capture_lifesafety_desc">将此报告标记为紧急，以便审核人员优先查看。</string>
 
     <!-- Capture: infrastructure -->
     <string name="capture_infra_q">这是哪类建筑？</string>

@@ -12,7 +12,7 @@ import com.stepanok.undp.core.mvi.MviScreenModel
 import com.stepanok.undp.core.mvi.UiEffect
 import com.stepanok.undp.core.mvi.UiIntent
 import com.stepanok.undp.core.mvi.UiState
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.repository.CrisisRepository
 import com.stepanok.undp.domain.repository.MapBounds
@@ -33,7 +33,7 @@ enum class MapMode { LOADING, IN_CRISIS, NO_CRISIS }
 
 data class MapUiState(
     val pins: ImmutableList<ReportPin> = persistentListOf(),
-    val damageCounts: Map<DamageLevel, Int> = emptyMap(),
+    val damageCounts: Map<DamageTier, Int> = emptyMap(),
     val offline: Boolean = true,
     val queueCount: Int = 0,
     val mode: MapMode = MapMode.LOADING,
@@ -58,7 +58,7 @@ data class ReportPreview(
     val id: String,
     val place: String,
     val time: String,
-    val damage: DamageLevel,
+    val damage: DamageTier,
     val plusCode: String,
 )
 
@@ -72,10 +72,10 @@ class MapScreenModel(
 
     private val selectedId = MutableStateFlow<String?>(null)
 
-    private val _filter = MutableStateFlow<DamageLevel?>(null)
-    /** Active map filter by damage level (null = show all). */
-    val filter: StateFlow<DamageLevel?> = _filter
-    fun setFilter(level: DamageLevel?) { _filter.value = level }
+    private val _filter = MutableStateFlow<DamageTier?>(null)
+    /** Active map filter by damage tier (null = show all). */
+    val filter: StateFlow<DamageTier?> = _filter
+    fun setFilter(tier: DamageTier?) { _filter.value = tier }
 
     /** Areas grouped + ranked for the hotspots sheet. */
     val hotspots: StateFlow<List<com.stepanok.undp.domain.model.AreaGroup>> =

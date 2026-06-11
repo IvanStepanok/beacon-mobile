@@ -13,14 +13,10 @@ data class Report(
     val id: String,
     val idempotencyKey: String,
     val photos: List<PhotoRef> = emptyList(),
-    /** Display grade (5-level). For tier3 reports this is the representative level of [damageTier]. */
-    val damage: DamageLevel,
-    /** Required 3-tier classification, sent to the server when the reporter used the 3-tier scale. */
-    val damageTier: DamageTier? = null,
+    /** The mandated 3-tier damage classification (minimal/partial/complete). */
+    val damage: DamageTier,
     /** Reporter unsure of the exact grade (resolves the satellite "possibly damaged" class). */
     val possiblyDamaged: Boolean = false,
-    /** Intake life-safety flag (people trapped/injured) → drives the dispatch fast lane. */
-    val lifeSafety: Boolean = false,
     val infraTypes: Set<InfraType> = emptySet(),
     /** Name/details of the infrastructure (any type), e.g. "Cumhuriyet Primary School". */
     val infraName: String? = null,

@@ -287,7 +287,7 @@ fun ReviewStep(
         }
         // Field rows
         Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(colors.surface).border(1.dp, colors.line, RoundedCornerShape(18.dp))) {
-            ReviewRow(BeaconIcons.House, stringResource(Res.string.review_row_damage), draft.damage?.let { damageLabel(it) } ?: "—", valueColor = draft.damage?.let { colors.damageColor(it) })
+            ReviewRow(BeaconIcons.House, stringResource(Res.string.review_row_damage), draft.damageTier?.let { damageLabel(it) } ?: "—", valueColor = draft.damageTier?.let { colors.damageColor(it) })
             ReviewRow(BeaconIcons.Building, stringResource(Res.string.review_row_type), infraText)
             ReviewRow(BeaconIcons.Warning, stringResource(Res.string.review_row_crisis), crisisText)
             ReviewRow(BeaconIcons.Truck, stringResource(Res.string.review_row_debris), draft.debris?.let { debrisLabel(it) } ?: "—")

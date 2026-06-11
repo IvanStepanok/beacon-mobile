@@ -27,7 +27,6 @@ import com.stepanok.undp.designsystem.components.SelectableOptionRow
 import com.stepanok.undp.designsystem.icons.BeaconIcons
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.domain.model.CrisisNature
-import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.InfraType
@@ -54,16 +53,6 @@ import undp.shared.generated.resources.crisis_hurricane
 import undp.shared.generated.resources.crisis_tsunami
 import undp.shared.generated.resources.crisis_unrest
 import undp.shared.generated.resources.crisis_wildfire
-import undp.shared.generated.resources.damage_none
-import undp.shared.generated.resources.damage_none_desc
-import undp.shared.generated.resources.damage_slight
-import undp.shared.generated.resources.damage_slight_desc
-import undp.shared.generated.resources.damage_moderate
-import undp.shared.generated.resources.damage_moderate_desc
-import undp.shared.generated.resources.damage_severe
-import undp.shared.generated.resources.damage_severe_desc
-import undp.shared.generated.resources.damage_destroyed
-import undp.shared.generated.resources.damage_destroyed_desc
 import undp.shared.generated.resources.damage_tier_minimal
 import undp.shared.generated.resources.damage_tier_minimal_desc
 import undp.shared.generated.resources.damage_tier_partial
@@ -72,8 +61,6 @@ import undp.shared.generated.resources.damage_tier_complete
 import undp.shared.generated.resources.damage_tier_complete_desc
 import undp.shared.generated.resources.capture_possibly_damaged
 import undp.shared.generated.resources.capture_possibly_damaged_desc
-import undp.shared.generated.resources.capture_lifesafety_q
-import undp.shared.generated.resources.capture_lifesafety_desc
 import undp.shared.generated.resources.debris_no
 import undp.shared.generated.resources.debris_no_desc
 import undp.shared.generated.resources.debris_unsure
@@ -105,7 +92,6 @@ import undp.shared.generated.resources.step_change_later
 @Composable
 fun DamageStep(
     draft: CaptureDraft,
-    damageScale: String,
     onIntent: (CaptureIntent) -> Unit,
     current: Int,
     total: Int,
@@ -115,48 +101,26 @@ fun DamageStep(
     val colors = BeaconTheme.colors
     StepShell(
         current, total, onBack, onContinue,
-        canContinue = draft.damage != null,
+        canContinue = draft.damageTier != null,
         footer = { Text(stringResource(Res.string.step_change_later), style = BeaconTheme.typography.caption, color = colors.ink3) },
     ) {
         StepHeading(stringResource(Res.string.capture_damage_q), stringResource(Res.string.capture_damage_sub))
-        if (damageScale == "ems98") {
-            // 5-level EMS-98 (enabled globally by an analyst)
-            val options = listOf(
-                Triple(DamageLevel.NONE, Res.string.damage_none to Res.string.damage_none_desc, colors.damageColor(DamageLevel.NONE)),
-                Triple(DamageLevel.SLIGHT, Res.string.damage_slight to Res.string.damage_slight_desc, colors.damageColor(DamageLevel.SLIGHT)),
-                Triple(DamageLevel.MODERATE, Res.string.damage_moderate to Res.string.damage_moderate_desc, colors.damageColor(DamageLevel.MODERATE)),
-                Triple(DamageLevel.SEVERE, Res.string.damage_severe to Res.string.damage_severe_desc, colors.damageColor(DamageLevel.SEVERE)),
-                Triple(DamageLevel.DESTROYED, Res.string.damage_destroyed to Res.string.damage_destroyed_desc, colors.damageColor(DamageLevel.DESTROYED)),
+        // The mandated 3-tier classification (minimal / partial / complete).
+        val tiers = listOf(
+            DamageTier.MINIMAL to (Res.string.damage_tier_minimal to Res.string.damage_tier_minimal_desc),
+            DamageTier.PARTIAL to (Res.string.damage_tier_partial to Res.string.damage_tier_partial_desc),
+            DamageTier.COMPLETE to (Res.string.damage_tier_complete to Res.string.damage_tier_complete_desc),
+        )
+        tiers.forEach { (tier, labels) ->
+            SelectableOptionRow(
+                title = stringResource(labels.first),
+                description = stringResource(labels.second),
+                icon = BeaconIcons.House,
+                selected = draft.damageTier == tier,
+                accent = colors.damageColor(tier),
+                softAccent = colors.damageSoft(tier),
+                onClick = { onIntent(CaptureIntent.SetDamageTier(tier)) },
             )
-            options.forEach { (level, labels, color) ->
-                SelectableOptionRow(
-                    title = stringResource(labels.first),
-                    description = stringResource(labels.second),
-                    icon = BeaconIcons.House,
-                    selected = draft.damage == level && draft.damageTier == null,
-                    accent = color,
-                    softAccent = colors.damageSoft(level),
-                    onClick = { onIntent(CaptureIntent.SetDamage(level)) },
-                )
-            }
-        } else {
-            // Required 3-tier classification (default)
-            val tiers = listOf(
-                Triple(DamageTier.MINIMAL, Res.string.damage_tier_minimal to Res.string.damage_tier_minimal_desc, DamageLevel.NONE),
-                Triple(DamageTier.PARTIAL, Res.string.damage_tier_partial to Res.string.damage_tier_partial_desc, DamageLevel.MODERATE),
-                Triple(DamageTier.COMPLETE, Res.string.damage_tier_complete to Res.string.damage_tier_complete_desc, DamageLevel.DESTROYED),
-            )
-            tiers.forEach { (tier, labels, repr) ->
-                SelectableOptionRow(
-                    title = stringResource(labels.first),
-                    description = stringResource(labels.second),
-                    icon = BeaconIcons.House,
-                    selected = draft.damageTier == tier,
-                    accent = colors.damageColor(repr),
-                    softAccent = colors.damageSoft(repr),
-                    onClick = { onIntent(CaptureIntent.SetDamageTier(tier)) },
-                )
-            }
         }
         Spacer(Modifier.height(8.dp))
         // Confidence: reporter unsure of the exact grade.
@@ -168,16 +132,6 @@ fun DamageStep(
             accent = colors.warn,
             softAccent = colors.warnSoft,
             onClick = { onIntent(CaptureIntent.SetPossiblyDamaged(!draft.possiblyDamaged)) },
-        )
-        // Life-safety question — drives the dispatch fast lane.
-        SelectableOptionRow(
-            title = stringResource(Res.string.capture_lifesafety_q),
-            description = stringResource(Res.string.capture_lifesafety_desc),
-            icon = BeaconIcons.Crisis,
-            selected = draft.lifeSafety,
-            accent = colors.complete,
-            softAccent = colors.completeSoft,
-            onClick = { onIntent(CaptureIntent.SetLifeSafety(!draft.lifeSafety)) },
         )
     }
 }

@@ -137,7 +137,6 @@ object CaptureFlowScreen : Screen {
                         current = idx,
                         total = CAPTURE_ORDER.size,
                         draft = state.draft,
-                        damageScale = state.damageScale,
                         formSections = state.formSections,
                         duplicateWarning = state.duplicateWarning,
                         onIntent = model::onIntent,
@@ -168,7 +167,6 @@ private fun CaptureStep(
     current: Int,
     total: Int,
     draft: CaptureDraft,
-    damageScale: String,
     formSections: List<FormSection>,
     duplicateWarning: String?,
     onIntent: (CaptureIntent) -> Unit,
@@ -176,7 +174,7 @@ private fun CaptureStep(
     onContinue: () -> Unit,
 ) {
     when (step) {
-        "damage" -> DamageStep(draft, damageScale, onIntent, current, total, onBack, onContinue)
+        "damage" -> DamageStep(draft, onIntent, current, total, onBack, onContinue)
         "infra" -> InfraStep(draft, onIntent, current, total, onBack, onContinue)
         "crisis" -> CrisisStep(draft, onIntent, current, total, onBack, onContinue)
         "debris" -> DebrisStep(draft, onIntent, current, total, onBack, onContinue)

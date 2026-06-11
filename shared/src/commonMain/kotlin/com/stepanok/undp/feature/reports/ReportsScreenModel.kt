@@ -11,7 +11,7 @@ import com.stepanok.undp.core.mvi.MviScreenModel
 import com.stepanok.undp.core.mvi.UiEffect
 import com.stepanok.undp.core.mvi.UiIntent
 import com.stepanok.undp.core.mvi.UiState
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.PhotoRef
 import com.stepanok.undp.domain.model.SyncState
 import com.stepanok.undp.domain.repository.ReportRepository
@@ -27,7 +27,7 @@ data class ReportRowUi(
     val id: String,
     val place: String,
     val time: String,
-    val damage: DamageLevel,
+    val damage: DamageTier,
     val synced: Boolean,
     val sync: SyncState,
     val photo: PhotoRef? = null,
@@ -35,17 +35,17 @@ data class ReportRowUi(
 
 data class ReportsUiState(
     val rows: ImmutableList<ReportRowUi> = persistentListOf(),
-    val filter: DamageLevel? = null,
+    val filter: DamageTier? = null,
     val total: Int = 0,
     val syncedCount: Int = 0,
     val queuedCount: Int = 0,
-    val damageCounts: Map<DamageLevel, Int> = emptyMap(),
+    val damageCounts: Map<DamageTier, Int> = emptyMap(),
     val online: Boolean = false,
     val isSyncing: Boolean = false,
 ) : UiState
 
 sealed interface ReportsIntent : UiIntent {
-    data class SetFilter(val level: DamageLevel?) : ReportsIntent
+    data class SetFilter(val level: DamageTier?) : ReportsIntent
     /** Manually flush the device outbox now (real upload of any queued reports). */
     data object SyncNow : ReportsIntent
 }
@@ -57,7 +57,7 @@ class ReportsScreenModel(
     private val clock: AppClock,
 ) : MviScreenModel<ReportsUiState, ReportsIntent, UiEffect>(ReportsUiState()) {
 
-    private val filter = MutableStateFlow<DamageLevel?>(null)
+    private val filter = MutableStateFlow<DamageTier?>(null)
 
     init {
         screenModelScope.launch {

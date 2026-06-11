@@ -4,7 +4,6 @@ import com.stepanok.undp.core.mvi.UiEffect
 import com.stepanok.undp.core.mvi.UiIntent
 import com.stepanok.undp.core.mvi.UiState
 import com.stepanok.undp.domain.model.CrisisNature
-import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.FormSection
@@ -20,12 +19,9 @@ data class CaptureDraft(
     val photoSizeBytes: Long = 0L,
     /** On-device face/plate redaction outcome for the captured photo (drives Anonymization). */
     val redaction: RedactionResult = RedactionResult(),
-    /** EMS-98 grade (set in either scale: the representative level for a chosen tier). */
-    val damage: DamageLevel? = null,
-    /** Required 3-tier choice (set when the global scale is tier3). */
+    /** The reporter's chosen damage tier (null until they pick one). */
     val damageTier: DamageTier? = null,
     val possiblyDamaged: Boolean = false,
-    val lifeSafety: Boolean = false,
     val infra: Set<InfraType> = emptySet(),
     /** Optional name/details of the infrastructure — one field for ANY selected type. When
      *  OTHER is selected it doubles as the legacy "specify Other" detail on the wire. */
@@ -55,8 +51,6 @@ data class CaptureState(
     val draft: CaptureDraft = CaptureDraft(),
     val submitting: Boolean = false,
     val offline: Boolean = true,
-    /** Global capture scale from the server: "tier3" (3 buttons) | "ems98" (5 buttons). */
-    val damageScale: String = "tier3",
     /** Server-driven modular form (GET /form-schema, cached for offline); the built-in
      *  Appendix-1 default until loaded — so the step is never blank. */
     val formSections: List<FormSection> = defaultFormSections(),
@@ -67,10 +61,8 @@ data class CaptureState(
 sealed interface CaptureIntent : UiIntent {
     /** A real photo was captured/picked and saved to [path] ([sizeBytes] on disk). */
     data class PhotoCaptured(val path: String, val sizeBytes: Long, val redaction: RedactionResult = RedactionResult()) : CaptureIntent
-    data class SetDamage(val level: DamageLevel) : CaptureIntent
     data class SetDamageTier(val tier: DamageTier) : CaptureIntent
     data class SetPossiblyDamaged(val flag: Boolean) : CaptureIntent
-    data class SetLifeSafety(val flag: Boolean) : CaptureIntent
     data class ToggleInfra(val type: InfraType) : CaptureIntent
     data class SetInfraName(val text: String) : CaptureIntent
     data class ToggleCrisis(val nature: CrisisNature) : CaptureIntent

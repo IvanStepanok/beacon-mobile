@@ -6,7 +6,6 @@ import com.stepanok.undp.data.remote.ReportDescriptionDto
 import com.stepanok.undp.data.remote.modularSectionsOf
 import com.stepanok.undp.data.remote.toSubmitDto
 import com.stepanok.undp.domain.model.CrisisNature
-import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.InfraType
@@ -15,7 +14,6 @@ import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.model.ReportDescription
 import com.stepanok.undp.domain.model.ReportLocation
 import com.stepanok.undp.domain.model.SyncState
-import com.stepanok.undp.domain.model.toTier
 import kotlin.time.Instant
 
 // ── domain → persisted entry ───────────────────────────────────────────
@@ -28,7 +26,7 @@ fun Report.toOutboxEntry(): OutboxEntry {
         photoLocalPath = photo?.localPath,
         photoRemoteUrl = photo?.remoteUrl,
         damageLevel = damage.name,
-        damageTier = damageTier?.name,
+        damageTier = damage.name,
         place = place,
         capturedAtMillis = capturedAt.toEpochMilliseconds(),
         isMine = isMine,
@@ -48,15 +46,13 @@ fun Report.toOutboxEntry(): OutboxEntry {
 fun OutboxEntry.toReport(): Report {
     val s = submit
     val photos = photoLocalPath?.let { listOf(PhotoRef(localPath = it, remoteUrl = photoRemoteUrl)) } ?: emptyList()
-    val level = damageLevelOf(damageLevel)
     return Report(
         id = s.id,
         idempotencyKey = s.idempotencyKey,
         photos = photos,
-        damage = level,
-        damageTier = damageTier?.let { tierOf(it) } ?: level.toTier(),
+        // Reconstruct the tier from either stored field (tolerant of pre-migration 5-level names).
+        damage = tierOf(damageTier ?: damageLevel),
         possiblyDamaged = s.possiblyDamaged,
-        lifeSafety = s.lifeSafety,
         infraTypes = s.infraTypes.mapNotNull(::infraOf).toSet(),
         infraName = s.infraName,
         infraOtherDetail = s.infraOtherDetail,
@@ -140,22 +136,14 @@ private fun OutboxEntry.syncStateOf(): SyncState = when (syncKind) {
 
 // ── lenient string → enum helpers (mirror data.remote.Mappers, kept local) ──
 
-private fun damageLevelOf(s: String): DamageLevel = when (s.lowercase()) {
-    "none" -> DamageLevel.NONE
-    "slight" -> DamageLevel.SLIGHT
-    "moderate" -> DamageLevel.MODERATE
-    "severe" -> DamageLevel.SEVERE
-    "destroyed" -> DamageLevel.DESTROYED
-    "minimal" -> DamageLevel.NONE
-    "partial" -> DamageLevel.MODERATE
-    "complete" -> DamageLevel.DESTROYED
-    else -> DamageLevel.NONE
+// Parse the persisted damage value to a tier. Tolerant of pre-migration 5-level enum
+// names so an outbox file written before the 3-tier purge still rebuilds correctly.
+private fun tierOf(s: String): DamageTier = when (s.uppercase()) {
+    "MINIMAL", "NONE", "SLIGHT" -> DamageTier.MINIMAL
+    "PARTIAL", "MODERATE", "SEVERE" -> DamageTier.PARTIAL
+    "COMPLETE", "DESTROYED" -> DamageTier.COMPLETE
+    else -> DamageTier.MINIMAL
 }
-
-private fun tierOf(s: String): DamageTier =
-    runCatching { DamageTier.valueOf(s.uppercase()) }.getOrElse {
-        runCatching { DamageLevel.valueOf(s.uppercase()).toTier() }.getOrDefault(DamageTier.MINIMAL)
-    }
 
 private fun infraOf(s: String): InfraType? = runCatching { InfraType.valueOf(s.uppercase()) }.getOrNull()
 

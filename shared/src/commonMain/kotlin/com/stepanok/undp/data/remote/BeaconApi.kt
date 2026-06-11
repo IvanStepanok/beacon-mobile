@@ -109,13 +109,7 @@ class BeaconApi(
         return if (r.status == HttpStatusCode.OK) r.body() else null
     }
 
-    suspend fun dangerZones(crisisId: String): List<DangerZoneDto> =
-        client.get("$v1/crises/$crisisId/danger-zones").body<ItemsDto<DangerZoneDto>>().items
-
     suspend fun profile(): ProfileDto = client.get("$v1/profile").body()
-
-    /** Global client config — the capture scale (tier3 | ems98). */
-    suspend fun config(): ConfigDto = client.get("$v1/config").body()
 
     /** The modular capture-form definition (PUBLIC, like /crises): the built-in Appendix-1
      *  sections with [crisisId]'s required/disabled overrides applied; with no crisisId the

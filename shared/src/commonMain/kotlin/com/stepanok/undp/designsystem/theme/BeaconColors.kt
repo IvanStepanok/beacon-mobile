@@ -2,7 +2,7 @@ package com.stepanok.undp.designsystem.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 
 /**
  * Beacon's palette — richer than Material3's [androidx.compose.material3.ColorScheme] (it carries
@@ -37,21 +37,17 @@ data class BeaconColors(
     val completeSoft: Color,
     val info: Color,
 ) {
-    // 5-level EMS-98 ordinal palette (trauma-informed: muted green → terracotta, never pure red).
-    fun damageColor(level: DamageLevel): Color = when (level) {
-        DamageLevel.NONE -> ok
-        DamageLevel.SLIGHT -> slight
-        DamageLevel.MODERATE -> warn
-        DamageLevel.SEVERE -> severe
-        DamageLevel.DESTROYED -> complete
+    // 3-tier palette (trauma-informed: muted green → amber → terracotta, never pure red).
+    fun damageColor(tier: DamageTier): Color = when (tier) {
+        DamageTier.MINIMAL -> ok
+        DamageTier.PARTIAL -> warn
+        DamageTier.COMPLETE -> complete
     }
 
-    fun damageSoft(level: DamageLevel): Color = when (level) {
-        DamageLevel.NONE -> okSoft
-        DamageLevel.SLIGHT -> slightSoft
-        DamageLevel.MODERATE -> warnSoft
-        DamageLevel.SEVERE -> severeSoft
-        DamageLevel.DESTROYED -> completeSoft
+    fun damageSoft(tier: DamageTier): Color = when (tier) {
+        DamageTier.MINIMAL -> okSoft
+        DamageTier.PARTIAL -> warnSoft
+        DamageTier.COMPLETE -> completeSoft
     }
 }
 

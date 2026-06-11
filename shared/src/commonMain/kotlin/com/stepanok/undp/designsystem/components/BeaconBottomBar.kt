@@ -35,7 +35,6 @@ import com.stepanok.undp.designsystem.theme.beaconPopShadow
 enum class BeaconTab(val icon: ImageVector) {
     Map(BeaconIcons.Map),
     Reports(BeaconIcons.Reports),
-    Crisis(BeaconIcons.Crisis),
     Profile(BeaconIcons.Profile),
 }
 
@@ -64,9 +63,7 @@ fun BeaconBottomBar(
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 CaptureFab(onCapture)
             }
-            TabCell(BeaconTab.Crisis, active, label, onSelect)
             TabCell(BeaconTab.Profile, active, label, onSelect)
-
         }
     }
 }

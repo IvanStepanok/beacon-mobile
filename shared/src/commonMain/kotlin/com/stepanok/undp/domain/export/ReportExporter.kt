@@ -4,7 +4,6 @@ package com.stepanok.undp.domain.export
 
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.Report
-import com.stepanok.undp.domain.model.toTier
 
 /** Builds interoperable export payloads (GeoJSON / CSV) from reports — UNDP must-have, on-device.
  *
@@ -95,9 +94,8 @@ object ReportExporter {
         return "$header\n$rows"
     }
 
-    /** Title-cased 3-tier gate value, copying the backend's generated damage_tier rollup +
-     *  titleTier (none/slight → Minimal, moderate/severe → Partial, destroyed → Complete). */
-    private fun damageClassification(r: Report): String = when (r.damageTier ?: r.damage.toTier()) {
+    /** Title-cased 3-tier gate value, matching the backend's damage_classification export field. */
+    private fun damageClassification(r: Report): String = when (r.damage) {
         DamageTier.MINIMAL -> "Minimal"
         DamageTier.PARTIAL -> "Partial"
         DamageTier.COMPLETE -> "Complete"

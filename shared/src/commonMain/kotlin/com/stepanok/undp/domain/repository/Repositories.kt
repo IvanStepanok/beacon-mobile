@@ -42,8 +42,6 @@ interface ReportRepository {
     suspend fun submit(report: Report)
     /** Update one report's sync state (driven by [SyncManager]). */
     suspend fun updateSync(reportId: String, state: SyncState)
-    /** Global capture scale set by analysts ("tier3" default | "ems98"). */
-    suspend fun damageScale(): String
     /** The modular capture-form sections — server-driven (GET /form-schema for the current
      *  crisis scope), cached so the form works offline, with the built-in Appendix-1 default
      *  as the final fallback. */
@@ -77,8 +75,6 @@ interface CrisisRepository {
     suspend fun crisesNear(lat: Double, lng: Double, radiusKm: Double = 50.0): List<Crisis>
     /** All active crises (for the "browse crises elsewhere" list). */
     suspend fun activeCrises(): List<Crisis>
-    /** Danger zones for a specific crisis (scoped, not a hardcoded crisis). */
-    suspend fun dangerZones(crisisId: String): List<com.stepanok.undp.domain.model.DangerZone>
 }
 
 interface ProfileRepository {

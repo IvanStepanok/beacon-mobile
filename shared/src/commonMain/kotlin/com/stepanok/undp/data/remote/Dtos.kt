@@ -22,7 +22,6 @@ data class ReportDto(
     val id: String,
     val idempotencyKey: String = "",
     val damage: String,
-    val damageTier: String = "minimal",
     val possiblyDamaged: Boolean = false,
     val infraTypes: List<String> = emptyList(),
     val infraName: String? = null,
@@ -52,7 +51,6 @@ data class ReportDto(
     val sizeBytes: Long = 0,
     val synced: Boolean = true,
     val isMine: Boolean = false,
-    val lifeSafety: Boolean = false,
     val capturedAt: String,
 )
 
@@ -72,14 +70,6 @@ data class CrisisDto(
     val radiusKm: Double = 0.0,
     val distanceKm: Double? = null,
     val covers: Boolean? = null,
-)
-
-@Serializable
-data class DangerZoneDto(
-    val id: String,
-    val name: String,
-    val note: String,
-    val severity: String,
 )
 
 @Serializable
@@ -165,12 +155,8 @@ data class SubmitReportDto(
     // companions (pressingNeedsOther). A raw JsonObject — not a fixed DTO — so answers to
     // sections UNDP adds server-side flow through untouched.
     val modular: JsonObject? = null,
-    val lifeSafety: Boolean = false,
     val capturedAt: String,
 )
-
-@Serializable
-data class ConfigDto(val damageScale: String = "tier3")
 
 /** The backend's JSON error envelope, returned with every non-2xx status. */
 @Serializable

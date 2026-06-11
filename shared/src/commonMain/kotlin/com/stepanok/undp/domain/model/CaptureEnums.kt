@@ -1,25 +1,7 @@
 package com.stepanok.undp.domain.model
 
-/** 5-level ordinal damage grade aligned to EMS-98 / Copernicus EMS / UNOSAT. */
-enum class DamageLevel { NONE, SLIGHT, MODERATE, SEVERE, DESTROYED }
-
-/** The challenge's REQUIRED 3-level core indicator. EMS-98 grades roll up to this. */
+/** The challenge's REQUIRED 3-level damage classification — the only damage scale Beacon uses. */
 enum class DamageTier { MINIMAL, PARTIAL, COMPLETE }
-
-/** Roll a 5-level grade up to the required 3 tiers. */
-fun DamageLevel.toTier(): DamageTier = when (this) {
-    DamageLevel.NONE, DamageLevel.SLIGHT -> DamageTier.MINIMAL
-    DamageLevel.MODERATE, DamageLevel.SEVERE -> DamageTier.PARTIAL
-    DamageLevel.DESTROYED -> DamageTier.COMPLETE
-}
-
-/** A representative 5-level grade for a tier — lets the existing DamageLevel-based
- *  display (colors/labels/pins) render a tier3 report sensibly (green/amber/terracotta). */
-fun DamageTier.representativeLevel(): DamageLevel = when (this) {
-    DamageTier.MINIMAL -> DamageLevel.NONE
-    DamageTier.PARTIAL -> DamageLevel.MODERATE
-    DamageTier.COMPLETE -> DamageLevel.DESTROYED
-}
 
 /** Required multi-select: type of affected infrastructure (7 categories + Other). */
 enum class InfraType {

@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stepanok.undp.designsystem.labels.damageLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 
-/** The home-map stat pill row: a colored-dot count per 5-level EMS-98 grade. */
+/** The home-map stat pill row: a colored-dot count per 3-tier damage classification. */
 @Composable
 fun DamageStatsRow(
-    counts: Map<DamageLevel, Int>,
+    counts: Map<DamageTier, Int>,
     modifier: Modifier = Modifier,
 ) {
     val colors = BeaconTheme.colors
@@ -41,8 +41,8 @@ fun DamageStatsRow(
             .padding(10.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        DamageLevel.entries.forEach { level ->
-            StatCell(damageLabel(level), counts[level] ?: 0, colors.damageColor(level))
+        DamageTier.entries.forEach { tier ->
+            StatCell(damageLabel(tier), counts[tier] ?: 0, colors.damageColor(tier))
         }
     }
 }
@@ -50,8 +50,8 @@ fun DamageStatsRow(
 @Composable
 private fun RowScope.StatCell(label: String, value: Int, dot: Color) {
     val colors = BeaconTheme.colors
-    // Number (+dot) on top so all five align regardless of label length; the label
-    // sits below in a compact single line so "Moderate"/"Destroyed" don't wrap.
+    // Number (+dot) on top so all three align regardless of label length; the label
+    // sits below in a compact single line so longer tier labels don't wrap.
     Column(
         modifier = Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 1.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

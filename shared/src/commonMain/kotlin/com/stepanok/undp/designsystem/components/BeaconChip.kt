@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stepanok.undp.designsystem.theme.BeaconTheme
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 
 enum class ChipSize { Sm, Md }
 
@@ -52,16 +52,16 @@ fun BeaconChip(
     }
 }
 
-/** Convenience chip for the 3-tier damage level using the theme's trauma-informed colors. */
+/** Convenience chip for the 3-tier damage classification using the theme's trauma-informed colors. */
 @Composable
-fun DamageChip(level: DamageLevel, label: String, modifier: Modifier = Modifier, size: ChipSize = ChipSize.Md) {
+fun DamageChip(tier: DamageTier, label: String, modifier: Modifier = Modifier, size: ChipSize = ChipSize.Md) {
     val colors = BeaconTheme.colors
     BeaconChip(
         text = label,
         modifier = modifier,
-        container = colors.damageSoft(level),
-        contentColor = colors.damageColor(level),
-        dotColor = colors.damageColor(level),
+        container = colors.damageSoft(tier),
+        contentColor = colors.damageColor(tier),
+        dotColor = colors.damageColor(tier),
         size = size,
     )
 }

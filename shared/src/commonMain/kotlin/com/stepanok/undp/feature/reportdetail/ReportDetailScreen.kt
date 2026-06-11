@@ -100,7 +100,7 @@ data class ReportDetailScreen(val reportId: String) : Screen {
                         Text(stringResource(Res.string.report_label), style = BeaconTheme.typography.micro, color = colors.ink3)
                         Text("#${report.id}", style = BeaconTheme.typography.titleM, color = colors.ink)
                     }
-                    DamageChip(level = report.damage, label = damageLabel(report.damage))
+                    DamageChip(tier = report.damage, label = damageLabel(report.damage))
                 }
 
                 // The server permanently rejected the reporter's own report — show the honest

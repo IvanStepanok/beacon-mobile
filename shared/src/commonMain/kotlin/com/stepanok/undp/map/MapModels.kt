@@ -1,6 +1,6 @@
 package com.stepanok.undp.map
 
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 
 data class GeoPoint(val lat: Double, val lng: Double)
 
@@ -9,7 +9,7 @@ data class ReportPin(
     val id: String,
     val lat: Double,
     val lng: Double,
-    val level: DamageLevel,
+    val level: DamageTier,
 )
 
 object MapDefaults {

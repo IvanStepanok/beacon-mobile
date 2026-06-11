@@ -2,7 +2,7 @@ package com.stepanok.undp.designsystem.labels
 
 import androidx.compose.runtime.Composable
 import com.stepanok.undp.domain.model.CrisisNature
-import com.stepanok.undp.domain.model.DamageLevel
+import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.InfraType
 import com.stepanok.undp.domain.model.SyncState
@@ -17,11 +17,9 @@ import undp.shared.generated.resources.crisis_hurricane
 import undp.shared.generated.resources.crisis_tsunami
 import undp.shared.generated.resources.crisis_unrest
 import undp.shared.generated.resources.crisis_wildfire
-import undp.shared.generated.resources.damage_none
-import undp.shared.generated.resources.damage_slight
-import undp.shared.generated.resources.damage_moderate
-import undp.shared.generated.resources.damage_severe
-import undp.shared.generated.resources.damage_destroyed
+import undp.shared.generated.resources.damage_tier_minimal
+import undp.shared.generated.resources.damage_tier_partial
+import undp.shared.generated.resources.damage_tier_complete
 import undp.shared.generated.resources.debris_no
 import undp.shared.generated.resources.debris_unsure
 import undp.shared.generated.resources.debris_yes
@@ -38,13 +36,11 @@ import undp.shared.generated.resources.reject_invalid
 import undp.shared.generated.resources.reject_rate_limited
 
 @Composable
-fun damageLabel(level: DamageLevel): String = stringResource(
-    when (level) {
-        DamageLevel.NONE -> Res.string.damage_none
-        DamageLevel.SLIGHT -> Res.string.damage_slight
-        DamageLevel.MODERATE -> Res.string.damage_moderate
-        DamageLevel.SEVERE -> Res.string.damage_severe
-        DamageLevel.DESTROYED -> Res.string.damage_destroyed
+fun damageLabel(tier: DamageTier): String = stringResource(
+    when (tier) {
+        DamageTier.MINIMAL -> Res.string.damage_tier_minimal
+        DamageTier.PARTIAL -> Res.string.damage_tier_partial
+        DamageTier.COMPLETE -> Res.string.damage_tier_complete
     },
 )
 

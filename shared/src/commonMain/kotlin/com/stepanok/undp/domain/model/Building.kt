@@ -12,7 +12,7 @@ data class Building(
 
 data class BuildingVersion(
     val reportId: String,
-    val damage: DamageLevel,
+    val damage: DamageTier,
     val at: Instant,
     val note: String,
     val isCurrent: Boolean,
@@ -21,7 +21,7 @@ data class BuildingVersion(
 /** Damage history for one building — latest + the over-time timeline shown in report detail. */
 data class BuildingTimeline(
     val buildingId: String,
-    val current: DamageLevel?,
+    val current: DamageTier?,
     val versions: List<BuildingVersion>,
 )
 
@@ -29,5 +29,5 @@ data class BuildingTimeline(
 data class AreaGroup(
     val area: String,
     val count: Int,
-    val worst: DamageLevel,
+    val worst: DamageTier,
 )

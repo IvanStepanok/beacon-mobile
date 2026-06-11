@@ -22,7 +22,6 @@ import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.model.ReportDescription
 import com.stepanok.undp.domain.model.ReportLocation
 import com.stepanok.undp.domain.model.SyncState
-import com.stepanok.undp.domain.model.representativeLevel
 import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.domain.repository.SyncManager
 import com.stepanok.undp.core.format.relativeTime
@@ -47,11 +46,6 @@ class CaptureFlowScreenModel(
                 setState { copy(offline = status == ConnectivityStatus.OFFLINE) }
             }
         }
-        // Server-driven capture scale (3-tier default, or EMS-98 if an analyst flipped it).
-        screenModelScope.launch {
-            val scale = reportRepository.damageScale()
-            setState { copy(damageScale = scale) }
-        }
         // Server-driven modular form (cached for offline; built-in Appendix-1 default fallback) —
         // a section UNDP adds server-side renders + submits without an app update.
         screenModelScope.launch {
@@ -65,13 +59,8 @@ class CaptureFlowScreenModel(
             is CaptureIntent.PhotoCaptured -> setState {
                 copy(draft = draft.copy(photoCaptured = true, photoPath = intent.path, photoSizeBytes = intent.sizeBytes, redaction = intent.redaction))
             }
-            is CaptureIntent.SetDamage -> setState { copy(draft = draft.copy(damage = intent.level, damageTier = null)) }
-            is CaptureIntent.SetDamageTier -> setState {
-                // Store the tier + a representative 5-level grade so the rest of the flow/display works.
-                copy(draft = draft.copy(damageTier = intent.tier, damage = intent.tier.representativeLevel()))
-            }
+            is CaptureIntent.SetDamageTier -> setState { copy(draft = draft.copy(damageTier = intent.tier)) }
             is CaptureIntent.SetPossiblyDamaged -> setState { copy(draft = draft.copy(possiblyDamaged = intent.flag)) }
-            is CaptureIntent.SetLifeSafety -> setState { copy(draft = draft.copy(lifeSafety = intent.flag)) }
             is CaptureIntent.ToggleInfra -> setState { copy(draft = draft.copy(infra = draft.infra.toggle(intent.type))) }
             is CaptureIntent.SetInfraName -> setState { copy(draft = draft.copy(infraName = intent.text)) }
             is CaptureIntent.ToggleCrisis -> setState { copy(draft = draft.copy(crisis = draft.crisis.toggle(intent.nature))) }
@@ -157,7 +146,7 @@ class CaptureFlowScreenModel(
 
     private fun submit() {
         val draft = state.value.draft
-        val damage = draft.damage ?: run {
+        val tier = draft.damageTier ?: run {
             postEffect(CaptureEffect.Error("Pick a damage level first")); return
         }
         // A report MUST carry a real location: a GPS fix, a tapped footprint, or (failing both)
@@ -183,10 +172,8 @@ class CaptureFlowScreenModel(
                 idempotencyKey = ids.newId(),
                 photos = draft.photoPath?.let { listOf(PhotoRef(localPath = it, sizeBytes = draft.photoSizeBytes)) }
                     ?: emptyList(),
-                damage = damage,
-                damageTier = draft.damageTier,
+                damage = tier,
                 possiblyDamaged = draft.possiblyDamaged,
-                lifeSafety = draft.lifeSafety,
                 infraTypes = draft.infra,
                 infraName = draft.infraName.ifBlank { null },
                 // The single name field doubles as the legacy "specify Other" detail when OTHER is picked.

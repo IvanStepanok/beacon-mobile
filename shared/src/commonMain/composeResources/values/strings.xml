@@ -3,19 +3,11 @@
     <!-- Navigation -->
     <string name="nav_map">Map</string>
     <string name="nav_reports">Reports</string>
-    <string name="nav_crisis">Crisis</string>
     <string name="nav_profile">Profile</string>
 
     <!-- Crisis &amp; Safety tab -->
     <string name="crisis_title">Crisis &amp; Safety</string>
     <string name="crisis_started">Started %1$s</string>
-    <string name="crisis_danger_zones">Danger zones — avoid these areas</string>
-    <string name="crisis_no_danger">No danger zones flagged right now.</string>
-    <string name="danger_caution">Caution</string>
-    <string name="danger_warning">Warning</string>
-    <string name="danger_critical">Critical</string>
-    <string name="crisis_safety_title">Stay safe while reporting</string>
-    <string name="crisis_safety_tip">Keep a safe distance from damaged structures. Never enter unstable buildings to take a photo.</string>
     <string name="crisis_none_nearby">No active crisis near you</string>
     <string name="crisis_none_nearby_sub">You can still report a damaged building from the map — it’ll be reviewed.</string>
     <string name="crisis_active_near_you">ACTIVE CRISES NEAR YOU</string>
@@ -28,11 +20,6 @@
     <string name="common_close">Close</string>
 
     <!-- Damage levels (5-level EMS-98) -->
-    <string name="damage_none">None</string>
-    <string name="damage_slight">Slight</string>
-    <string name="damage_moderate">Moderate</string>
-    <string name="damage_severe">Severe</string>
-    <string name="damage_destroyed">Destroyed</string>
 
     <!-- Map home -->
     <string name="map_search_hint">Search area or address</string>
@@ -80,11 +67,6 @@
     <!-- Capture: damage -->
     <string name="capture_damage_q">What is the extent of damage?</string>
     <string name="capture_damage_sub">Pick the option that best describes this structure.</string>
-    <string name="damage_none_desc">No visible damage — the building appears intact.</string>
-    <string name="damage_slight_desc">Minor, non-structural cracks. Still usable.</string>
-    <string name="damage_moderate_desc">Moderate damage, partial use possible. Enter with caution.</string>
-    <string name="damage_severe_desc">Serious structural damage. Do not enter.</string>
-    <string name="damage_destroyed_desc">Collapsed or beyond repair.</string>
     <!-- Capture: damage 3-tier (default scale) -->
     <string name="damage_tier_minimal">Minimal / no damage</string>
     <string name="damage_tier_minimal_desc">Little or no visible damage</string>
@@ -95,8 +77,6 @@
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">Possibly damaged</string>
     <string name="capture_possibly_damaged_desc">Not sure of the exact level — flag it for an analyst to review.</string>
-    <string name="capture_lifesafety_q">Are people trapped or injured here?</string>
-    <string name="capture_lifesafety_desc">Flags this report as urgent so reviewers see it first.</string>
 
     <!-- Capture: infrastructure -->
     <string name="capture_infra_q">What kind of structure?</string>

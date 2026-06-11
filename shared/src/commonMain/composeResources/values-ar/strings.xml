@@ -3,19 +3,11 @@
     <!-- Navigation -->
     <string name="nav_map">الخريطة</string>
     <string name="nav_reports">البلاغات</string>
-    <string name="nav_crisis">الأزمة</string>
     <string name="nav_profile">الملف الشخصي</string>
 
     <!-- Crisis &amp; Safety tab -->
     <string name="crisis_title">الأزمة والسلامة</string>
     <string name="crisis_started">بدأت %1$s</string>
-    <string name="crisis_danger_zones">مناطق خطرة — تجنّب هذه المناطق</string>
-    <string name="crisis_no_danger">لا توجد مناطق خطرة مرصودة حاليًا.</string>
-    <string name="danger_caution">احترس</string>
-    <string name="danger_warning">تحذير</string>
-    <string name="danger_critical">حرج</string>
-    <string name="crisis_safety_title">حافظ على سلامتك أثناء الإبلاغ</string>
-    <string name="crisis_safety_tip">احتفظ بمسافة آمنة عن المنشآت المتضررة. لا تدخل أبدًا مبانٍ غير مستقرة لالتقاط صورة.</string>
     <string name="crisis_none_nearby">لا توجد أزمة نشطة قريبة منك</string>
     <string name="crisis_none_nearby_sub">لا يزال بإمكانك الإبلاغ عن مبنى متضرر من الخريطة — وستتم مراجعته.</string>
     <string name="crisis_active_near_you">أزمات نشطة قريبة منك</string>
@@ -28,11 +20,6 @@
     <string name="common_close">إغلاق</string>
 
     <!-- Damage levels -->
-    <string name="damage_none">لا يوجد</string>
-    <string name="damage_slight">طفيف</string>
-    <string name="damage_moderate">متوسط</string>
-    <string name="damage_severe">شديد</string>
-    <string name="damage_destroyed">مدمر</string>
 
     <!-- Map home -->
     <string name="map_search_hint">ابحث عن منطقة أو عنوان</string>
@@ -80,11 +67,6 @@
     <!-- Capture: damage -->
     <string name="capture_damage_q">ما مدى الضرر؟</string>
     <string name="capture_damage_sub">اختر الخيار الذي يصف هذه المنشأة على أفضل وجه.</string>
-    <string name="damage_none_desc">لا ضرر مرئي — يبدو المبنى سليمًا.</string>
-    <string name="damage_slight_desc">شقوق طفيفة غير إنشائية. لا يزال صالحًا للاستخدام.</string>
-    <string name="damage_moderate_desc">ضرر متوسط، يمكن استخدامه جزئيًا. ادخل بحذر.</string>
-    <string name="damage_severe_desc">ضرر إنشائي خطير. لا تدخل.</string>
-    <string name="damage_destroyed_desc">منهار أو يتعذّر إصلاحه.</string>
     <!-- Capture: damage 3-tier (default scale) -->
     <string name="damage_tier_minimal">ضرر طفيف / لا ضرر</string>
     <string name="damage_tier_minimal_desc">ضرر مرئي قليل أو معدوم</string>
@@ -95,8 +77,6 @@
     <!-- Capture: possibly-damaged + life-safety -->
     <string name="capture_possibly_damaged">ربما متضرر</string>
     <string name="capture_possibly_damaged_desc">لست متأكدًا من المستوى الدقيق — ضع علامة ليراجعه محلّل.</string>
-    <string name="capture_lifesafety_q">هل يوجد أشخاص محاصرون أو مصابون هنا؟</string>
-    <string name="capture_lifesafety_desc">يضع هذا البلاغ كعاجل ليطّلع عليه المراجعون أولًا.</string>
 
     <!-- Capture: infrastructure -->
     <string name="capture_infra_q">ما نوع المنشأة؟</string>

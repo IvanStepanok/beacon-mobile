@@ -8,11 +8,7 @@ import com.stepanok.undp.domain.model.BuildingTimeline
 import com.stepanok.undp.domain.model.BuildingVersion
 import com.stepanok.undp.domain.model.Crisis
 import com.stepanok.undp.domain.model.CrisisNature
-import com.stepanok.undp.domain.model.DamageLevel
 import com.stepanok.undp.domain.model.DamageTier
-import com.stepanok.undp.domain.model.toTier
-import com.stepanok.undp.domain.model.DangerSeverity
-import com.stepanok.undp.domain.model.DangerZone
 import com.stepanok.undp.domain.model.DebrisState
 import com.stepanok.undp.domain.model.FormOption
 import com.stepanok.undp.domain.model.FormSection
@@ -36,24 +32,14 @@ import kotlin.time.Instant
 
 // ── enum + time helpers (lowercase wire ↔ UPPERCASE enum), tolerant of unknowns ──
 
-// Accepts EITHER vocabulary: a 5-level EMS-98 grade, or a 3-tier value (which we
-// render with its representative 5-level grade so the existing UI displays sensibly).
-private fun damage(s: String): DamageLevel = when (s.lowercase()) {
-    "none" -> DamageLevel.NONE
-    "slight" -> DamageLevel.SLIGHT
-    "moderate" -> DamageLevel.MODERATE
-    "severe" -> DamageLevel.SEVERE
-    "destroyed" -> DamageLevel.DESTROYED
-    "minimal" -> DamageLevel.NONE
-    "partial" -> DamageLevel.MODERATE
-    "complete" -> DamageLevel.DESTROYED
-    else -> DamageLevel.NONE
+// The mandated 3-tier classification. Tolerant of legacy 5-level grades a not-yet-migrated
+// server might still emit (none/slight → minimal, moderate/severe → partial, destroyed → complete).
+private fun tier(s: String): DamageTier = when (s.lowercase()) {
+    "minimal", "none", "slight" -> DamageTier.MINIMAL
+    "partial", "moderate", "severe" -> DamageTier.PARTIAL
+    "complete", "destroyed" -> DamageTier.COMPLETE
+    else -> DamageTier.MINIMAL
 }
-
-private fun tier(s: String): DamageTier =
-    runCatching { DamageTier.valueOf(s.uppercase()) }.getOrElse {
-        runCatching { DamageLevel.valueOf(s.uppercase()).toTier() }.getOrDefault(DamageTier.MINIMAL)
-    }
 
 private fun infra(s: String): InfraType? = runCatching { InfraType.valueOf(s.uppercase()) }.getOrNull()
 
@@ -62,9 +48,6 @@ private fun nature(s: String): CrisisNature? = runCatching { CrisisNature.valueO
 private fun debris(s: String): DebrisState =
     runCatching { DebrisState.valueOf(s.uppercase()) }.getOrDefault(DebrisState.UNSURE)
 
-private fun severity(s: String): DangerSeverity =
-    runCatching { DangerSeverity.valueOf(s.uppercase()) }.getOrDefault(DangerSeverity.CAUTION)
-
 private fun instant(s: String): Instant = runCatching { Instant.parse(s) }.getOrElse { Clock.System.now() }
 
 // ── DTO → domain ──────────────────────────────────────────────────────
@@ -72,10 +55,8 @@ private fun instant(s: String): Instant = runCatching { Instant.parse(s) }.getOr
 fun ReportDto.toDomain(): Report = Report(
     id = id,
     idempotencyKey = idempotencyKey.ifBlank { "idem-$id" },
-    damage = damage(damage),
-    damageTier = tier(damageTier),
+    damage = tier(damage),
     possiblyDamaged = possiblyDamaged,
-    lifeSafety = lifeSafety,
     infraTypes = infraTypes.mapNotNull(::infra).toSet(),
     infraName = infraName,
     crisisNature = crisisNature.mapNotNull(::nature).toSet(),
@@ -112,14 +93,12 @@ fun CrisisDto.toDomain(): Crisis = Crisis(
     status = status, radiusKm = radiusKm, distanceKm = distanceKm, covers = covers ?: false,
 )
 
-fun DangerZoneDto.toDomain(): DangerZone = DangerZone(id, name, note, severity(severity))
-
-fun AreaGroupDto.toDomain(): AreaGroup = AreaGroup(area, count, damage(worst))
+fun AreaGroupDto.toDomain(): AreaGroup = AreaGroup(area, count, tier(worst))
 
 fun BuildingTimelineDto.toDomain(): BuildingTimeline = BuildingTimeline(
     buildingId = buildingId,
-    current = current?.let(::damage),
-    versions = versions.map { BuildingVersion(it.reportId, damage(it.damage), instant(it.at), it.note, it.isCurrent) },
+    current = current?.let(::tier),
+    versions = versions.map { BuildingVersion(it.reportId, tier(it.damage), instant(it.at), it.note, it.isCurrent) },
 )
 
 fun ProfileDto.toDomain(): Profile = Profile(
@@ -183,9 +162,8 @@ fun Report.toSubmitDto(): SubmitReportDto = SubmitReportDto(
     idempotencyKey = idempotencyKey,
     // Crisis pin stamped from the map scope at enqueue time (null = server assigns spatially).
     crisisId = crisisId,
-    // Send the chosen tier when the reporter used the 3-tier scale; else the EMS-98 grade.
-    // The server accepts both and always derives the required 3-tier rollup.
-    damage = (damageTier?.name ?: damage.name).lowercase(),
+    // The mandated 3-tier classification (minimal|partial|complete).
+    damage = damage.name.lowercase(),
     possiblyDamaged = possiblyDamaged,
     infraTypes = infraTypes.map { it.name.lowercase() },
     infraName = infraName,
@@ -205,6 +183,5 @@ fun Report.toSubmitDto(): SubmitReportDto = SubmitReportDto(
     place = place.ifBlank { null },
     description = description?.let { ReportDescriptionDto(it.original, it.originalLang, it.translated ?: "", it.translatedLang) },
     modular = modular?.takeUnless { it.isEmpty }?.toWireBlob(),
-    lifeSafety = lifeSafety,
     capturedAt = capturedAt.toString(),
 )
