@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -108,10 +109,15 @@ fun LocationStep(
             centeredOnce = true
         }
     }
-    StepShell(current, total, onBack, onContinue, canContinue = hasLocation, continueLabel = stringResource(Res.string.capture_location_confirm)) {
+    // scrollable=false: the map must own its drag gestures. Inside a verticalScroll the
+    // parent steals vertical pans, so the map "stops" when you try to drag to a new area.
+    // The map takes weight(1f) (fills the space between the heading and the cards) instead.
+    StepShell(current, total, onBack, onContinue, canContinue = hasLocation, continueLabel = stringResource(Res.string.capture_location_confirm), scrollable = false) {
         StepHeading(stringResource(Res.string.capture_location_q), stringResource(Res.string.capture_location_sub))
         Box(
-            Modifier.fillMaxWidth().height(420.dp).clip(RoundedCornerShape(18.dp)).border(1.dp, colors.line, RoundedCornerShape(18.dp)),
+            // weight(1f): the map fills the space between the heading and the cards, and shrinks
+            // to make room when the keyboard opens for the landmark field (no fixed min height).
+            Modifier.fillMaxWidth().weight(1f).clip(RoundedCornerShape(18.dp)).border(1.dp, colors.line, RoundedCornerShape(18.dp)),
         ) {
             BeaconMap(
                 reports = emptyList(),
@@ -121,7 +127,7 @@ fun LocationStep(
                 footprints = true,
                 onMapTap = { p -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng)) },
                 onFootprintTap = { p, id -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng, id)) },
-                modifier = Modifier.fillMaxWidth().height(420.dp),
+                modifier = Modifier.fillMaxSize(),
             )
             // Centre "your location" crosshair — shown ONLY while no specific building is tapped.
             // Once a footprint is selected, the highlighted polygon (not the centre) is the pinned

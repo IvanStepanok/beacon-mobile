@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -196,10 +197,16 @@ fun StepShell(
     continueLabel: String = stringResource(Res.string.step_continue),
     trailingIcon: androidx.compose.ui.graphics.vector.ImageVector? = BeaconIcons.ArrowRight,
     footer: (@Composable () -> Unit)? = null,
+    // Most steps scroll their content. The map step opts OUT (scrollable=false): a parent
+    // verticalScroll steals the map's vertical drags, so panning stutters/stops — instead
+    // the map takes weight(1f) and owns its own gestures.
+    scrollable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = BeaconTheme.colors
-    Column(Modifier.fillMaxSize().background(colors.bg)) {
+    // imePadding so the soft keyboard lifts the content (the app is edge-to-edge, so the IME
+    // overlays otherwise) — matters most for the non-scrolling map step's optional landmark field.
+    Column(Modifier.fillMaxSize().background(colors.bg).imePadding()) {
         Row(
             Modifier.fillMaxWidth().safeTopPadding().padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -223,8 +230,11 @@ fun StepShell(
                 color = colors.ink3,
             )
         }
+        val scrollState = rememberScrollState()
         Column(
-            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
+            Modifier.weight(1f).fillMaxWidth()
+                .then(if (scrollable) Modifier.verticalScroll(scrollState) else Modifier)
+                .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             content = content,
         )
