@@ -21,6 +21,7 @@ import platform.UIKit.UIImagePickerControllerDelegateProtocol
 import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
+import platform.UIKit.UIViewController
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_global_queue
@@ -38,6 +39,14 @@ actual fun rememberPhotoCapture(onResult: (CapturedPhoto?) -> Unit): PhotoCaptur
     }
 }
 
+// Strong, EXTERNAL reference to the live picker delegate. UIImagePickerController.delegate is a
+// WEAK property, and Kotlin/Native's GC collects reference cycles — so a delegate kept alive only
+// by a self-reference can be collected BEFORE the pick callback fires, silently dropping the first
+// selection (the reported bug: "the photo isn't selected the first time"). A top-level strong ref
+// guarantees the delegate outlives the picker until finish() clears it. Only one picker is on
+// screen at a time, so a single slot is sufficient.
+private var activePickerDelegate: PickerDelegate? = null
+
 @OptIn(ExperimentalForeignApi::class)
 private fun present(sourceType: UIImagePickerControllerSourceType, onResult: (CapturedPhoto?) -> Unit) {
     val root = UIApplication.sharedApplication.keyWindow?.rootViewController
@@ -45,21 +54,26 @@ private fun present(sourceType: UIImagePickerControllerSourceType, onResult: (Ca
         onResult(null)
         return
     }
+    // Present on the TOPMOST controller. Presenting on a controller that already has a presented
+    // child is a silent no-op in UIKit — a stale/mid-dismiss presentation would otherwise swallow
+    // the request, so the gallery "doesn't open" until a second tap.
+    var top: UIViewController = root
+    while (top.presentedViewController != null) top = top.presentedViewController!!
+
     val picker = UIImagePickerController()
     picker.sourceType =
         if (UIImagePickerController.isSourceTypeAvailable(sourceType)) sourceType
         else UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
-    picker.delegate = PickerDelegate(onResult)
-    root.presentViewController(picker, animated = true, completion = null)
+    val delegate = PickerDelegate(onResult)
+    activePickerDelegate = delegate
+    picker.delegate = delegate
+    top.presentViewController(picker, animated = true, completion = null)
 }
 
 @OptIn(ExperimentalForeignApi::class)
 private class PickerDelegate(
     private var onResult: ((CapturedPhoto?) -> Unit)?,
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
-
-    // The picker holds its delegate weakly — keep a strong self-reference until a callback fires.
-    private var selfRef: PickerDelegate? = this
 
     override fun imagePickerController(
         picker: UIImagePickerController,
@@ -87,7 +101,7 @@ private class PickerDelegate(
     private fun finish(photo: CapturedPhoto?) {
         onResult?.invoke(photo)
         onResult = null
-        selfRef = null
+        activePickerDelegate = null
     }
 }
 
