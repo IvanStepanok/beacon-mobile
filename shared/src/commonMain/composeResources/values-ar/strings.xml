@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">الخرائط دون اتصال</string>
     <string name="offline_sub">حمّل منطقة الأزمة مسبقًا ليعمل التطبيق دون إشارة.</string>
-    <string name="offline_download_area">تنزيل حزمة أزمة أنطاكية</string>
+    <string name="offline_download_area">تنزيل خريطة منطقتك</string>
     <string name="offline_ready">جاهز</string>
     <string name="offline_downloading">جارٍ التنزيل</string>
     <string name="offline_queued">في قائمة الانتظار</string>

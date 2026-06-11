@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">Cartes hors ligne</string>
     <string name="offline_sub">Téléchargez la zone de crise à l'avance pour que l'application fonctionne sans réseau.</string>
-    <string name="offline_download_area">Télécharger le pack de crise d'Antakya</string>
+    <string name="offline_download_area">Télécharger la carte de votre zone</string>
     <string name="offline_ready">Prêt</string>
     <string name="offline_downloading">Téléchargement</string>
     <string name="offline_queued">En attente</string>

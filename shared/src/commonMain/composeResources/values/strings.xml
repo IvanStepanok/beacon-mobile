@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">Offline maps</string>
     <string name="offline_sub">Pre-download the crisis area so the app works with no signal.</string>
-    <string name="offline_download_area">Download Antakya crisis pack</string>
+    <string name="offline_download_area">Download map for your area</string>
     <string name="offline_ready">Ready</string>
     <string name="offline_downloading">Downloading</string>
     <string name="offline_queued">Queued</string>

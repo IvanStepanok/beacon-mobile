@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">Mapas sin conexión</string>
     <string name="offline_sub">Descarga previamente la zona de crisis para que la app funcione sin señal.</string>
-    <string name="offline_download_area">Descargar el paquete de crisis de Antakya</string>
+    <string name="offline_download_area">Descargar el mapa de tu zona</string>
     <string name="offline_ready">Listo</string>
     <string name="offline_downloading">Descargando</string>
     <string name="offline_queued">En cola</string>

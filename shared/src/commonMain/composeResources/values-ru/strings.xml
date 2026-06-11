@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">Автономные карты</string>
     <string name="offline_sub">Заранее загрузите зону кризиса, чтобы приложение работало без сигнала.</string>
-    <string name="offline_download_area">Загрузить пакет кризиса Антакья</string>
+    <string name="offline_download_area">Загрузить карту вашей области</string>
     <string name="offline_ready">Готово</string>
     <string name="offline_downloading">Загрузка</string>
     <string name="offline_queued">В очереди</string>

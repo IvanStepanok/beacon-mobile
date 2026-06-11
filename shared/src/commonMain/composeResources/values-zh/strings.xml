@@ -258,7 +258,7 @@
     <!-- Offline downloads -->
     <string name="offline_title">离线地图</string>
     <string name="offline_sub">预先下载危机区域，让应用在没有信号时也能使用。</string>
-    <string name="offline_download_area">下载安塔基亚危机地图包</string>
+    <string name="offline_download_area">下载您所在区域的地图</string>
     <string name="offline_ready">就绪</string>
     <string name="offline_downloading">下载中</string>
     <string name="offline_queued">排队中</string>
