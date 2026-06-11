@@ -160,6 +160,9 @@ def main():
     with open(os.path.join(OUT, "confusion_matrix.txt"), "w") as f:
         f.write(report)
 
+    # Save the Keras model so Core ML / TFLite can be re-exported later WITHOUT re-training.
+    model.save(os.path.join(OUT, "keras_model.keras"))
+
     # ---- export TFLite (float32; small model, simplest correct mobile inference) ----
     print(">> exporting TFLite ...", flush=True)
     conv = tf.lite.TFLiteConverter.from_keras_model(model)
@@ -181,8 +184,11 @@ def main():
     try:
         import coremltools as ct
         print(">> exporting Core ML ...", flush=True)
+        # The ImageType name MUST match the model's actual input placeholder (Keras 3 auto-names it,
+        # e.g. "input_layer_1") — hardcoding "image" makes coremltools fail to bind the input.
+        inp_name = model.inputs[0].name.split(":")[0]
         mlm = ct.convert(model, source="tensorflow",
-                         inputs=[ct.ImageType(name="image", shape=(1, IMG, IMG, 3), scale=1.0, bias=[0, 0, 0])],
+                         inputs=[ct.ImageType(name=inp_name, shape=(1, IMG, IMG, 3), scale=1.0, bias=[0, 0, 0])],
                          classifier_config=ct.ClassifierConfig(TIERS),
                          minimum_deployment_target=ct.target.iOS15)
         mlm.save(os.path.join(OUT, "DamageClassifier.mlpackage"))
