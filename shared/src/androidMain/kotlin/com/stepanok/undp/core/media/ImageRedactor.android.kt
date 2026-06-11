@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
@@ -13,32 +14,52 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
+private const val TAG = "BeaconRedact"
+
 /**
  * On-device, OFFLINE face + license-plate redaction (B1). Detects regions on [src], paints
  * over them on a mutable copy, and returns (redacted bitmap, result). Faces use ML Kit Face
  * Detection (BUNDLED offline model — reliable, no network/Play-Services download); plates use
  * ML Kit Text Recognition + an aspect-ratio/character heuristic (best-effort). MUST run OFF the
- * main thread — `Tasks.await` blocks. Never throws: on any failure returns (src, all-false) so
- * the photo is still stored (EXIF already stripped) — privacy is never worse than before.
+ * main thread — `Tasks.await` blocks.
+ *
+ * HONESTY: a detector that THREW (model failed to load, runtime error) is NOT the same as one
+ * that ran and found nothing. A thrown detector leaves its `*Redacted` flag FALSE so the report's
+ * Anonymization never claims a guarantee that did not run. The photo is always still stored (EXIF
+ * already stripped) — privacy is never WORSE than before redaction existed.
  */
-internal fun redactBitmap(src: Bitmap): Pair<Bitmap, RedactionResult> = runCatching {
-    val faces = detectFaces(src)
-    val plates = detectPlates(src)
-    if (faces.isEmpty() && plates.isEmpty()) {
-        // Detectors ran and found nothing to redact — certify processed, keep original pixels.
-        return@runCatching src to RedactionResult(facesRedacted = true, platesRedacted = true)
+internal fun redactBitmap(src: Bitmap): Pair<Bitmap, RedactionResult> {
+    // null == the detector threw (logged); empty == it ran and found nothing.
+    val faces: List<Rect>? = try {
+        detectFaces(src)
+    } catch (e: Throwable) {
+        Log.w(TAG, "face detection failed (no blur applied; flag stays false)", e); null
+    }
+    val plates: List<Rect>? = try {
+        detectPlates(src)
+    } catch (e: Throwable) {
+        Log.w(TAG, "plate detection failed (no blur applied; flag stays false)", e); null
+    }
+    val faceList = faces.orEmpty()
+    val plateList = plates.orEmpty()
+    Log.i(TAG, "redact ${src.width}x${src.height}: faces=${faces?.size ?: "ERR"} plates=${plates?.size ?: "ERR"}")
+
+    if (faceList.isEmpty() && plateList.isEmpty()) {
+        // Nothing to paint. Flags reflect whether each detector actually RAN (honest).
+        return src to RedactionResult(facesRedacted = faces != null, platesRedacted = plates != null)
     }
     val out = if (src.isMutable) src else src.copy(Bitmap.Config.ARGB_8888, true)
     val canvas = Canvas(out)
-    faces.forEach { pixelate(out, canvas, it) }
-    plates.forEach { solidBox(canvas, it) }
-    out to RedactionResult(
-        facesFound = faces.size, platesFound = plates.size,
-        facesRedacted = true, platesRedacted = true,
+    faceList.forEach { pixelate(out, canvas, it) }
+    plateList.forEach { solidBox(canvas, it) }
+    return out to RedactionResult(
+        facesFound = faceList.size, platesFound = plateList.size,
+        facesRedacted = faces != null, platesRedacted = plates != null,
     )
-}.getOrDefault(src to RedactionResult())
+}
 
-private fun detectFaces(bmp: Bitmap): List<Rect> = runCatching {
+/** Detect faces. THROWS on ML Kit failure (caught + logged by the caller) — do not swallow here. */
+private fun detectFaces(bmp: Bitmap): List<Rect> {
     val detector = FaceDetection.getClient(
         FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
@@ -46,17 +67,18 @@ private fun detectFaces(bmp: Bitmap): List<Rect> = runCatching {
             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
             .build(),
     )
-    try {
+    return try {
         Tasks.await(detector.process(InputImage.fromBitmap(bmp, 0)))
             .map { expand(it.boundingBox, bmp, 0.18f) }
     } finally {
         detector.close()
     }
-}.getOrDefault(emptyList())
+}
 
-private fun detectPlates(bmp: Bitmap): List<Rect> = runCatching {
+/** Detect plate-like text. THROWS on ML Kit failure (caught + logged by the caller). */
+private fun detectPlates(bmp: Bitmap): List<Rect> {
     val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    try {
+    return try {
         val text = Tasks.await(recognizer.process(InputImage.fromBitmap(bmp, 0)))
         buildList {
             for (block in text.textBlocks) {
@@ -69,7 +91,7 @@ private fun detectPlates(bmp: Bitmap): List<Rect> = runCatching {
     } finally {
         recognizer.close()
     }
-}.getOrDefault(emptyList())
+}
 
 /** A plate-like line: 4–10 alphanumerics with ≥2 digits, wide aspect ratio, modest height. */
 internal fun looksLikePlate(text: String, box: Rect, imgHeight: Int): Boolean {

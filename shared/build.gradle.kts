@@ -19,6 +19,30 @@ kotlin {
         }
     }
 
+    // TEST-ONLY: the published maplibre-compose carries CI-baked framework search paths, so the
+    // iosSimulatorArm64 TEST executable can't find MapLibre.framework (the real app build gets it
+    // from Xcode/SPM). Point the test linker + runtime at the SPM-resolved simulator slice from
+    // Xcode's DerivedData (populated once the iosApp has been built in Xcode) so on-simulator unit
+    // tests (e.g. ImageRedactorIosTest) can link and run. Guarded: if the slice isn't present the
+    // opts are simply skipped. Affects ONLY the iosSimulatorArm64 test binary — every other build
+    // (the shipped framework, the Xcode app, Android) is untouched.
+    run {
+        val derivedData = file("${System.getProperty("user.home")}/Library/Developer/Xcode/DerivedData")
+        val mlSlice = derivedData.listFiles()
+            ?.filter { it.isDirectory && it.name.startsWith("iosApp-") }
+            ?.map {
+                file(
+                    "$it/SourcePackages/artifacts/maplibre-gl-native-distribution/MapLibre/" +
+                        "MapLibre.xcframework/ios-arm64_x86_64-simulator",
+                )
+            }
+            ?.firstOrNull { it.exists() }
+        if (mlSlice != null) {
+            iosSimulatorArm64().binaries.getTest("DEBUG")
+                .linkerOpts("-F", mlSlice.path, "-framework", "MapLibre", "-rpath", mlSlice.path)
+        }
+    }
+
     androidLibrary {
        namespace = "com.stepanok.undp.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()

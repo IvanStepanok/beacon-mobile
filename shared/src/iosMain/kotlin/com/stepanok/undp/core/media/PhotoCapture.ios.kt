@@ -22,6 +22,9 @@ import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_global_queue
+import platform.darwin.dispatch_get_main_queue
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -63,9 +66,17 @@ private class PickerDelegate(
         didFinishPickingMediaWithInfo: Map<Any?, *>,
     ) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
-        val photo = image?.let { saveJpeg(it) }
         picker.dismissViewControllerAnimated(true, completion = null)
-        finish(photo)
+        if (image == null) {
+            finish(null)
+            return
+        }
+        // saveJpeg now runs Vision detection (synchronous) — keep it OFF the main thread, then
+        // post the result back to main for the Compose callback.
+        dispatch_async(dispatch_get_global_queue(0, 0u)) {
+            val photo = saveJpeg(image)
+            dispatch_async(dispatch_get_main_queue()) { finish(photo) }
+        }
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -84,12 +95,15 @@ private class PickerDelegate(
 private fun saveJpeg(image: UIImage): CapturedPhoto? {
     // Downscale + recompress so uploads are small. UIImageJPEGRepresentation also
     // re-encodes (dropping EXIF); UIImage applies its own orientation when drawn.
-    val data = UIImageJPEGRepresentation(downscale(image, 1600.0), 0.8) ?: return null
+    // On-device, OFFLINE face/plate redaction (B1) BEFORE encoding — the redacted pixels
+    // are what gets written (irreversible). Best-effort; never throws.
+    val (redacted, redaction) = redactImage(downscale(image, 1600.0))
+    val data = UIImageJPEGRepresentation(redacted, 0.8) ?: return null
     val stamp = NSDate().timeIntervalSince1970.toString().replace(".", "")
     // Persistent captures dir (same root as the outbox, NOT NSTemporaryDirectory) — a queued
     // photo must survive OS cache/tmp purges + process death until its upload succeeds.
     val path = capturesDirPath() + "/capture_$stamp.jpg"
-    return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong()) else null
+    return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong(), redaction) else null
 }
 
 @OptIn(ExperimentalForeignApi::class)

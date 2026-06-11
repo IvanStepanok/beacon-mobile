@@ -191,12 +191,15 @@ private fun writeCaptureJpeg(data: NSData): CapturedPhoto? {
     // dropping EXIF) — a full-res AVCapture still would otherwise land in the outbox at
     // multi-MB size, with device metadata embedded.
     val image = UIImage.imageWithData(data) ?: return null
-    val jpeg = UIImageJPEGRepresentation(downscale(image, 1600.0), 0.8) ?: return null
+    // On-device, OFFLINE face/plate redaction (B1) BEFORE encoding — the redacted pixels are
+    // what gets written (irreversible). This runs on the AVFoundation session queue (off main).
+    val (redacted, redaction) = redactImage(downscale(image, 1600.0))
+    val jpeg = UIImageJPEGRepresentation(redacted, 0.8) ?: return null
     // Persistent captures dir (same root as the outbox, NOT NSTemporaryDirectory) — a queued
     // photo must survive OS cache/tmp purges + process death until its upload succeeds.
     val stamp = NSDate().timeIntervalSince1970.toString().replace(".", "")
     val path = capturesDirPath() + "/capture_$stamp.jpg"
-    return if (jpeg.writeToFile(path, atomically = true)) CapturedPhoto(path, jpeg.length.toLong()) else null
+    return if (jpeg.writeToFile(path, atomically = true)) CapturedPhoto(path, jpeg.length.toLong(), redaction) else null
 }
 
 @Composable
