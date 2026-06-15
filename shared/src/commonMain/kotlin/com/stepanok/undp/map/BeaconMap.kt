@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,10 @@ class BeaconMapController {
     fun recenter(point: GeoPoint, zoom: Double = MapDefaults.CITY_ZOOM) {
         recenterRequest.value = point to zoom
     }
+
+    /** The map's live centre, updated as the user pans/zooms. Lets a screen offer "download the
+     *  area I'm looking at" instead of being tied to the (often-wrong on emulators) GPS location. */
+    val currentCenter = MutableStateFlow<GeoPoint?>(null)
 }
 
 @Composable
@@ -67,6 +72,9 @@ fun BeaconMap(
     zoom: Double = MapDefaults.CITY_ZOOM,
     styleUri: String = MapDefaults.OPEN_FREE_MAP_LIBERTY,
     footprints: Boolean = false,
+    /** Optional "photo was taken here" hint (from a picked photo's EXIF GPS). Drawn as a distinct
+     *  hollow ring + dot — a suggestion only; it is NOT a report pin and not the chosen location. */
+    photoHint: GeoPoint? = null,
     onMapTap: ((GeoPoint) -> Unit)? = null,
     onFootprintTap: ((GeoPoint, String) -> Unit)? = null,
     onReportClick: ((String) -> Unit)? = null,
@@ -85,6 +93,12 @@ fun BeaconMap(
                 controller.recenterRequest.value = null
             }
         }
+    }
+
+    // Publish the live camera centre so screens can offer "download what I'm viewing".
+    LaunchedEffect(cameraState, controller) {
+        snapshotFlow { cameraState.position.target }
+            .collect { target -> controller.currentCenter.value = GeoPoint(target.latitude, target.longitude) }
     }
 
     val featuresJson = remember(reports) { reports.toGeoJson() }
@@ -212,6 +226,35 @@ fun BeaconMap(
                 }
             },
         )
+
+        // "Photo was taken here" hint, from a picked photo's EXIF GPS. A hollow ring + small dot —
+        // visually distinct from report pins and from the centre crosshair, so it reads as a
+        // suggestion, not the chosen location. Pure CircleLayers (no glyph/sprite) so it renders
+        // offline. Hoisted last → drawn on top of the pins.
+        if (photoHint != null) {
+            val hintJson = remember(photoHint) {
+                """{"type":"FeatureCollection","features":[{"type":"Feature",""" +
+                    """"geometry":{"type":"Point","coordinates":[${photoHint.lng},${photoHint.lat}]},"properties":{}}]}"""
+            }
+            val hintSource = rememberGeoJsonSource(data = GeoJsonData.JsonString(hintJson))
+            CircleLayer(
+                id = "photo-hint-halo",
+                source = hintSource,
+                color = const(Color.Transparent),
+                radius = const(13.dp),
+                strokeColor = const(colors.primary),
+                strokeWidth = const(2.dp),
+                opacity = const(0.95f),
+            )
+            CircleLayer(
+                id = "photo-hint-dot",
+                source = hintSource,
+                color = const(colors.primary),
+                radius = const(4.dp),
+                strokeColor = const(Color.White),
+                strokeWidth = const(1.5.dp),
+            )
+        }
     }
 }
 

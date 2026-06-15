@@ -34,6 +34,7 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.stepanok.undp.designsystem.components.BeaconChip
+import com.stepanok.undp.designsystem.components.BeaconLoading
 import com.stepanok.undp.designsystem.components.BeaconProgressBar
 import com.stepanok.undp.designsystem.safeTopPadding
 import com.stepanok.undp.designsystem.components.ChipSize
@@ -49,6 +50,7 @@ import com.stepanok.undp.feature.reportdetail.ReportDetailScreen
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
 import undp.shared.generated.resources.filter_all
+import undp.shared.generated.resources.common_loading
 import undp.shared.generated.resources.reports_empty
 import undp.shared.generated.resources.reports_summary
 import undp.shared.generated.resources.reports_title
@@ -98,7 +100,10 @@ object ReportsScreen : Screen {
                 }
             }
 
-            if (state.rows.isEmpty()) {
+            if (state.loading && state.rows.isEmpty()) {
+                // Still loading the first page — a spinner, not the "no reports yet" empty state.
+                BeaconLoading(label = stringResource(Res.string.common_loading))
+            } else if (state.rows.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(stringResource(Res.string.reports_empty), style = BeaconTheme.typography.bodyS, color = colors.ink3)
                 }

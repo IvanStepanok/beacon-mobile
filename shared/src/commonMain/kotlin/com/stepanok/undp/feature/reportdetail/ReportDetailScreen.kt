@@ -43,6 +43,7 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.stepanok.undp.core.format.relativeTime
+import com.stepanok.undp.designsystem.components.BeaconLoading
 import com.stepanok.undp.designsystem.components.DamageChip
 import com.stepanok.undp.core.media.ReportPhoto
 import com.stepanok.undp.designsystem.safeTopPadding
@@ -62,6 +63,7 @@ import com.stepanok.undp.map.ReportPin
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 import undp.shared.generated.resources.Res
+import undp.shared.generated.resources.common_loading
 import undp.shared.generated.resources.detail_anonymised
 import undp.shared.generated.resources.detail_description
 import undp.shared.generated.resources.detail_location_unresolved
@@ -89,7 +91,17 @@ data class ReportDetailScreen(val reportId: String) : Screen {
         val nav = LocalNavigator.currentOrThrow
         // The report was erased server-side (withdrawn) → leave the now-empty detail screen.
         LaunchedEffect(state.withdrawn) { if (state.withdrawn) nav.pop() }
-        val report = state.report ?: return
+        val report = state.report
+        if (report == null) {
+            // Spinner while the report flow resolves, instead of a blank flash; once loaded a still
+            // -null report means it was withdrawn/not found, so there's nothing to show.
+            if (state.loading) {
+                Box(Modifier.fillMaxSize().background(colors.bg)) {
+                    BeaconLoading(label = stringResource(Res.string.common_loading))
+                }
+            }
+            return
+        }
 
         Column(Modifier.fillMaxSize().background(colors.bg).verticalScroll(rememberScrollState())) {
             // Photo header

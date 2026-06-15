@@ -34,6 +34,9 @@ data class ReportRowUi(
 )
 
 data class ReportsUiState(
+    /** True until the reports flow emits — lets the UI show a spinner instead of the "no reports
+     *  yet" empty state before the first load completes. */
+    val loading: Boolean = true,
     val rows: ImmutableList<ReportRowUi> = persistentListOf(),
     val filter: DamageTier? = null,
     val total: Int = 0,
@@ -72,6 +75,7 @@ class ReportsScreenModel(
                     .filter { f == null || it.damage == f }
                     .map { ReportRowUi(it.id, it.placeLabel, relativeTime(now, it.capturedAt), it.damage, it.isSynced, it.sync, it.photos.firstOrNull()) }
                 ReportsUiState(
+                    loading = false,
                     rows = rows.toImmutableList(),
                     filter = f,
                     total = mine.size,

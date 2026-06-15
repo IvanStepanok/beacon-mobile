@@ -17,6 +17,12 @@ data class CaptureDraft(
     /** Local file path of the real captured/picked photo (null until taken). */
     val photoPath: String? = null,
     val photoSizeBytes: Long = 0L,
+    /** The photo's EXIF GPS, if it carried any (gallery imports usually do). Used ONLY to center
+     *  the Location-step map on where the photo was taken — a hint the reporter must still confirm
+     *  by tapping. It is NEVER the report's authoritative location ([lat]/[lng]), and never leaves
+     *  the device: the stored photo is always EXIF-stripped. Null when the photo had no location. */
+    val photoLat: Double? = null,
+    val photoLng: Double? = null,
     /** On-device face/plate redaction outcome for the captured photo (drives Anonymization). */
     val redaction: RedactionResult = RedactionResult(),
     /** The reporter's chosen damage tier (null until they pick one). */
@@ -57,6 +63,10 @@ data class CaptureState(
     val draft: CaptureDraft = CaptureDraft(),
     val submitting: Boolean = false,
     val offline: Boolean = true,
+    /** Centre of a downloaded offline map pack, if any. Used as the LAST-resort camera target for the
+     *  Location step when there's no EXIF and no GPS fix — so an offline reporter lands ON the area
+     *  whose tiles are actually cached instead of staring at the blank world map. */
+    val offlineCenter: com.stepanok.undp.map.GeoPoint? = null,
     /** Server-driven modular form (GET /form-schema, cached for offline); the built-in
      *  Appendix-1 default until loaded — so the step is never blank. */
     val formSections: List<FormSection> = defaultFormSections(),
@@ -65,8 +75,15 @@ data class CaptureState(
 ) : UiState
 
 sealed interface CaptureIntent : UiIntent {
-    /** A real photo was captured/picked and saved to [path] ([sizeBytes] on disk). */
-    data class PhotoCaptured(val path: String, val sizeBytes: Long, val redaction: RedactionResult = RedactionResult()) : CaptureIntent
+    /** A real photo was captured/picked and saved to [path] ([sizeBytes] on disk).
+     *  [exifLat]/[exifLng] are the photo's original GPS (if any), for centering the map only. */
+    data class PhotoCaptured(
+        val path: String,
+        val sizeBytes: Long,
+        val redaction: RedactionResult = RedactionResult(),
+        val exifLat: Double? = null,
+        val exifLng: Double? = null,
+    ) : CaptureIntent
     /** The on-device advisory classifier finished: [tier] = suggestion (null = abstained),
      *  [confidence] 0–100. Fired from the async classify kicked off on PhotoCaptured. */
     data class DamageSuggested(val tier: DamageTier?, val confidence: Int) : CaptureIntent

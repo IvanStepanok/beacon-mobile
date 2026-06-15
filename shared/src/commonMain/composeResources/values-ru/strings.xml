@@ -26,6 +26,8 @@
     <string name="map_offline_mode">Автономный режим</string>
     <string name="map_reports_queued">Отчётов в очереди: %1$d</string>
     <string name="map_crisis_active">Активный кризис</string>
+    <string name="map_crisis_emerging">Поступают сообщения</string>
+    <string name="map_crisis_emerging_sub">Ожидает проверки</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">Подробнее</string>
     <string name="map_filter_title">Фильтр по повреждениям</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">Автономные карты</string>
-    <string name="offline_sub">Заранее загрузите зону кризиса, чтобы приложение работало без сигнала.</string>
+    <string name="offline_sub">Скачанные области работают без связи. Новую можно добавить с карты.</string>
     <string name="offline_download_area">Загрузить карту вашей области</string>
     <string name="offline_ready">Готово</string>
     <string name="offline_downloading">Загрузка</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">Ваш отчёт и его фото будут безвозвратно удалены с сервера. Это действие нельзя отменить.</string>
     <string name="withdraw_confirm">Отозвать</string>
     <string name="withdraw_cancel">Отмена</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">Обработка фото…</string>
+    <string name="capture_photo_location">Место съёмки — нажмите, чтобы подтвердить</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">Сохранить этот район для офлайна?</string>
+    <string name="offline_prompt_body">Загрузите карту вокруг вас сейчас, чтобы отправлять отчёты даже без связи.</string>
+    <string name="offline_prompt_download">Загрузить этот район</string>
+    <string name="offline_prompt_dismiss">Не сейчас</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">Загрузка…</string>
+    <string name="capture_analyzing">Анализ повреждений…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">Пока нет сохранённых областей. На карте нажмите кнопку загрузки, чтобы сохранить видимую область.</string>
+    <string name="offline_delete_title">Удалить эту офлайн-карту?</string>
+    <string name="offline_delete_body">Это освободит память. Область можно будет скачать снова.</string>
+    <string name="offline_delete_confirm">Удалить</string>
 </resources>

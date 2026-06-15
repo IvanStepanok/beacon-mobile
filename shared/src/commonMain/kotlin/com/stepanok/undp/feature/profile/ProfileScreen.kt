@@ -39,6 +39,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.stepanok.undp.core.share.rememberShareHandler
 import com.stepanok.undp.designsystem.components.BeaconBottomSheet
 import com.stepanok.undp.designsystem.components.BeaconButton
+import com.stepanok.undp.designsystem.components.BeaconLoading
 import com.stepanok.undp.designsystem.safeTopPadding
 import com.stepanok.undp.designsystem.components.BeaconButtonVariant
 import com.stepanok.undp.designsystem.icons.BeaconIcons
@@ -69,6 +70,7 @@ import undp.shared.generated.resources.profile_buildings
 import undp.shared.generated.resources.profile_points
 import undp.shared.generated.resources.profile_recognition
 import undp.shared.generated.resources.profile_reports
+import undp.shared.generated.resources.common_loading
 import undp.shared.generated.resources.profile_title
 
 object ProfileScreen : Screen {
@@ -81,7 +83,16 @@ object ProfileScreen : Screen {
         val shareHandler = rememberShareHandler()
         var showLangSheet by remember { mutableStateOf(false) }
         var showExport by remember { mutableStateOf(false) }
-        val profile = state.profile ?: return
+        val profile = state.profile
+        if (profile == null) {
+            // Spinner while the profile flow resolves, instead of a blank flash.
+            if (state.loading) {
+                Box(Modifier.fillMaxSize().background(colors.bg)) {
+                    BeaconLoading(label = stringResource(Res.string.common_loading))
+                }
+            }
+            return
+        }
         val currentLangLabel = appLocaleOverride?.let { UnLanguage.fromTag(it).nativeName }
             ?: stringResource(Res.string.language_system)
 
@@ -131,7 +142,7 @@ object ProfileScreen : Screen {
                 Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(colors.surface).border(1.dp, colors.line, RoundedCornerShape(18.dp))) {
                     MenuRow(BeaconIcons.Download, stringResource(Res.string.menu_export), stringResource(Res.string.menu_export_sub), onClick = { showExport = true })
                     Divider()
-                    MenuRow(BeaconIcons.Map, stringResource(Res.string.menu_offline), stringResource(Res.string.menu_offline_sub), onClick = { nav.push(OfflineDownloadsScreen) })
+                    MenuRow(BeaconIcons.Map, stringResource(Res.string.menu_offline), stringResource(Res.string.menu_offline_sub), onClick = { nav.push(OfflineDownloadsScreen()) })
                     Divider()
                     MenuRow(BeaconIcons.Language, stringResource(Res.string.menu_language), currentLangLabel, onClick = { showLangSheet = true })
                     Divider()

@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 data class ReportDetailUiState(
+    /** True until the report flow emits its first value — drives the loading spinner vs. blank screen. */
+    val loading: Boolean = true,
     val report: Report? = null,
     val timeline: BuildingTimeline? = null,
     /** A withdrawal request is in flight (disables the button). */
@@ -45,7 +47,7 @@ class ReportDetailScreenModel(
                     }
                 }
                 .collect { (report, timeline) ->
-                    setState { copy(report = report, timeline = timeline) }
+                    setState { copy(loading = false, report = report, timeline = timeline) }
                 }
         }
     }

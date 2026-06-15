@@ -26,6 +26,8 @@
     <string name="map_offline_mode">Offline mode</string>
     <string name="map_reports_queued">%1$d report(s) queued</string>
     <string name="map_crisis_active">Active crisis</string>
+    <string name="map_crisis_emerging">Reports coming in</string>
+    <string name="map_crisis_emerging_sub">Awaiting verification</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">View details</string>
     <string name="map_filter_title">Filter by damage</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">Offline maps</string>
-    <string name="offline_sub">Pre-download the crisis area so the app works with no signal.</string>
+    <string name="offline_sub">Your downloaded areas work with no signal. Add a new one from the map.</string>
     <string name="offline_download_area">Download map for your area</string>
     <string name="offline_ready">Ready</string>
     <string name="offline_downloading">Downloading</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">This permanently erases your report and its photo from the server. This cannot be undone.</string>
     <string name="withdraw_confirm">Withdraw</string>
     <string name="withdraw_cancel">Cancel</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">Processing photo…</string>
+    <string name="capture_photo_location">Photo location — tap to confirm</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">Save this area for offline use?</string>
+    <string name="offline_prompt_body">Download the map around you now, so reporting still works when the signal drops.</string>
+    <string name="offline_prompt_download">Download this area</string>
+    <string name="offline_prompt_dismiss">Not now</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">Loading…</string>
+    <string name="capture_analyzing">Analyzing damage…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">No areas saved yet. On the map, tap the download button to save the area in view.</string>
+    <string name="offline_delete_title">Delete this offline map?</string>
+    <string name="offline_delete_body">This frees the storage. You can download the area again later.</string>
+    <string name="offline_delete_confirm">Delete</string>
 </resources>

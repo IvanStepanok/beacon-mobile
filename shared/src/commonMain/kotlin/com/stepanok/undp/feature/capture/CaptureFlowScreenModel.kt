@@ -23,8 +23,11 @@ import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.model.ReportDescription
 import com.stepanok.undp.domain.model.ReportLocation
 import com.stepanok.undp.domain.model.SyncState
+import com.stepanok.undp.domain.model.DownloadState
+import com.stepanok.undp.domain.repository.DownloadQueue
 import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.domain.repository.SyncManager
+import com.stepanok.undp.map.GeoPoint
 import com.stepanok.undp.core.format.relativeTime
 import com.stepanok.undp.translation.LanguageDetector
 import kotlinx.coroutines.Job
@@ -41,12 +44,23 @@ class CaptureFlowScreenModel(
     private val ids: IdGenerator,
     private val locationProvider: LocationProvider,
     private val damageClassifier: DamageClassifier,
+    private val downloadQueue: DownloadQueue,
 ) : MviScreenModel<CaptureState, CaptureIntent, CaptureEffect>(CaptureState()) {
 
     init {
         screenModelScope.launch {
             connectivity.status.collect { status ->
                 setState { copy(offline = status == ConnectivityStatus.OFFLINE) }
+            }
+        }
+        // Track the centre of a downloaded offline pack so the Location step can fall back to it
+        // (offline, no EXIF, no GPS) — landing the reporter ON the cached area, not the blank world.
+        screenModelScope.launch {
+            downloadQueue.observe().collect { bundles ->
+                val region = bundles.firstOrNull { it.state is DownloadState.Done && it.region != null }?.region
+                    ?: bundles.firstOrNull { it.region != null }?.region
+                val center = region?.let { GeoPoint((it.north + it.south) / 2.0, (it.east + it.west) / 2.0) }
+                setState { copy(offlineCenter = center) }
             }
         }
         // Server-driven modular form (cached for offline; built-in Appendix-1 default fallback) —
@@ -109,6 +123,10 @@ class CaptureFlowScreenModel(
                     photoPath = intent.path,
                     photoSizeBytes = intent.sizeBytes,
                     redaction = intent.redaction,
+                    // EXIF GPS (if any) — centers the Location-step map on where the photo was taken.
+                    // A hint only: it never sets lat/lng (the reporter still confirms by tapping).
+                    photoLat = intent.exifLat,
+                    photoLng = intent.exifLng,
                     // Reset any prior suggestion — inference for THIS photo starts now.
                     suggesting = true,
                     suggestedTier = null,

@@ -26,6 +26,8 @@
     <string name="map_offline_mode">离线模式</string>
     <string name="map_reports_queued">%1$d 份报告待处理</string>
     <string name="map_crisis_active">危机进行中</string>
+    <string name="map_crisis_emerging">正在收到报告</string>
+    <string name="map_crisis_emerging_sub">等待核实</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">查看详情</string>
     <string name="map_filter_title">按受损程度筛选</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">离线地图</string>
-    <string name="offline_sub">预先下载危机区域，让应用在没有信号时也能使用。</string>
+    <string name="offline_sub">已下载的区域在无信号时也能使用。可在地图上添加新的区域。</string>
     <string name="offline_download_area">下载您所在区域的地图</string>
     <string name="offline_ready">就绪</string>
     <string name="offline_downloading">下载中</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">这将从服务器永久删除您的报告及其照片。此操作无法撤销。</string>
     <string name="withdraw_confirm">撤回</string>
     <string name="withdraw_cancel">取消</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">正在处理照片…</string>
+    <string name="capture_photo_location">照片位置 — 点按确认</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">保存此区域以离线使用？</string>
+    <string name="offline_prompt_body">立即下载你周边的地图，信号中断时也能继续上报。</string>
+    <string name="offline_prompt_download">下载此区域</string>
+    <string name="offline_prompt_dismiss">暂不</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">加载中…</string>
+    <string name="capture_analyzing">正在分析损坏…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">尚未保存任何区域。在地图上点按下载按钮即可保存当前查看的区域。</string>
+    <string name="offline_delete_title">删除此离线地图？</string>
+    <string name="offline_delete_body">这将释放存储空间。之后可以重新下载该区域。</string>
+    <string name="offline_delete_confirm">删除</string>
 </resources>

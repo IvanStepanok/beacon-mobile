@@ -10,7 +10,7 @@ Built for the person standing in front of a damaged building:
   packs (MapLibre OfflineManager / MLNOfflineStorage), on-device Plus Codes (Open
   Location Code — no network, no API key).
 - **Guided capture wizard** — in-app camera (CameraX / AVFoundation; **EXIF GPS/time/device
-  tags stripped on capture**), 5-level EMS-98 damage grade + life-safety question,
+  tags stripped on capture**), 3-level damage classification (minimal / partial / complete),
   infrastructure type, building-footprint snap (stable building identity) with GPS and
   landmark-only fallbacks, modular secondary-impacts questions served by the backend's
   form schema, review → idempotent submit.

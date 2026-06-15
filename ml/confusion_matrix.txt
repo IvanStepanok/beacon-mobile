@@ -1,17 +1,17 @@
-Test accuracy: 0.958
+Test accuracy: 0.945  (95% CI [0.9378, 0.9524])  n=3736
 
 Confusion matrix (rows=true, cols=pred) [['minimal', 'partial', 'complete']]:
-[[1714    1   43]
- [  78    3   10]
- [  24    1 1862]]
+[[1655   59   44]
+ [  60   21   10]
+ [  17   15 1855]]
 
               precision    recall  f1-score   support
 
-     minimal      0.944     0.975     0.959      1758
-     partial      0.600     0.033     0.062        91
-    complete      0.972     0.987     0.979      1887
+     minimal      0.956     0.941     0.948      1758
+     partial      0.221     0.231     0.226        91
+    complete      0.972     0.983     0.977      1887
 
-    accuracy                          0.958      3736
-   macro avg      0.839     0.665     0.667      3736
-weighted avg      0.950     0.958     0.948      3736
+    accuracy                          0.945      3736
+   macro avg      0.716     0.718     0.717      3736
+weighted avg      0.946     0.945     0.945      3736
 

@@ -16,9 +16,11 @@ import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
+import platform.Photos.PHAsset
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
 import platform.UIKit.UIImagePickerControllerOriginalImage
+import platform.UIKit.UIImagePickerControllerPHAsset
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.UIKit.UIViewController
@@ -80,6 +82,9 @@ private class PickerDelegate(
         didFinishPickingMediaWithInfo: Map<Any?, *>,
     ) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
+        // The picked asset's GPS (when Photos access is granted) — read BEFORE re-encoding, used
+        // ONLY to center the capture map. The saved JPEG is always EXIF-stripped (UIImageJPEGRepresentation).
+        val gps = extractGps(didFinishPickingMediaWithInfo)
         picker.dismissViewControllerAnimated(true, completion = null)
         if (image == null) {
             finish(null)
@@ -88,7 +93,7 @@ private class PickerDelegate(
         // saveJpeg now runs Vision detection (synchronous) — keep it OFF the main thread, then
         // post the result back to main for the Compose callback.
         dispatch_async(dispatch_get_global_queue(0, 0u)) {
-            val photo = saveJpeg(image)
+            val photo = saveJpeg(image, gps?.first, gps?.second)
             dispatch_async(dispatch_get_main_queue()) { finish(photo) }
         }
     }
@@ -106,7 +111,7 @@ private class PickerDelegate(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun saveJpeg(image: UIImage): CapturedPhoto? {
+private fun saveJpeg(image: UIImage, exifLat: Double?, exifLng: Double?): CapturedPhoto? {
     // Downscale + recompress so uploads are small. UIImageJPEGRepresentation also
     // re-encodes (dropping EXIF); UIImage applies its own orientation when drawn.
     // On-device, OFFLINE face/plate redaction (B1) BEFORE encoding — the redacted pixels
@@ -117,7 +122,21 @@ private fun saveJpeg(image: UIImage): CapturedPhoto? {
     // Persistent captures dir (same root as the outbox, NOT NSTemporaryDirectory) — a queued
     // photo must survive OS cache/tmp purges + process death until its upload succeeds.
     val path = capturesDirPath() + "/capture_$stamp.jpg"
-    return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong(), redaction) else null
+    return if (data.writeToFile(path, atomically = true)) CapturedPhoto(path, data.length.toLong(), redaction, exifLat, exifLng) else null
+}
+
+/**
+ * GPS of the picked photo from its PHAsset (gallery imports, when Photos access is granted) — read
+ * BEFORE the JPEG re-encode strips EXIF, used only to center the capture map (never persisted).
+ * Null for camera shots / when Photos access isn't granted / the 0,0 "no fix" sentinel.
+ */
+@OptIn(ExperimentalForeignApi::class)
+private fun extractGps(info: Map<Any?, *>): Pair<Double, Double>? {
+    val asset = info[UIImagePickerControllerPHAsset] as? PHAsset ?: return null
+    val loc = asset.location ?: return null
+    return loc.coordinate.useContents {
+        if (latitude != 0.0 || longitude != 0.0) latitude to longitude else null
+    }
 }
 
 @OptIn(ExperimentalForeignApi::class)

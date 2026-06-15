@@ -8,6 +8,8 @@ import MapLibre.MLNOfflineStorage
 import MapLibre.MLNTilePyramidOfflineRegion
 import com.stepanok.undp.domain.model.DownloadBundle
 import com.stepanok.undp.domain.model.DownloadState
+import com.stepanok.undp.domain.model.DownloadType
+import com.stepanok.undp.domain.model.GeoBox
 import com.stepanok.undp.domain.repository.DownloadQueue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -36,7 +38,45 @@ class IosDownloadQueue : DownloadQueue {
     private val storage = MLNOfflineStorage.sharedOfflineStorage()
     private var observer: NSObjectProtocol? = null
 
+    init {
+        // Restore packs already in MapLibre's offline DB so a download from a prior session still
+        // shows as "Ready" and feeds the map's offline-area fallback. (MLNOfflineStorage loads packs
+        // asynchronously; on a cold start `packs` may still be nil here — acceptable for now, refine
+        // with KVO/notification observation when the iOS build is wired up.)
+        loadExisting()
+    }
+
     override fun observe(): Flow<List<DownloadBundle>> = items.asStateFlow()
+
+    @OptIn(ExperimentalForeignApi::class)
+    private fun loadExisting() {
+        val packs = storage.packs ?: return
+        packs.forEach { p ->
+            val pack = p as? MLNOfflinePack ?: return@forEach
+            val region = pack.region as? MLNTilePyramidOfflineRegion ?: return@forEach
+            val geoBox = region.bounds.useContents {
+                GeoBox(
+                    north = ne.latitude, east = ne.longitude,
+                    south = sw.latitude, west = sw.longitude,
+                    minZoom = region.minimumZoomLevel, maxZoom = region.maximumZoomLevel,
+                )
+            }
+            // id + label both re-derived from the region's centre — matches areaPack()/cancel().
+            val centerLat = (geoBox.north + geoBox.south) / 2.0
+            val centerLng = (geoBox.east + geoBox.west) / 2.0
+            val label = "${kotlin.math.round(centerLat * 100) / 100.0}, ${kotlin.math.round(centerLng * 100) / 100.0}"
+            put(
+                DownloadBundle(
+                    id = OfflineBundles.areaId(centerLat, centerLng),
+                    title = "Offline map · $label",
+                    type = DownloadType.CRISIS_BUNDLE,
+                    bytesTotal = 18_000_000,
+                    state = DownloadState.Done,
+                    region = geoBox,
+                ),
+            )
+        }
+    }
 
     override suspend fun enqueue(bundle: DownloadBundle) {
         put(bundle.copy(state = DownloadState.Queued))
@@ -86,6 +126,15 @@ class IosDownloadQueue : DownloadQueue {
     }
 
     override suspend fun cancel(id: String) {
+        // Remove the actual pack from MapLibre's offline storage (frees the tiles), matching by the
+        // same centre-derived id used everywhere, then drop the card.
+        val target = storage.packs?.firstOrNull { p ->
+            val region = (p as? MLNOfflinePack)?.region as? MLNTilePyramidOfflineRegion
+            region != null && region.bounds.useContents {
+                OfflineBundles.areaId((ne.latitude + sw.latitude) / 2.0, (ne.longitude + sw.longitude) / 2.0) == id
+            }
+        } as? MLNOfflinePack
+        if (target != null) storage.removePack(target, null)
         items.value = items.value.filterNot { it.id == id }
     }
 

@@ -53,8 +53,11 @@ import com.stepanok.undp.designsystem.theme.beaconCardShadow
 import com.stepanok.undp.domain.model.AreaGroup
 import com.stepanok.undp.domain.model.DamageTier
 import com.stepanok.undp.feature.reportdetail.ReportDetailScreen
+import com.stepanok.undp.feature.offline.OfflineDownloadsScreen
 import com.stepanok.undp.core.location.LocationProvider
 import com.stepanok.undp.core.location.RequestLocationPermission
+import com.stepanok.undp.core.storage.PrefKeys
+import com.stepanok.undp.core.storage.Prefs
 import com.stepanok.undp.map.BeaconMap
 import com.stepanok.undp.map.GeoPoint
 import com.stepanok.undp.map.MapDefaults
@@ -70,11 +73,17 @@ import undp.shared.generated.resources.hotspots_reports
 import undp.shared.generated.resources.hotspots_sub
 import undp.shared.generated.resources.hotspots_title
 import undp.shared.generated.resources.map_crisis_active
+import undp.shared.generated.resources.map_crisis_emerging
+import undp.shared.generated.resources.map_crisis_emerging_sub
 import undp.shared.generated.resources.map_filter_title
 import undp.shared.generated.resources.map_offline_mode
 import undp.shared.generated.resources.map_view_details
 import undp.shared.generated.resources.map_reports_queued
 import undp.shared.generated.resources.map_search_hint
+import undp.shared.generated.resources.offline_prompt_body
+import undp.shared.generated.resources.offline_prompt_dismiss
+import undp.shared.generated.resources.offline_prompt_download
+import undp.shared.generated.resources.offline_prompt_title
 
 object MapScreen : Screen {
     @Composable
@@ -91,22 +100,39 @@ object MapScreen : Screen {
         val scope = rememberCoroutineScope()
         var showFilter by remember { mutableStateOf(false) }
         var showHotspots by remember { mutableStateOf(false) }
+        var showOfflinePrompt by remember { mutableStateOf(false) }
         // Ask for location permission once, then (re)resolve the user's location so the
         // map centres on THEM, not a hardcoded city.
         RequestLocationPermission { granted -> if (granted) model.resolveLocation() }
 
-        // Centre on the user (instant last-known → refined) or a browsed crisis.
+        // Auto-centre only ONCE per resolved mode — not on every GPS refinement. Previously the
+        // camera re-centred on each focus change (instant last-known → precise fix → …), so it
+        // visibly jumped around as the location updated. Now it settles after the first center and
+        // only the recenter button (explicit) moves it afterwards.
+        var lastCenteredMode by remember { mutableStateOf<MapMode?>(null) }
         LaunchedEffect(state.focusLat, state.focusLng, state.mode) {
-            val lat = state.focusLat
-            val lng = state.focusLng
-            if (lat != null && lng != null) {
+            val lat = state.focusLat ?: return@LaunchedEffect
+            val lng = state.focusLng ?: return@LaunchedEffect
+            if (state.mode != MapMode.LOADING && state.mode != lastCenteredMode) {
+                // Only a confirmed, city-wide crisis zooms out to CITY_ZOOM. An EMERGING cluster is
+                // local + unconfirmed, so it centres on the cluster but stays at NEIGHBORHOOD_ZOOM
+                // (same as NO_CRISIS) — don't imply a city-wide event before an analyst confirms.
                 val zoom = if (state.mode == MapMode.IN_CRISIS) MapDefaults.CITY_ZOOM else MapDefaults.NEIGHBORHOOD_ZOOM
                 mapController.recenter(GeoPoint(lat, lng), zoom)
+                lastCenteredMode = state.mode
             }
         }
 
         val pins = remember(state.pins, filter) {
             filter?.let { f -> state.pins.filter { it.level == f } } ?: state.pins
+        }
+
+        // Whether the area currently in view is already inside a downloaded pack — if so we hide the
+        // "download this area" button (nothing to do), and show it again once the user pans away.
+        val liveCenter by mapController.currentCenter.collectAsState()
+        val coveredOffline = remember(liveCenter, state.offlineBoxes) {
+            val c = liveCenter
+            c != null && state.offlineBoxes.any { c.lat in it.south..it.north && c.lng in it.west..it.east }
         }
 
         Box(Modifier.fillMaxSize()) {
@@ -136,6 +162,12 @@ object MapScreen : Screen {
             }
             if (showHotspots) {
                 HotspotsSheet(groups = hotspots, onDismiss = { showHotspots = false })
+            }
+            if (showOfflinePrompt) {
+                OfflineDownloadPromptSheet(
+                    onDownload = { showOfflinePrompt = false; nav.push(OfflineDownloadsScreen(autoStart = true)) },
+                    onDismiss = { showOfflinePrompt = false },
+                )
             }
 
             // Top overlays: search + filter, then crisis banner
@@ -178,6 +210,9 @@ object MapScreen : Screen {
                         onDismiss = { model.onIntent(MapIntent.DismissCrisis) },
                     )
                 }
+                if (state.mode == MapMode.EMERGING && !state.crisisDismissed) {
+                    EmergingClusterBanner(onDismiss = { model.onIntent(MapIntent.DismissCrisis) })
+                }
                 if (state.mode == MapMode.NO_CRISIS) {
                     NoCrisisCard()
                 }
@@ -189,6 +224,29 @@ object MapScreen : Screen {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.End,
             ) {
+                // Download the area currently in view (not GPS) — pan anywhere, cache exactly that.
+                // Hidden when the current view is already inside a downloaded pack.
+                if (!coveredOffline) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .beaconCardShadow(RoundedCornerShape(14.dp))
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(colors.surface)
+                            .clickable {
+                                val c = mapController.currentCenter.value
+                                if (c != null) {
+                                    val label = "${kotlin.math.round(c.lat * 100) / 100.0}, ${kotlin.math.round(c.lng * 100) / 100.0}"
+                                    model.downloadArea(c.lat, c.lng, label)
+                                    nav.push(OfflineDownloadsScreen())
+                                }
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(BeaconIcons.Download, contentDescription = "Download this area", tint = colors.ink2, modifier = Modifier.size(20.dp))
+                    }
+                }
+
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -197,13 +255,31 @@ object MapScreen : Screen {
                         .background(colors.surface)
                         .clickable {
                             scope.launch {
+                                var gpsLocated = false
                                 // Instant: jump to the cached fix immediately (no 8s wait)…
                                 locationProvider.lastKnown()?.let {
                                     mapController.recenter(GeoPoint(it.lat, it.lng), MapDefaults.NEIGHBORHOOD_ZOOM)
+                                    gpsLocated = true
                                 }
                                 // …then refine with a fresh, precise fix when it arrives.
                                 locationProvider.current()?.let {
                                     mapController.recenter(GeoPoint(it.lat, it.lng), MapDefaults.BUILDING_ZOOM)
+                                    gpsLocated = true
+                                }
+                                // No GPS (airplane mode / denied) → at least centre on the downloaded
+                                // offline area, so the button still does something useful offline.
+                                if (!gpsLocated) {
+                                    val oLat = state.offlineCenterLat
+                                    val oLng = state.offlineCenterLng
+                                    if (oLat != null && oLng != null) {
+                                        mapController.recenter(GeoPoint(oLat, oLng), MapDefaults.CITY_ZOOM)
+                                    }
+                                }
+                                // First time the user centres on a real GPS fix, offer to save their
+                                // area for offline use (so reports keep working when signal drops).
+                                if (gpsLocated && !Prefs.getBool(PrefKeys.OFFLINE_PROMPT_SHOWN, false)) {
+                                    Prefs.setBool(PrefKeys.OFFLINE_PROMPT_SHOWN, true)
+                                    showOfflinePrompt = true
                                 }
                             }
                         },
@@ -306,6 +382,51 @@ private fun CrisisBanner(title: String, subtitle: String, onDismiss: () -> Unit)
     }
 }
 
+/** Soft amber banner for an UNCONFIRMED emergent cluster — reports are coming in but no analyst
+ *  has verified a crisis yet. Deliberately NOT the red alarm: a single pin / auto-detected cluster
+ *  must never imply a confirmed crisis. Dismissible like [CrisisBanner]. */
+@Composable
+private fun EmergingClusterBanner(onDismiss: () -> Unit) {
+    val colors = BeaconTheme.colors
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(colors.warnSoft)
+            .border(1.dp, colors.warn.copy(alpha = 0.4f), RoundedCornerShape(14.dp))
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Box(
+            Modifier.size(32.dp).clip(RoundedCornerShape(10.dp)).background(colors.warn),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(BeaconIcons.Info, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+        }
+        Column(Modifier.weight(1f)) {
+            Text(
+                stringResource(Res.string.map_crisis_emerging),
+                style = BeaconTheme.typography.label,
+                color = colors.warn,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                stringResource(Res.string.map_crisis_emerging_sub),
+                style = BeaconTheme.typography.caption,
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        Box(Modifier.size(28.dp).clip(CircleShape).clickable(onClick = onDismiss), contentAlignment = Alignment.Center) {
+            Icon(BeaconIcons.Close, contentDescription = "Dismiss", tint = colors.ink3, modifier = Modifier.size(16.dp))
+        }
+        Spacer(Modifier.width(0.dp))
+    }
+}
+
 @Composable
 private fun ReportPreviewSheet(preview: ReportPreview, onDismiss: () -> Unit, onDetails: () -> Unit) {
     val colors = BeaconTheme.colors
@@ -369,6 +490,43 @@ private fun FilterRow(label: String, level: DamageTier?, current: DamageTier?, o
             Text(label, style = BeaconTheme.typography.titleS, color = colors.ink)
         }
         if (current == level) Icon(BeaconIcons.Check, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
+    }
+}
+
+/** One-time nudge to pre-download the user's area, shown the first time they recenter on themselves. */
+@Composable
+private fun OfflineDownloadPromptSheet(onDownload: () -> Unit, onDismiss: () -> Unit) {
+    val colors = BeaconTheme.colors
+    BeaconBottomSheet(onDismiss = onDismiss) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(
+                    Modifier.size(44.dp).clip(RoundedCornerShape(14.dp)).background(colors.primarySoft),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(BeaconIcons.CloudOff, contentDescription = null, tint = colors.primary, modifier = Modifier.size(22.dp))
+                }
+                Text(stringResource(Res.string.offline_prompt_title), style = BeaconTheme.typography.titleM, color = colors.ink, modifier = Modifier.weight(1f))
+            }
+            Spacer(Modifier.height(10.dp))
+            Text(stringResource(Res.string.offline_prompt_body), style = BeaconTheme.typography.bodyS, color = colors.ink2)
+            Spacer(Modifier.height(16.dp))
+            BeaconButton(
+                text = stringResource(Res.string.offline_prompt_download),
+                onClick = onDownload,
+                leadingIcon = BeaconIcons.Download,
+                fullWidth = true,
+                trailingIcon = null,
+            )
+            Spacer(Modifier.height(10.dp))
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    stringResource(Res.string.offline_prompt_dismiss),
+                    style = BeaconTheme.typography.label, color = colors.ink3,
+                    modifier = Modifier.clickable(onClick = onDismiss),
+                )
+            }
+        }
     }
 }
 

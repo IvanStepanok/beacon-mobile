@@ -1,0 +1,17 @@
+language = Objective-C
+package = beacon.sectrust
+modules = Foundation Security
+---
+
+// Bridges two Foundation APIs that the Kotlin/Native binding omits because they return
+// CoreFoundation/SecTrust types: NSURLProtectionSpace.serverTrust and
+// +[NSURLCredential credentialForTrust:]. Needed for TLS certificate pinning in the Ktor
+// Darwin engine. Defined as static inline so cinterop generates Kotlin bridges for them.
+
+static inline SecTrustRef _Nullable beaconServerTrust(NSURLProtectionSpace * _Nonnull space) {
+    return space.serverTrust;
+}
+
+static inline NSURLCredential * _Nonnull beaconCredentialForTrust(SecTrustRef _Nonnull trust) {
+    return [NSURLCredential credentialForTrust:trust];
+}

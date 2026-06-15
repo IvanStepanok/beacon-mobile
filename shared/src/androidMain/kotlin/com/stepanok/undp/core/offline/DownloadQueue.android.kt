@@ -6,6 +6,8 @@ import android.os.Looper
 import com.stepanok.undp.core.android.AndroidAppContext
 import com.stepanok.undp.domain.model.DownloadBundle
 import com.stepanok.undp.domain.model.DownloadState
+import com.stepanok.undp.domain.model.DownloadType
+import com.stepanok.undp.domain.model.GeoBox
 import com.stepanok.undp.domain.repository.DownloadQueue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,14 @@ class AndroidDownloadQueue(private val context: Context) : DownloadQueue {
         OfflineManager.getInstance(context)
     }
 
+    init {
+        // Re-populate the list from regions already in MapLibre's offline DB, so a pack downloaded
+        // in a PREVIOUS session still shows as "Ready" (the Offline screen) and still feeds the
+        // map's offline-area fallback. Without this the in-memory list started empty on every launch,
+        // so the app "forgot" downloads even though their tiles were intact on disk.
+        main.post { loadExisting() }
+    }
+
     override fun observe(): Flow<List<DownloadBundle>> = items.asStateFlow()
 
     override suspend fun enqueue(bundle: DownloadBundle) {
@@ -41,6 +51,34 @@ class AndroidDownloadQueue(private val context: Context) : DownloadQueue {
     }
 
     override suspend fun cancel(id: String) {
+        // Delete the actual region from MapLibre's offline DB (frees the tiles), then drop the card.
+        // Match by the same centre-derived id used everywhere, so we delete exactly the tapped pack.
+        main.post {
+            offlineManager.listOfflineRegions(object : OfflineManager.ListOfflineRegionsCallback {
+                override fun onList(offlineRegions: Array<OfflineRegion>?) {
+                    val target = offlineRegions?.firstOrNull { region ->
+                        val b = (region.definition as? OfflineTilePyramidRegionDefinition)?.bounds
+                        b != null && OfflineBundles.areaId(
+                            (b.latitudeNorth + b.latitudeSouth) / 2.0,
+                            (b.longitudeEast + b.longitudeWest) / 2.0,
+                        ) == id
+                    }
+                    if (target != null) {
+                        target.delete(object : OfflineRegion.OfflineRegionDeleteCallback {
+                            override fun onDelete() = dropFromItems(id)
+                            override fun onError(error: String) = dropFromItems(id)
+                        })
+                    } else {
+                        dropFromItems(id)
+                    }
+                }
+
+                override fun onError(error: String) = dropFromItems(id)
+            })
+        }
+    }
+
+    private fun dropFromItems(id: String) {
         items.value = items.value.filterNot { it.id == id }
     }
 
@@ -58,7 +96,9 @@ class AndroidDownloadQueue(private val context: Context) : DownloadQueue {
             region.maxZoom,
             context.resources.displayMetrics.density,
         )
-        val metadata = bundle.id.encodeToByteArray()
+        // Persist the human label so loadExisting() can restore the pack's title after a relaunch
+        // (the id itself is re-derived from the region's centre, so it need not be stored).
+        val metadata = bundle.title.encodeToByteArray()
 
         offlineManager.createOfflineRegion(
             definition,
@@ -99,6 +139,38 @@ class AndroidDownloadQueue(private val context: Context) : DownloadQueue {
                 }
             },
         )
+    }
+
+    /** Reconstruct DownloadBundles from the regions already stored in MapLibre's offline DB. */
+    private fun loadExisting() {
+        offlineManager.listOfflineRegions(object : OfflineManager.ListOfflineRegionsCallback {
+            override fun onList(offlineRegions: Array<OfflineRegion>?) {
+                offlineRegions?.forEach { region ->
+                    val def = region.definition as? OfflineTilePyramidRegionDefinition ?: return@forEach
+                    val b = def.bounds ?: return@forEach
+                    val title = region.metadata?.decodeToString()?.takeIf { it.isNotBlank() } ?: "Offline map"
+                    // id re-derived from the region's centre — matches areaPack()/cancel() exactly.
+                    val id = OfflineBundles.areaId(
+                        (b.latitudeNorth + b.latitudeSouth) / 2.0,
+                        (b.longitudeEast + b.longitudeWest) / 2.0,
+                    )
+                    // Tiles are on disk → show the restored pack as ready. (A partially-downloaded
+                    // pack is the rare case; "Ready" is the correct state for a completed one.)
+                    put(
+                        DownloadBundle(
+                            id = id,
+                            title = title,
+                            type = DownloadType.CRISIS_BUNDLE,
+                            bytesTotal = 18_000_000,
+                            state = DownloadState.Done,
+                            region = GeoBox(b.latitudeNorth, b.longitudeEast, b.latitudeSouth, b.longitudeWest, def.minZoom, def.maxZoom),
+                        ),
+                    )
+                }
+            }
+
+            override fun onError(error: String) { /* no existing regions readable → keep current list */ }
+        })
     }
 
     private fun put(bundle: DownloadBundle) {

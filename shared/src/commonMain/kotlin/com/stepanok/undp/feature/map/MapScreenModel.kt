@@ -13,8 +13,11 @@ import com.stepanok.undp.core.mvi.UiEffect
 import com.stepanok.undp.core.mvi.UiIntent
 import com.stepanok.undp.core.mvi.UiState
 import com.stepanok.undp.domain.model.DamageTier
+import com.stepanok.undp.domain.model.DownloadState
+import com.stepanok.undp.domain.model.GeoBox
 import com.stepanok.undp.domain.model.Report
 import com.stepanok.undp.domain.repository.CrisisRepository
+import com.stepanok.undp.domain.repository.DownloadQueue
 import com.stepanok.undp.domain.repository.MapBounds
 import com.stepanok.undp.domain.repository.ReportRepository
 import com.stepanok.undp.map.ReportPin
@@ -28,8 +31,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/** Whether the map is resolving location, inside a crisis, or in an area with none. */
-enum class MapMode { LOADING, IN_CRISIS, NO_CRISIS }
+/** Whether the map is resolving location, inside a confirmed crisis, sitting on an
+ *  unconfirmed emergent cluster (reports coming in, awaiting analyst verification), or
+ *  in an area with none. */
+enum class MapMode { LOADING, IN_CRISIS, EMERGING, NO_CRISIS }
 
 data class MapUiState(
     val pins: ImmutableList<ReportPin> = persistentListOf(),
@@ -43,6 +48,13 @@ data class MapUiState(
     /** Where the map should centre (user location, or the covering crisis). */
     val focusLat: Double? = null,
     val focusLng: Double? = null,
+    /** Centre of a downloaded offline pack, if any — the recenter button + initial view fall back
+     *  to this when there's no GPS (e.g. airplane mode), so the map opens on cached tiles. */
+    val offlineCenterLat: Double? = null,
+    val offlineCenterLng: Double? = null,
+    /** Bounding boxes of all downloaded packs — the map hides its "download this area" button while
+     *  the current view sits inside one of these (already cached), and shows it elsewhere. */
+    val offlineBoxes: List<GeoBox> = emptyList(),
     /** Human label of the current area/crisis. */
     val areaLabel: String? = null,
 ) : UiState
@@ -68,7 +80,40 @@ class MapScreenModel(
     connectivity: ConnectivityObserver,
     private val clock: AppClock,
     private val locationProvider: LocationProvider,
+    private val downloadQueue: DownloadQueue,
 ) : MviScreenModel<MapUiState, MapIntent, MapEffect>(MapUiState()) {
+
+    /** Download an offline pack centred on [lat]/[lng] — the area the user is currently viewing on
+     *  the map. Unlike the GPS-based "my area" download, this lets them pre-cache anywhere they pan. */
+    fun downloadArea(lat: Double, lng: Double, label: String) {
+        screenModelScope.launch {
+            downloadQueue.enqueue(com.stepanok.undp.core.offline.OfflineBundles.areaPack(lat, lng, label))
+        }
+    }
+
+    init {
+        // Track the centre of a downloaded offline pack. If the map has no GPS focus yet (airplane
+        // mode / location denied), centre on that cached area instead of leaving the user on the
+        // blank world map. GPS, when it resolves, overrides this (focus is only filled when null).
+        screenModelScope.launch {
+            downloadQueue.observe().collect { bundles ->
+                val boxes = bundles.mapNotNull { it.region }
+                val region = bundles.firstOrNull { it.state is DownloadState.Done && it.region != null }?.region
+                    ?: boxes.firstOrNull()
+                val cLat = region?.let { (it.north + it.south) / 2.0 }
+                val cLng = region?.let { (it.east + it.west) / 2.0 }
+                setState {
+                    copy(
+                        offlineBoxes = boxes,
+                        offlineCenterLat = cLat,
+                        offlineCenterLng = cLng,
+                        focusLat = focusLat ?: cLat,
+                        focusLng = focusLng ?: cLng,
+                    )
+                }
+            }
+        }
+    }
 
     private val selectedId = MutableStateFlow<String?>(null)
 
@@ -147,17 +192,43 @@ class MapScreenModel(
             }
             setState { copy(focusLat = loc.lat, focusLng = loc.lng) }
 
-            val covering = crisisRepository.crisesNear(loc.lat, loc.lng).firstOrNull { it.covers }
-            if (covering != null) {
-                reportRepository.setMapScope(covering.id, null)
+            // Two-tier: a CONFIRMED crisis (status=="active", authoritative feed / analyst /
+            // analyst-confirmed cluster) shows the red alarm; an UNCONFIRMED emergent cluster
+            // (status=="proposed", auto-detected, awaiting verification) shows only the soft
+            // "reports coming in" banner. Confirmed always wins over emerging.
+            val near = crisisRepository.crisesNear(loc.lat, loc.lng)
+            val confirmed = near.firstOrNull { it.covers && it.status == "active" }
+            val emerging = near.firstOrNull { it.covers && it.status == "proposed" }
+            if (confirmed != null) {
+                reportRepository.setMapScope(confirmed.id, null)
                 setState {
                     copy(
                         mode = MapMode.IN_CRISIS,
-                        crisisTitle = covering.title,
-                        crisisSubtitle = "${covering.area} · ${relativeTime(clock.now(), covering.startedAt)} · ${covering.source}",
-                        areaLabel = covering.area,
-                        focusLat = covering.centerLat,
-                        focusLng = covering.centerLng,
+                        crisisTitle = confirmed.title,
+                        crisisSubtitle = "${confirmed.area} · ${relativeTime(clock.now(), confirmed.startedAt)} · ${confirmed.source}",
+                        areaLabel = confirmed.area,
+                        focusLat = confirmed.centerLat,
+                        focusLng = confirmed.centerLng,
+                        crisisDismissed = false,
+                    )
+                }
+            } else if (emerging != null) {
+                // Unconfirmed cluster → show the soft amber banner, but scope the feed to the
+                // VIEWPORT (like NO_CRISIS), NOT to the proposed crisis id. A fresh proposed
+                // cluster holds only PENDING reports, and the public/anonymous tier serves
+                // verified-only — so a crisis-id scope would render an empty map under the
+                // banner. Viewport scope shows the user's own reports (always merged locally)
+                // plus any verified reports nearby; the banner copy comes from string resources
+                // (EmergingClusterBanner), never an alarmist code-built subtitle.
+                reportRepository.setMapScope(null, boundsAround(loc.lat, loc.lng))
+                setState {
+                    copy(
+                        mode = MapMode.EMERGING,
+                        crisisTitle = emerging.area,
+                        crisisSubtitle = null,
+                        areaLabel = emerging.area,
+                        focusLat = loc.lat,
+                        focusLng = loc.lng,
                         crisisDismissed = false,
                     )
                 }

@@ -3,11 +3,19 @@ package com.stepanok.undp.core.media
 import androidx.compose.runtime.Composable
 
 /** A photo captured to app-local storage, with the on-device redaction outcome
- *  (faces/plates blurred) so the report's Anonymization flags reflect what actually ran. */
+ *  (faces/plates blurred) so the report's Anonymization flags reflect what actually ran.
+ *
+ *  [exifLat]/[exifLng] are the photo's ORIGINAL GPS coordinates, read from EXIF (gallery pick) or
+ *  capture metadata BEFORE the re-encode strips them — used only to CENTER the capture map on where
+ *  the photo was taken (a hint the reporter still has to confirm by tapping). They never become the
+ *  report's location and never leave the device: the stored JPEG is always EXIF-stripped. Null when
+ *  the source had no GPS (most in-app camera shots, screenshots, scrubbed images). */
 data class CapturedPhoto(
     val path: String,
     val sizeBytes: Long,
     val redaction: RedactionResult = RedactionResult(),
+    val exifLat: Double? = null,
+    val exifLng: Double? = null,
 )
 
 /** Drives a real photo capture (device camera) or a pick from the photo library. */

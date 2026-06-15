@@ -115,8 +115,11 @@ def main():
             counts[t] += 1
     print(">> train tier counts:", dict(zip(TIERS, counts.tolist())), flush=True)
     total = counts.sum()
-    class_weight = {i: float(total / (3 * max(counts[i], 1))) for i in range(3)}
-    print(">> class weights:", class_weight, flush=True)
+    # sqrt-dampened inverse-frequency: lifts the rare 'partial' tier so the model actually
+    # predicts it, WITHOUT the raw inverse-frequency overshoot (a ~15x weight made the model
+    # cry 'partial' on ~1-in-4 truly-minimal buildings — recall up but precision ~0.1).
+    class_weight = {i: float((total / (3 * max(counts[i], 1))) ** 0.5) for i in range(3)}
+    print(">> class weights (sqrt-dampened):", class_weight, flush=True)
 
     # model: MobileNetV3-Small w/ baked-in preprocessing (mobile feeds raw [0,255] RGB)
     base = tf.keras.applications.MobileNetV3Small(
@@ -134,7 +137,7 @@ def main():
 
     cbs = [tf.keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=3, restore_best_weights=True)]
     print(">> stage 1: train head ...", flush=True)
-    model.fit(train_ds, validation_data=val_ds, epochs=8, callbacks=cbs, verbose=2)
+    model.fit(train_ds, validation_data=val_ds, epochs=8, class_weight=class_weight, callbacks=cbs, verbose=2)
 
     # stage 2: unfreeze the top of the base + fine-tune at a low LR
     base.trainable = True
@@ -143,7 +146,7 @@ def main():
     model.compile(optimizer=tf.keras.optimizers.Adam(1e-5),
                   loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     print(">> stage 2: fine-tune top ...", flush=True)
-    model.fit(train_ds, validation_data=val_ds, epochs=6, callbacks=cbs, verbose=2)
+    model.fit(train_ds, validation_data=val_ds, epochs=6, class_weight=class_weight, callbacks=cbs, verbose=2)
 
     # honest evaluation on the held-out test set
     from sklearn.metrics import classification_report, confusion_matrix
@@ -155,7 +158,14 @@ def main():
     cm = confusion_matrix(y_true, y_pred, labels=[0, 1, 2])
     rep = classification_report(y_true, y_pred, labels=[0, 1, 2], target_names=TIERS, digits=3)
     acc = float(np.mean(np.array(y_true) == np.array(y_pred)))
-    report = f"Test accuracy: {acc:.3f}\n\nConfusion matrix (rows=true, cols=pred) [{TIERS}]:\n{cm}\n\n{rep}\n"
+    from sklearn.metrics import precision_recall_fscore_support
+    prec, rec, f1, sup = precision_recall_fscore_support(y_true, y_pred, labels=[0, 1, 2], zero_division=0)
+    per_class = {TIERS[i]: {"precision": round(float(prec[i]), 3), "recall": round(float(rec[i]), 3),
+                            "f1": round(float(f1[i]), 3), "support": int(sup[i])} for i in range(3)}
+    n_test = len(y_true)
+    half = 1.96 * (acc * (1 - acc) / max(n_test, 1)) ** 0.5  # 95% normal-approx CI on overall accuracy
+    acc_ci = [round(max(0.0, acc - half), 4), round(min(1.0, acc + half), 4)]
+    report = f"Test accuracy: {acc:.3f}  (95% CI {acc_ci})  n={n_test}\n\nConfusion matrix (rows=true, cols=pred) [{TIERS}]:\n{cm}\n\n{rep}\n"
     print("\n================ HONEST TEST REPORT ================\n" + report, flush=True)
     with open(os.path.join(OUT, "confusion_matrix.txt"), "w") as f:
         f.write(report)
@@ -174,9 +184,21 @@ def main():
 
     with open(os.path.join(OUT, "labels.txt"), "w") as f:
         f.write("\n".join(TIERS) + "\n")
-    meta = {"input": [1, IMG, IMG, 3], "input_range": "0..255 RGB float32 (preprocessing baked in)",
-            "output": TIERS, "test_accuracy": acc, "model": "MobileNetV3Small",
-            "dataset": "kevincluo/structure_wildfire_damage_classification (CC-BY-4.0)"}
+    meta = {
+        "input": [1, IMG, IMG, 3],
+        "input_range": "0..255 RGB float32 (preprocessing baked in)",
+        "output": TIERS,
+        "test_accuracy": round(acc, 4),
+        "test_accuracy_95ci": acc_ci,
+        "test_n": n_test,
+        "per_class": per_class,
+        "class_weighting": "sqrt-dampened inverse-frequency, applied during both training stages",
+        "advisory_only": True,
+        "human_in_the_loop": "the model only SUGGESTS a tier + confidence; the reporter (and later an analyst) always confirms or overrides",
+        "domain_caveat": "Trained on California wildfire structure-damage photos (DINS). Accuracy on other hazards (earthquake, flood, conflict) is unvalidated — known domain shift. The suggestion is advisory and always human-confirmed.",
+        "model": "MobileNetV3Small",
+        "dataset": "kevincluo/structure_wildfire_damage_classification (CC-BY-4.0)",
+    }
     with open(os.path.join(OUT, "metadata.json"), "w") as f:
         json.dump(meta, f, indent=2)
 

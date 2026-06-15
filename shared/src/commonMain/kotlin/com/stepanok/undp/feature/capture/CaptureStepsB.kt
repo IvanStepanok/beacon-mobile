@@ -62,6 +62,7 @@ import undp.shared.generated.resources.capture_location_set
 import undp.shared.generated.resources.capture_location_sub
 import undp.shared.generated.resources.capture_landmark_hint
 import undp.shared.generated.resources.capture_photo_label
+import undp.shared.generated.resources.capture_photo_location
 import undp.shared.generated.resources.capture_privacy
 import undp.shared.generated.resources.capture_review_q
 import undp.shared.generated.resources.capture_review_sub
@@ -87,6 +88,7 @@ fun LocationStep(
     total: Int,
     onBack: () -> Unit,
     onContinue: () -> Unit,
+    offlineCenter: GeoPoint? = null,
 ) {
     val colors = BeaconTheme.colors
     // Once foreground-location permission is granted, pull the real device fix into the draft.
@@ -95,18 +97,37 @@ fun LocationStep(
     val lat = draft.lat
     val lng = draft.lng
     val fix = if (lat != null && lng != null) GeoPoint(lat, lng) else null
+    // Where a picked photo's EXIF said it was taken. A HINT only (it never sets the location): it
+    // seeds the initial camera + draws a ring so an offline reporter who uploaded a geotagged photo
+    // lands on their area instead of staring at the world map. The reporter still confirms by tapping.
+    val pLat = draft.photoLat
+    val pLng = draft.photoLng
+    val photoHint = if (pLat != null && pLng != null) GeoPoint(pLat, pLng) else null
     // A report must carry a REAL location: a GPS fix / tapped footprint, or a non-blank landmark.
-    // Block Continue until one of those exists so we never submit a fabricated point.
+    // Block Continue until one of those exists so we never submit a fabricated point. (The photo
+    // hint deliberately does NOT satisfy this — EXIF can be stale/wrong, so the reporter confirms.)
     val hasLocation = fix != null || draft.landmark.isNotBlank()
-    // Recenter the map ONCE, on the first real fix (the GPS arrival). Tapping a building must
-    // NOT move the camera: recentering on every draft.lat/lng change made a tap lurch the map,
-    // sliding a different building under the centre marker so it looked like the wrong one was
-    // selected. A footprint tap now highlights the polygon in place, leaving the camera put.
+    // Initial camera, best signal first: a real fix → the photo's EXIF spot → the downloaded offline
+    // area (so offline, with a camera photo that has no EXIF and no GPS, the map opens ON the cached
+    // region instead of the blank world) → finally the neutral world view.
+    val initialCenter = fix ?: photoHint ?: offlineCenter
+    val initialZoom = when {
+        fix != null || photoHint != null -> MapDefaults.BUILDING_ZOOM
+        offlineCenter != null -> MapDefaults.CITY_ZOOM // within the pack's z8–z15 → tiles render
+        else -> MapDefaults.WORLD_ZOOM
+    }
+    // Center ONCE on a real fix (GPS arrival / tapped building) — after that the user owns the camera,
+    // so a tap never lurches it. Before any real fix we sit on the photo spot, else the offline area;
+    // those are re-applied if they arrive late, but a real fix always takes over exactly once.
     var centeredOnce by remember { mutableStateOf(false) }
-    LaunchedEffect(fix) {
-        if (fix != null && !centeredOnce) {
-            mapController.recenter(fix, MapDefaults.BUILDING_ZOOM)
-            centeredOnce = true
+    LaunchedEffect(fix, photoHint, offlineCenter) {
+        when {
+            fix != null && !centeredOnce -> {
+                mapController.recenter(fix, MapDefaults.BUILDING_ZOOM)
+                centeredOnce = true
+            }
+            fix == null && photoHint != null -> mapController.recenter(photoHint, MapDefaults.BUILDING_ZOOM)
+            fix == null && offlineCenter != null -> mapController.recenter(offlineCenter, MapDefaults.CITY_ZOOM)
         }
     }
     // scrollable=false: the map must own its drag gestures. Inside a verticalScroll the
@@ -122,9 +143,11 @@ fun LocationStep(
             BeaconMap(
                 reports = emptyList(),
                 controller = mapController,
-                center = fix ?: MapDefaults.WORLD,
-                zoom = if (fix != null) MapDefaults.BUILDING_ZOOM else MapDefaults.WORLD_ZOOM,
+                center = initialCenter ?: MapDefaults.WORLD,
+                zoom = initialZoom,
                 footprints = true,
+                // Show the "photo taken here" ring until the reporter has pinned a building.
+                photoHint = if (draft.buildingId == null) photoHint else null,
                 onMapTap = { p -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng)) },
                 onFootprintTap = { p, id -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng, id)) },
                 modifier = Modifier.fillMaxSize(),
@@ -140,7 +163,15 @@ fun LocationStep(
                 Modifier.align(Alignment.TopStart).padding(10.dp).clip(CircleShape).background(colors.surface.copy(alpha = 0.95f)).padding(horizontal = 10.dp, vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Box(Modifier.size(7.dp).clip(CircleShape).background(if (fix != null) colors.ok else colors.warn))
+                // Spinner while still locating (no fix yet); a solid green dot once a fix lands —
+                // so "Locating you…" reads as active work, not a stuck label.
+                if (fix != null) {
+                    Box(Modifier.size(7.dp).clip(CircleShape).background(colors.ok))
+                } else {
+                    androidx.compose.material3.CircularProgressIndicator(
+                        modifier = Modifier.size(11.dp), strokeWidth = 1.5.dp, color = colors.warn,
+                    )
+                }
                 Text(
                     when {
                         fix == null -> stringResource(Res.string.capture_locating_you)
@@ -149,6 +180,17 @@ fun LocationStep(
                     },
                     style = BeaconTheme.typography.caption, color = colors.ink2,
                 )
+            }
+            // "Photo location" hint — explains the ring when an uploaded photo's EXIF seeded the
+            // camera and the reporter hasn't pinned a building or gotten a GPS fix yet.
+            if (photoHint != null && fix == null && draft.buildingId == null) {
+                Row(
+                    Modifier.align(Alignment.TopEnd).padding(10.dp).clip(CircleShape).background(colors.primarySoft).padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Icon(BeaconIcons.Image, contentDescription = null, tint = colors.primary, modifier = Modifier.size(12.dp))
+                    Text(stringResource(Res.string.capture_photo_location), style = BeaconTheme.typography.caption, color = colors.primaryInk)
+                }
             }
             // selected-building confirmation
             if (draft.buildingId != null) {

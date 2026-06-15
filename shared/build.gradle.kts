@@ -17,6 +17,13 @@ kotlin {
             baseName = "Shared"
             isStatic = true
         }
+        // cinterop shim exposing NSURLProtectionSpace.serverTrust + [NSURLCredential
+        // credentialForTrust:], which the Kotlin/Native Foundation binding omits (they return
+        // CoreFoundation/SecTrust types). Needed for TLS certificate pinning in the Darwin HTTP
+        // engine — see shared/src/.../core/network/Engine.*.kt + CertPinning.ios.kt.
+        iosTarget.compilations.getByName("main").cinterops.create("beaconSecTrust") {
+            defFile(project.file("src/nativeInterop/cinterop/beaconSecTrust.def"))
+        }
     }
 
     // TEST-ONLY: the published maplibre-compose carries CI-baked framework search paths, so the

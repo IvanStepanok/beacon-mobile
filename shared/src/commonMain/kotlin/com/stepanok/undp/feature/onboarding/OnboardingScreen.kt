@@ -182,7 +182,10 @@ private fun SlideContent(slide: OnboardingSlide) {
                 .offset(y = (-28).dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(colors.surface)
+                // Match the page background (the gradient fades to `bg`, and the dots/button area
+                // below is `bg`) — `surface` here was a brighter white that left a visible seam at
+                // the bottom of the text sheet. One shade now, top to bottom.
+                .background(colors.bg)
                 .padding(horizontal = 28.dp, vertical = 28.dp),
         ) {
             Text(slide.eyebrow.uppercase(), style = BeaconTheme.typography.micro, color = colors.primary)

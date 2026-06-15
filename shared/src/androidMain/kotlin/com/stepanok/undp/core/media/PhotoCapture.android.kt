@@ -84,8 +84,10 @@ private fun launchCamera(
 // CapturedPhoto (carrying its RedactionResult) back to the main thread.
 internal fun deliverProcessed(path: String, onResult: (CapturedPhoto?) -> Unit) {
     Thread {
+        // Read GPS from EXIF BEFORE downscaleAndStrip re-encodes the file and drops all metadata.
+        val gps = readExifLatLng(path)
         val p = downscaleAndStrip(path)
-        val photo = if (p.sizeBytes > 0) CapturedPhoto(path, p.sizeBytes, p.redaction) else null
+        val photo = if (p.sizeBytes > 0) CapturedPhoto(path, p.sizeBytes, p.redaction, gps?.first, gps?.second) else null
         Handler(Looper.getMainLooper()).post { onResult(photo) }
     }.start()
 }
@@ -98,8 +100,10 @@ private fun copyAndDeliver(context: Context, uri: Uri, onResult: (CapturedPhoto?
                 file.outputStream().use { output -> input.copyTo(output) }
             }
             if (file.length() > 0) {
+                // Gallery imports usually carry GPS — read it (to center the map) BEFORE stripping.
+                val gps = readExifLatLng(file.absolutePath)
                 val p = downscaleAndStrip(file.absolutePath)
-                CapturedPhoto(file.absolutePath, p.sizeBytes, p.redaction)
+                CapturedPhoto(file.absolutePath, p.sizeBytes, p.redaction, gps?.first, gps?.second)
             } else {
                 null
             }
@@ -107,6 +111,19 @@ private fun copyAndDeliver(context: Context, uri: Uri, onResult: (CapturedPhoto?
         Handler(Looper.getMainLooper()).post { onResult(photo) }
     }.start()
 }
+
+/**
+ * Read GPS lat/lng from the original photo's EXIF (gallery imports / GPS-tagged captures) BEFORE
+ * [downscaleAndStrip] re-encodes and drops it. Used ONLY to center the capture map on where the
+ * photo was taken; it is never persisted (the saved JPEG is always EXIF-stripped). Returns null
+ * when the photo has no location, or the 0,0 "Null Island" sentinel some cameras write for "no fix".
+ */
+internal fun readExifLatLng(path: String): Pair<Double, Double>? = runCatching {
+    val ll = ExifInterface(path).latLong ?: return@runCatching null
+    val lat = ll[0]
+    val lng = ll[1]
+    if (lat != 0.0 || lng != 0.0) lat to lng else null
+}.getOrNull()
 
 /**
  * Downscale + recompress a JPEG in place: caps the longest side at [MAX_DIM] and

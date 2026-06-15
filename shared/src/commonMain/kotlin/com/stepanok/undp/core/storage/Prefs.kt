@@ -11,6 +11,10 @@ expect object Prefs {
 object PrefKeys {
     const val ONBOARDING_SEEN = "onboarding_seen"
 
+    /** Set once the user has been offered the "download your area for offline" prompt (shown the
+     *  first time they recenter the map on themselves), so we never nag them again. */
+    const val OFFLINE_PROMPT_SHOWN = "offline_prompt_shown"
+
     /** Per-install anonymous device identity (X-Device-Id). Generated once, persisted forever. */
     const val DEVICE_ID = "device_id"
 

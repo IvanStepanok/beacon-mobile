@@ -54,6 +54,7 @@ import com.stepanok.undp.designsystem.icons.BeaconIcons
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.designsystem.theme.beaconPopShadow
 import com.stepanok.undp.domain.model.FormSection
+import com.stepanok.undp.map.GeoPoint
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
@@ -65,6 +66,7 @@ import undp.shared.generated.resources.capture_phase_damage
 import undp.shared.generated.resources.capture_phase_details
 import undp.shared.generated.resources.capture_phase_location
 import undp.shared.generated.resources.capture_points
+import undp.shared.generated.resources.capture_processing
 import undp.shared.generated.resources.capture_submitted_body
 import undp.shared.generated.resources.capture_submitted_offline_body
 import undp.shared.generated.resources.capture_submitted_offline_title
@@ -121,7 +123,7 @@ object CaptureFlowScreen : Screen {
         when (step) {
             "camera" -> CameraStep(
                 onCaptured = { photo ->
-                    model.onIntent(CaptureIntent.PhotoCaptured(photo.path, photo.sizeBytes, photo.redaction)); step = "damage"
+                    model.onIntent(CaptureIntent.PhotoCaptured(photo.path, photo.sizeBytes, photo.redaction, photo.exifLat, photo.exifLng)); step = "damage"
                 },
                 onClose = { nav.pop() },
             )
@@ -140,6 +142,7 @@ object CaptureFlowScreen : Screen {
                         draft = state.draft,
                         formSections = state.formSections,
                         duplicateWarning = state.duplicateWarning,
+                        offlineCenter = state.offlineCenter,
                         onIntent = model::onIntent,
                         onBack = onBack,
                         onContinue = onContinue,
@@ -170,6 +173,7 @@ private fun CaptureStep(
     draft: CaptureDraft,
     formSections: List<FormSection>,
     duplicateWarning: String?,
+    offlineCenter: GeoPoint?,
     onIntent: (CaptureIntent) -> Unit,
     onBack: () -> Unit,
     onContinue: () -> Unit,
@@ -179,7 +183,7 @@ private fun CaptureStep(
         "infra" -> InfraStep(draft, onIntent, current, total, onBack, onContinue)
         "crisis" -> CrisisStep(draft, onIntent, current, total, onBack, onContinue)
         "debris" -> DebrisStep(draft, onIntent, current, total, onBack, onContinue)
-        "location" -> LocationStep(draft, duplicateWarning, onIntent, current, total, onBack, onContinue)
+        "location" -> LocationStep(draft, duplicateWarning, onIntent, current, total, onBack, onContinue, offlineCenter)
         "describe" -> DescribeStep(draft, onIntent, current, total, onBack, onContinue)
         "modular" -> ModularStep(draft, formSections, onIntent, current, total, onBack, onContinue)
         "review" -> ReviewStep(draft, current, total, onBack, onContinue)
@@ -268,8 +272,13 @@ fun StepHeading(title: String, subtitle: String) {
 @Composable
 private fun CameraStep(onCaptured: (CapturedPhoto) -> Unit, onClose: () -> Unit) {
     // Live in-app camera (CameraX / AVFoundation). The gallery icon still falls back to the OS picker.
+    // `processing` covers the gap between picking/capturing and the result: downscale + EXIF-strip +
+    // on-device face/plate redaction run off the main thread and can take a beat, and without this
+    // overlay the screen looked frozen ("долго думает, нет индикации"). Cleared if the user cancels
+    // or capture fails; on success the step advances and this composable leaves the tree.
+    var processing by remember { mutableStateOf(false) }
     val photoCapture = rememberPhotoCapture { photo ->
-        if (photo != null) onCaptured(photo)
+        if (photo != null) onCaptured(photo) else processing = false
     }
     var granted by remember { mutableStateOf(false) }
     RequestCameraPermission { granted = it }
@@ -332,12 +341,13 @@ private fun CameraStep(onCaptured: (CapturedPhoto) -> Unit, onClose: () -> Unit)
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CircleControl(BeaconIcons.Image, onClick = { photoCapture.pickFromLibrary() }, bg = Color(0x1FFFFFFF))
+            CircleControl(BeaconIcons.Image, onClick = { processing = true; photoCapture.pickFromLibrary() }, bg = Color(0x1FFFFFFF))
             Box(
                 Modifier.size(78.dp).clip(CircleShape)
                     .background(if (live) BeaconTheme.colors.primary else BeaconTheme.colors.primary.copy(alpha = 0.4f))
-                    .clickable(enabled = live) {
-                        camera.capture { photo -> if (photo != null) onCaptured(photo) }
+                    .clickable(enabled = live && !processing) {
+                        processing = true
+                        camera.capture { photo -> if (photo != null) onCaptured(photo) else processing = false }
                     },
                 contentAlignment = Alignment.Center,
             ) { Icon(BeaconIcons.Camera, contentDescription = "Capture", tint = Color.White, modifier = Modifier.size(30.dp)) }
@@ -346,6 +356,20 @@ private fun CameraStep(onCaptured: (CapturedPhoto) -> Unit, onClose: () -> Unit)
                 onClick = { if (live) camera.switchLens() },
                 bg = Color(0x1FFFFFFF),
             )
+        }
+
+        // Processing overlay — covers the camera while the just-taken/picked photo is downscaled,
+        // EXIF-stripped and redacted off the main thread, so the screen never looks frozen.
+        if (processing) {
+            Box(
+                Modifier.fillMaxSize().background(Color(0xCC0C0C10)).clickable(enabled = false) {},
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    androidx.compose.material3.CircularProgressIndicator(color = Color.White)
+                    Text(stringResource(Res.string.capture_processing), style = BeaconTheme.typography.label, color = Color.White)
+                }
+            }
         }
     }
 }

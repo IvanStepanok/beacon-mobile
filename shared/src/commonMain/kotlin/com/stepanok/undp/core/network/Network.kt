@@ -12,6 +12,28 @@ expect fun beaconHttpEngine(): HttpClientEngine
 /** Backend base URL per platform (Android emulator reaches the host at 10.0.2.2). */
 expect val beaconBaseUrl: String
 
+/** The single API origin the app ever talks to — the host the TLS pins below apply to. */
+const val BEACON_API_HOST = "beacon-api.stepanok.com"
+
+/**
+ * TLS public-key (SPKI, SHA-256) pins for [BEACON_API_HOST]. The app talks to exactly ONE
+ * origin, so we pin its chain to Let's Encrypt's **ISRG roots** — stable for years, so they
+ * survive every leaf/intermediate auto-renewal, while still rejecting a man-in-the-middle
+ * that presents a chain from any OTHER certificate authority (e.g. a corporate TLS-inspection
+ * proxy or a rogue CA installed on the device). Enforced by the platform HTTP engines:
+ * OkHttp's CertificatePinner on Android, an NSURLSession server-trust evaluation on iOS.
+ *
+ * VERIFY against production from a clean (non-proxied) network before each release:
+ *   openssl s_client -connect beacon-api.stepanok.com:443 -showcerts </dev/null | \
+ *     openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | \
+ *     openssl dgst -sha256 -binary | openssl base64
+ * (computed 2026-06-15 from the ISRG roots in the OS trust store — see SUBMISSION-PLAN §D4).
+ */
+val BEACON_TLS_PINS = listOf(
+    "sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=", // ISRG Root X1 (RSA-4096)
+    "sha256/diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=", // ISRG Root X2 (EC P-384)
+)
+
 /**
  * Per-install anonymous device identity sent as the X-Device-Id header.
  *

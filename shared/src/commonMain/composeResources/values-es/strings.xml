@@ -26,6 +26,8 @@
     <string name="map_offline_mode">Modo sin conexión</string>
     <string name="map_reports_queued">%1$d informe(s) en cola</string>
     <string name="map_crisis_active">Crisis activa</string>
+    <string name="map_crisis_emerging">Informes entrantes</string>
+    <string name="map_crisis_emerging_sub">Pendiente de verificación</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">Ver detalles</string>
     <string name="map_filter_title">Filtrar por daño</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">Mapas sin conexión</string>
-    <string name="offline_sub">Descarga previamente la zona de crisis para que la app funcione sin señal.</string>
+    <string name="offline_sub">Tus áreas descargadas funcionan sin señal. Añade una nueva desde el mapa.</string>
     <string name="offline_download_area">Descargar el mapa de tu zona</string>
     <string name="offline_ready">Listo</string>
     <string name="offline_downloading">Descargando</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">Esto borra de forma permanente tu informe y su foto del servidor. No se puede deshacer.</string>
     <string name="withdraw_confirm">Retirar</string>
     <string name="withdraw_cancel">Cancelar</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">Procesando foto…</string>
+    <string name="capture_photo_location">Ubicación de la foto: toca para confirmar</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">¿Guardar esta zona para uso sin conexión?</string>
+    <string name="offline_prompt_body">Descarga ahora el mapa de tu zona para seguir reportando aunque se pierda la señal.</string>
+    <string name="offline_prompt_download">Descargar esta zona</string>
+    <string name="offline_prompt_dismiss">Ahora no</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">Cargando…</string>
+    <string name="capture_analyzing">Analizando daños…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">Aún no hay áreas guardadas. En el mapa, toca el botón de descarga para guardar el área visible.</string>
+    <string name="offline_delete_title">¿Eliminar este mapa sin conexión?</string>
+    <string name="offline_delete_body">Esto libera el almacenamiento. Puedes descargar el área de nuevo más tarde.</string>
+    <string name="offline_delete_confirm">Eliminar</string>
 </resources>

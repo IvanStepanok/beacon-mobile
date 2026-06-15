@@ -1,11 +1,11 @@
 program(1.0)
 [buildInfo = dict<tensor<string, []>, tensor<string, []>>({{"coremlc-component-MIL", "3520.4.1"}, {"coremlc-version", "3520.5.1"}, {"coremltools-component-tensorflow", "2.17.1"}, {"coremltools-version", "9.0"}})]
 {
-    func main<ios15>(tensor<fp32, [1, 3, 224, 224]> input_layer_1) {
-            tensor<string, []> input_layer_1_to_fp16_dtype_0 = const()[name = tensor<string, []>("input_layer_1_to_fp16_dtype_0"), val = tensor<string, []>("fp16")];
+    func main<ios15>(tensor<fp32, [1, 3, 224, 224]> keras_tensor_176) {
+            tensor<string, []> keras_tensor_176_to_fp16_dtype_0 = const()[name = tensor<string, []>("keras_tensor_176_to_fp16_dtype_0"), val = tensor<string, []>("fp16")];
             tensor<fp16, []> functional_1_MobileNetV3Small_1_rescaling_1_Cast_x_to_fp16 = const()[name = tensor<string, []>("functional_1_MobileNetV3Small_1_rescaling_1_Cast_x_to_fp16"), val = tensor<fp16, []>(0x1.01p-7)];
-            tensor<fp16, [1, 3, 224, 224]> input_layer_1_to_fp16 = cast(dtype = input_layer_1_to_fp16_dtype_0, x = input_layer_1)[name = tensor<string, []>("cast_5")];
-            tensor<fp16, [1, 3, 224, 224]> functional_1_MobileNetV3Small_1_rescaling_1_mul_cast_fp16 = mul(x = input_layer_1_to_fp16, y = functional_1_MobileNetV3Small_1_rescaling_1_Cast_x_to_fp16)[name = tensor<string, []>("functional_1_MobileNetV3Small_1_rescaling_1_mul_cast_fp16")];
+            tensor<fp16, [1, 3, 224, 224]> keras_tensor_176_to_fp16 = cast(dtype = keras_tensor_176_to_fp16_dtype_0, x = keras_tensor_176)[name = tensor<string, []>("cast_5")];
+            tensor<fp16, [1, 3, 224, 224]> functional_1_MobileNetV3Small_1_rescaling_1_mul_cast_fp16 = mul(x = keras_tensor_176_to_fp16, y = functional_1_MobileNetV3Small_1_rescaling_1_Cast_x_to_fp16)[name = tensor<string, []>("functional_1_MobileNetV3Small_1_rescaling_1_mul_cast_fp16")];
             tensor<fp16, []> functional_1_MobileNetV3Small_1_rescaling_1_Cast_1_x_to_fp16 = const()[name = tensor<string, []>("functional_1_MobileNetV3Small_1_rescaling_1_Cast_1_x_to_fp16"), val = tensor<fp16, []>(-0x1p+0)];
             tensor<fp16, [1, 3, 224, 224]> functional_1_MobileNetV3Small_1_rescaling_1_add_cast_fp16 = add(x = functional_1_MobileNetV3Small_1_rescaling_1_mul_cast_fp16, y = functional_1_MobileNetV3Small_1_rescaling_1_Cast_1_x_to_fp16)[name = tensor<string, []>("functional_1_MobileNetV3Small_1_rescaling_1_add_cast_fp16")];
             tensor<string, []> functional_1_MobileNetV3Small_1_conv_bn_1_batchnorm_mul_1x_pad_type_0 = const()[name = tensor<string, []>("functional_1_MobileNetV3Small_1_conv_bn_1_batchnorm_mul_1x_pad_type_0"), val = tensor<string, []>("same")];
@@ -637,7 +637,7 @@ program(1.0)
             tensor<bool, []> functional_1_MobileNetV3Small_1_avg_pool_1_Mean_keep_dims_0 = const()[name = tensor<string, []>("functional_1_MobileNetV3Small_1_avg_pool_1_Mean_keep_dims_0"), val = tensor<bool, []>(false)];
             tensor<fp16, [1, 576]> functional_1_MobileNetV3Small_1_avg_pool_1_Mean_cast_fp16 = reduce_mean(axes = functional_1_MobileNetV3Small_1_avg_pool_1_Mean_axes_0, keep_dims = functional_1_MobileNetV3Small_1_avg_pool_1_Mean_keep_dims_0, x = functional_1_MobileNetV3Small_1_activation_17_1_mul_cast_fp16)[name = tensor<string, []>("functional_1_MobileNetV3Small_1_avg_pool_1_Mean_cast_fp16")];
             tensor<fp16, [3, 576]> transpose_104_cast_fp16_to_fp32_to_fp16 = const()[name = tensor<string, []>("transpose_104_cast_fp16_to_fp32_to_fp16"), val = tensor<fp16, [3, 576]>(BLOBFILE(path = tensor<string, []>("@model_path/weights/weight.bin"), offset = tensor<uint64, []>(1849792)))];
-            tensor<fp16, [3]> functional_1_tier_1_BiasAdd_bias_0_to_fp16 = const()[name = tensor<string, []>("functional_1_tier_1_BiasAdd_bias_0_to_fp16"), val = tensor<fp16, [3]>([0x1.f3p-5, -0x1.34cp-4, 0x1.dbp-7])];
+            tensor<fp16, [3]> functional_1_tier_1_BiasAdd_bias_0_to_fp16 = const()[name = tensor<string, []>("functional_1_tier_1_BiasAdd_bias_0_to_fp16"), val = tensor<fp16, [3]>([0x1.014p-4, -0x1.b4cp-5, -0x1.74cp-6])];
             tensor<fp16, [1, 3]> functional_1_tier_1_BiasAdd_cast_fp16 = linear(bias = functional_1_tier_1_BiasAdd_bias_0_to_fp16, weight = transpose_104_cast_fp16_to_fp32_to_fp16, x = functional_1_MobileNetV3Small_1_avg_pool_1_Mean_cast_fp16)[name = tensor<string, []>("functional_1_tier_1_BiasAdd_cast_fp16")];
             tensor<int32, []> functional_1_tier_1_Softmax_axis_0 = const()[name = tensor<string, []>("functional_1_tier_1_Softmax_axis_0"), val = tensor<int32, []>(-1)];
             tensor<fp16, [1, 3]> functional_1_tier_1_Softmax_cast_fp16 = softmax(axis = functional_1_tier_1_Softmax_axis_0, x = functional_1_tier_1_BiasAdd_cast_fp16)[name = tensor<string, []>("functional_1_tier_1_Softmax_cast_fp16")];

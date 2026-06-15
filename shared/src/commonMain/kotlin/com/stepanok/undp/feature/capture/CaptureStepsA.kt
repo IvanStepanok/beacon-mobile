@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
 import undp.shared.generated.resources.capture_ai_suggestion_hint
 import undp.shared.generated.resources.capture_ai_suggestion_prefix
+import undp.shared.generated.resources.capture_analyzing
 import undp.shared.generated.resources.capture_crisis_q
 import undp.shared.generated.resources.capture_crisis_sub
 import undp.shared.generated.resources.capture_damage_q
@@ -107,6 +108,24 @@ fun DamageStep(
         footer = { Text(stringResource(Res.string.step_change_later), style = BeaconTheme.typography.caption, color = colors.ink3) },
     ) {
         StepHeading(stringResource(Res.string.capture_damage_q), stringResource(Res.string.capture_damage_sub))
+        // While the on-device classifier runs (it kicks off the moment the photo is taken), show
+        // that it's working — otherwise this step looks frozen for the second or two inference takes.
+        if (draft.suggesting && draft.suggestedTier == null) {
+            Row(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                    .background(colors.primarySoft)
+                    .border(1.dp, colors.primary.copy(alpha = 0.35f), RoundedCornerShape(14.dp))
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = colors.primary,
+                )
+                Text(stringResource(Res.string.capture_analyzing), style = BeaconTheme.typography.label, color = colors.ink)
+            }
+            Spacer(Modifier.height(12.dp))
+        }
         // Advisory, on-device AI suggestion (B2). NON-BINDING: it names the tier the offline model
         // proposed + its confidence, but never selects it — Continue stays gated on a real tap
         // (human-in-the-loop). Shown only when the model produced a suggestion above its floor.

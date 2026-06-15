@@ -30,20 +30,22 @@ severe/mild/none) — note it is CC-BY-NC-SA + research-only terms.
 ## Honest test metrics (held-out 3,736 images, no demo tuning)
 
 ```
-Test accuracy: 0.958
+Test accuracy: 0.945   (95% CI 0.938–0.952, n=3,736)
               precision  recall   support
-  minimal       0.944    0.975     1758    (intact — reliable)
-  partial       0.600    0.033       91    (rare + ambiguous — the model usually defers to a
-                                            neighbouring tier; this is why it's advisory)
-  complete      0.972    0.987     1887    (destroyed — reliable)
+  minimal       0.956    0.941     1758    (intact — reliable)
+  partial       0.221    0.231       91    (rare + ambiguous — sqrt class-weighted so the model
+                                            actually engages it, but low-confidence; advisory)
+  complete      0.972    0.983     1887    (destroyed — reliable)
 ```
-(full report: `confusion_matrix.txt`)
+(full report: `confusion_matrix.txt`; per-class metrics + 95% CI in `metadata.json`)
 
-The classifier is reliable at the extremes (intact vs destroyed, ~96–99%); the intermediate
-"partial" tier is genuinely hard and under-represented, so the model tends to defer — and the
-reporter confirms. On-device spot checks (same model): a destroyed structure → `complete` @
-99.96% (Android) / 99.95% (iOS); a borderline lightly-scorched structure → `minimal` below the
-floor → abstains, no suggestion.
+The classifier is reliable at the extremes (intact vs destroyed, ~95–98%); the intermediate
+"partial" tier is genuinely hard and under-represented (4.8% of the data, and visually close to
+"minimal" in wildfire imagery), so it is low-confidence. Sqrt-dampened inverse-frequency class
+weights make the model engage all three tiers rather than collapsing to a minimal/complete
+binary — the model only *suggests* a tier + confidence, and the reporter confirms or overrides.
+A destroyed structure scores `complete` at high confidence; a borderline case below the
+confidence floor → abstains, no suggestion.
 
 ## Reproduce
 

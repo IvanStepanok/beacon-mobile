@@ -55,8 +55,8 @@ val dataModule: Module = module {
 
 /** ScreenModel factories are registered here as features are built. */
 val featureModule: Module = module {
-    factory { com.stepanok.undp.feature.map.MapScreenModel(get(), get(), get(), get(), get()) }
-    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { com.stepanok.undp.feature.map.MapScreenModel(get(), get(), get(), get(), get(), get()) }
+    factory { com.stepanok.undp.feature.capture.CaptureFlowScreenModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { com.stepanok.undp.feature.reports.ReportsScreenModel(get(), get(), get(), get()) }
     factory { (id: String) -> com.stepanok.undp.feature.reportdetail.ReportDetailScreenModel(id, get(), get()) }
     factory { com.stepanok.undp.feature.profile.ProfileScreenModel(get(), get()) }

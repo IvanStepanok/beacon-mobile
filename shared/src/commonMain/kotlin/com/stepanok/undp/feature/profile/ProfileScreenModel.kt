@@ -13,7 +13,11 @@ import com.stepanok.undp.domain.repository.ReportRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-data class ProfileUiState(val profile: Profile? = null) : UiState
+data class ProfileUiState(
+    val profile: Profile? = null,
+    /** True until the profile flow emits — drives the loading spinner vs. blank screen. */
+    val loading: Boolean = true,
+) : UiState
 
 sealed interface ProfileIntent : UiIntent
 
@@ -39,7 +43,7 @@ class ProfileScreenModel(
                         buildingCount = myReports.mapNotNull { it.buildingId }.distinct().size,
                     )
                 }
-                .collect { p -> setState { copy(profile = p) } }
+                .collect { p -> setState { copy(profile = p, loading = false) } }
         }
         // "Export my reports" serializes the device's own reports (_mine), not the community feed.
         screenModelScope.launch {

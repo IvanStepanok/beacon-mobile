@@ -26,6 +26,8 @@
     <string name="map_offline_mode">Mode hors ligne</string>
     <string name="map_reports_queued">%1$d signalement(s) en attente</string>
     <string name="map_crisis_active">Crise en cours</string>
+    <string name="map_crisis_emerging">Signalements en cours</string>
+    <string name="map_crisis_emerging_sub">En attente de vérification</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">Voir les détails</string>
     <string name="map_filter_title">Filtrer par dommages</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">Cartes hors ligne</string>
-    <string name="offline_sub">Téléchargez la zone de crise à l'avance pour que l'application fonctionne sans réseau.</string>
+    <string name="offline_sub">Vos zones téléchargées fonctionnent sans réseau. Ajoutez-en une depuis la carte.</string>
     <string name="offline_download_area">Télécharger la carte de votre zone</string>
     <string name="offline_ready">Prêt</string>
     <string name="offline_downloading">Téléchargement</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">Cela efface définitivement votre signalement et sa photo du serveur. Action irréversible.</string>
     <string name="withdraw_confirm">Retirer</string>
     <string name="withdraw_cancel">Annuler</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">Traitement de la photo…</string>
+    <string name="capture_photo_location">Lieu de la photo — appuyez pour confirmer</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">Enregistrer cette zone hors ligne ?</string>
+    <string name="offline_prompt_body">Téléchargez la carte autour de vous maintenant pour continuer à signaler même sans réseau.</string>
+    <string name="offline_prompt_download">Télécharger cette zone</string>
+    <string name="offline_prompt_dismiss">Plus tard</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">Chargement…</string>
+    <string name="capture_analyzing">Analyse des dommages…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">Aucune zone enregistrée. Sur la carte, appuyez sur le bouton de téléchargement pour enregistrer la zone affichée.</string>
+    <string name="offline_delete_title">Supprimer cette carte hors ligne ?</string>
+    <string name="offline_delete_body">Cela libère l'espace de stockage. Vous pourrez retélécharger la zone plus tard.</string>
+    <string name="offline_delete_confirm">Supprimer</string>
 </resources>

@@ -26,6 +26,8 @@
     <string name="map_offline_mode">وضع عدم الاتصال</string>
     <string name="map_reports_queued">%1$d بلاغ في قائمة الانتظار</string>
     <string name="map_crisis_active">أزمة نشطة</string>
+    <string name="map_crisis_emerging">ترد بلاغات</string>
+    <string name="map_crisis_emerging_sub">في انتظار التحقق</string>
     <string name="map_crisis_source">UNDP RAPIDA</string>
     <string name="map_view_details">عرض التفاصيل</string>
     <string name="map_filter_title">التصفية حسب الضرر</string>
@@ -257,7 +259,7 @@
 
     <!-- Offline downloads -->
     <string name="offline_title">الخرائط دون اتصال</string>
-    <string name="offline_sub">حمّل منطقة الأزمة مسبقًا ليعمل التطبيق دون إشارة.</string>
+    <string name="offline_sub">تعمل مناطقك المنزّلة دون اتصال. أضف منطقة جديدة من الخريطة.</string>
     <string name="offline_download_area">تنزيل خريطة منطقتك</string>
     <string name="offline_ready">جاهز</string>
     <string name="offline_downloading">جارٍ التنزيل</string>
@@ -272,4 +274,24 @@
     <string name="withdraw_confirm_body">سيؤدي ذلك إلى حذف تقريرك وصورته نهائيًا من الخادم. لا يمكن التراجع عن هذا الإجراء.</string>
     <string name="withdraw_confirm">سحب</string>
     <string name="withdraw_cancel">إلغاء</string>
+
+    <!-- Photo processing + EXIF-seeded location hint -->
+    <string name="capture_processing">جارٍ معالجة الصورة…</string>
+    <string name="capture_photo_location">موقع الصورة — اضغط للتأكيد</string>
+
+    <!-- One-time "save your area offline" prompt (first recenter) -->
+    <string name="offline_prompt_title">حفظ هذه المنطقة للاستخدام دون اتصال؟</string>
+    <string name="offline_prompt_body">نزّل الخريطة المحيطة بك الآن لتستمر التقارير في العمل عند انقطاع الإشارة.</string>
+    <string name="offline_prompt_download">تنزيل هذه المنطقة</string>
+    <string name="offline_prompt_dismiss">ليس الآن</string>
+
+    <!-- Generic loading + on-device analysis indicators -->
+    <string name="common_loading">جارٍ التحميل…</string>
+    <string name="capture_analyzing">جارٍ تحليل الأضرار…</string>
+
+    <!-- Offline maps management -->
+    <string name="offline_empty">لا توجد مناطق محفوظة بعد. على الخريطة، اضغط زر التنزيل لحفظ المنطقة المعروضة.</string>
+    <string name="offline_delete_title">حذف هذه الخريطة دون اتصال؟</string>
+    <string name="offline_delete_body">سيؤدي ذلك إلى تحرير مساحة التخزين. يمكنك تنزيل المنطقة مرة أخرى لاحقًا.</string>
+    <string name="offline_delete_confirm">حذف</string>
 </resources>
