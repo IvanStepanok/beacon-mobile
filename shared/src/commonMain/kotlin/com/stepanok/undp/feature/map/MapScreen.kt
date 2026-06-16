@@ -175,21 +175,7 @@ object MapScreen : Screen {
                 modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().safeTopPadding().padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(colors.surface.copy(alpha = 0.96f))
-                            .border(1.dp, colors.line, RoundedCornerShape(16.dp))
-                            .padding(horizontal = 14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
-                        Icon(BeaconIcons.Search, contentDescription = null, tint = colors.ink3, modifier = Modifier.size(18.dp))
-                        Text(stringResource(Res.string.map_search_hint), style = BeaconTheme.typography.bodyS, color = colors.ink3)
-                    }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     Box(
                         modifier = Modifier
                             .size(48.dp)

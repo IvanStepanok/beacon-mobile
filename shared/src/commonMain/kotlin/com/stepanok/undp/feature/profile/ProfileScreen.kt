@@ -50,8 +50,6 @@ import com.stepanok.undp.i18n.UnLanguage
 import com.stepanok.undp.i18n.appLocaleOverride
 import org.jetbrains.compose.resources.stringResource
 import undp.shared.generated.resources.Res
-import undp.shared.generated.resources.menu_about
-import undp.shared.generated.resources.menu_about_sub
 import undp.shared.generated.resources.export_csv
 import undp.shared.generated.resources.export_geojson
 import undp.shared.generated.resources.language_sheet_sub
@@ -62,9 +60,6 @@ import undp.shared.generated.resources.menu_export_sub
 import undp.shared.generated.resources.menu_language
 import undp.shared.generated.resources.menu_offline
 import undp.shared.generated.resources.menu_offline_sub
-import undp.shared.generated.resources.menu_privacy
-import undp.shared.generated.resources.menu_privacy_sub
-import undp.shared.generated.resources.profile_add_alias
 import undp.shared.generated.resources.profile_anon
 import undp.shared.generated.resources.profile_buildings
 import undp.shared.generated.resources.profile_points
@@ -102,15 +97,12 @@ object ProfileScreen : Screen {
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(stringResource(Res.string.profile_title), style = BeaconTheme.typography.titleL, color = colors.ink)
-                Box(Modifier.size(40.dp).clip(CircleShape).background(colors.surface).clickable { }, contentAlignment = Alignment.Center) {
-                    Icon(BeaconIcons.Settings, contentDescription = null, tint = colors.ink2, modifier = Modifier.size(18.dp))
-                }
             }
 
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 // Identity card
                 Row(
-                    Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(colors.surface).border(1.dp, colors.line, RoundedCornerShape(22.dp)).clickable { }.padding(16.dp),
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(colors.surface).border(1.dp, colors.line, RoundedCornerShape(22.dp)).padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     Box(Modifier.size(56.dp).clip(RoundedCornerShape(18.dp)).background(colors.primary), contentAlignment = Alignment.Center) {
@@ -118,9 +110,8 @@ object ProfileScreen : Screen {
                     }
                     Column(Modifier.weight(1f)) {
                         Text("${stringResource(Res.string.profile_anon)} · ${profile.anonymousId}", style = BeaconTheme.typography.titleS, color = colors.ink)
-                        Text(profile.alias ?: stringResource(Res.string.profile_add_alias), style = BeaconTheme.typography.caption, color = colors.ink3)
+                        profile.alias?.let { Text(it, style = BeaconTheme.typography.caption, color = colors.ink3) }
                     }
-                    Icon(BeaconIcons.ChevronRight, contentDescription = null, tint = colors.ink3, modifier = Modifier.size(18.dp))
                 }
 
                 // Stats grid
@@ -145,10 +136,6 @@ object ProfileScreen : Screen {
                     MenuRow(BeaconIcons.Map, stringResource(Res.string.menu_offline), stringResource(Res.string.menu_offline_sub), onClick = { nav.push(OfflineDownloadsScreen()) })
                     Divider()
                     MenuRow(BeaconIcons.Language, stringResource(Res.string.menu_language), currentLangLabel, onClick = { showLangSheet = true })
-                    Divider()
-                    MenuRow(BeaconIcons.Shield, stringResource(Res.string.menu_privacy), stringResource(Res.string.menu_privacy_sub))
-                    Divider()
-                    MenuRow(BeaconIcons.Info, stringResource(Res.string.menu_about), stringResource(Res.string.menu_about_sub))
                 }
             }
         }
