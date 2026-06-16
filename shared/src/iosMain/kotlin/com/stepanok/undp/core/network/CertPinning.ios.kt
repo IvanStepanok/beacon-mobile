@@ -28,8 +28,8 @@ import platform.Security.SecTrustRef
  * hardest-to-get-wrong representation on the Security framework (no public-key extraction or
  * ASN.1 SubjectPublicKeyInfo reconstruction). The values differ in form from Android's SPKI
  * pins ([BEACON_TLS_PINS]) but anchor to the SAME two ISRG roots, so both platforms accept
- * exactly the Let's Encrypt chains and reject any other CA. Computed 2026-06-15 from the OS
- * trust store; re-verify against production before each release (see SUBMISSION-PLAN §D4).
+ * exactly the Let's Encrypt chains and reject any other CA. Re-verify against production
+ * from a clean (non-proxied) network before each release; recompute if the roots rotate.
  *
  * The SecTrust is extracted in the per-target source sets (iosArm64Main / iosSimulatorArm64Main)
  * because the `NSURLProtectionSpace.serverTrust` property is dropped from the COMMONIZED iosMain

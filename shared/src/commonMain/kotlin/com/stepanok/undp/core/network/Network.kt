@@ -27,7 +27,7 @@ const val BEACON_API_HOST = "beacon-api.stepanok.com"
  *   openssl s_client -connect beacon-api.stepanok.com:443 -showcerts </dev/null | \
  *     openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | \
  *     openssl dgst -sha256 -binary | openssl base64
- * (computed 2026-06-15 from the ISRG roots in the OS trust store — see SUBMISSION-PLAN §D4).
+ * (pins are the SHA-256 of the ISRG root SubjectPublicKeyInfo; recompute if Let's Encrypt rotates roots).
  */
 val BEACON_TLS_PINS = listOf(
     "sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=", // ISRG Root X1 (RSA-4096)
