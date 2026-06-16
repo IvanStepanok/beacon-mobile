@@ -10,49 +10,59 @@ abstains below a 0.55 confidence floor. The human grade is always authoritative 
 anti-"solely generative AI" stance). Verified end-to-end on both a destroyed structure (→ complete
 @ ~99.9% on Android and iOS) and a borderline one (→ minimal below the floor → abstains).
 
-## Dataset & license
+## Datasets & licence
 
-- **California Wildfire Structure Damage Classification** — ground-level, per-structure photos from
-  Cal Fire DINS damage assessments.
-  - HuggingFace: `kevincluo/structure_wildfire_damage_classification`
-  - Zenodo: https://zenodo.org/records/8336570 · Paper: https://www.mdpi.com/2571-6255/7/4/133
-  - **License: CC-BY-4.0** (commercial + redistribution OK with attribution; source is Cal Fire
-    DINS public-record data). Attribution: Cal Fire DINS + the dataset authors.
-- The 6 source classes are remapped to Beacon's 3 tiers:
-  `no_damage`,`affected` → **minimal** · `minor`,`major` → **partial** · `destroyed` → **complete**
-  (`inaccessible` dropped).
+Trained on **two ground-level datasets** so the model covers both hazard look-and-feel AND the
+hard middle "partial" tier:
 
-**Known limitation (honest):** the domain is US wildfire structures, not earthquake/conflict damage.
-Visual cues differ (fire char vs. structural cracks/collapse). Mitigated by the advisory framing +
-confidence floor + human-in-the-loop. To broaden hazard coverage, blend MEDIC (CrisisNLP,
-severe/mild/none) — note it is CC-BY-NC-SA + research-only terms.
+1. **California Wildfire Structure Damage Classification** (Cal Fire DINS) — ground-level per-structure photos.
+   - HuggingFace: `kevincluo/structure_wildfire_damage_classification`
+   - **Licence: CC-BY-4.0.** Attribution: Cal Fire DINS + dataset authors.
+   - Remap: `no_damage`,`affected` → **minimal** · `minor`,`major` → **partial** · `destroyed` → **complete** (`inaccessible` dropped).
+2. **PEER Hub ImageNet (Φ-Net) — Task 7 "Damage Level"** — ground-level post-earthquake structural photos.
+   - https://apps.peer.berkeley.edu/phi-net/ (request access). Citation: Gao & Mosalam, PEER Hub ImageNet.
+   - **Licence: CC-BY-NC-SA-4.0** — added to fill the wildfire set's near-empty middle tier.
+   - Remap: `Undamaged` → **minimal** · `Minor`,`Moderate` → **partial** · `Heavy` → **complete**.
+   - The `.npy` X is caffe-BGR mean-subtracted; the trainer reverses that to raw RGB to match the wildfire pipeline.
 
-## Honest test metrics (held-out 3,736 images, no demo tuning)
+> ⚠️ **MODEL-WEIGHTS LICENCE: CC-BY-NC-SA-4.0.** Because the weights are trained partly on Φ-Net
+> (NC-SA), the *bundled model files* (`damage_classifier.tflite`, `DamageClassifier.mlmodelc`) are
+> **non-commercial / humanitarian-use, ShareAlike** — appropriate for the UNDP non-commercial
+> mandate. **Beacon's source code stays Apache-2.0.** Do not relicense the model weights as Apache.
+
+**Known limitation (honest):** wildfire **and** ground-level earthquake are now in-domain (validated —
+partial F1 0.662 / recall 0.761 on the held-out earthquake test). Flood and conflict damage remain
+**unvalidated** (domain shift). Mitigated by advisory framing + confidence floor + human-in-the-loop.
+
+## Honest test metrics (held-out 4,234 images, wildfire + earthquake, no demo tuning)
 
 ```
-Test accuracy: 0.945   (95% CI 0.938–0.952, n=3,736)
-              precision  recall   support
-  minimal       0.956    0.941     1758    (intact — reliable)
-  partial       0.221    0.231       91    (rare + ambiguous — sqrt class-weighted so the model
-                                            actually engages it, but low-confidence; advisory)
-  complete      0.972    0.983     1887    (destroyed — reliable)
+COMBINED test accuracy: 0.902   (95% CI 0.893–0.911, n=4,234)   macro-F1 0.797
+              precision  recall   f1     support
+  minimal       0.940    0.891   0.915    1965
+  partial       0.503    0.562   0.531     288    (the hard middle — now genuinely usable)
+  complete      0.930    0.963   0.946    1981
+
+Φ-Net-only (REAL earthquake) partial tier:  precision 0.586  recall 0.761  f1 0.662  (n=197)
 ```
 (full report: `confusion_matrix.txt`; per-class metrics + 95% CI in `metadata.json`)
 
-The classifier is reliable at the extremes (intact vs destroyed, ~95–98%); the intermediate
-"partial" tier is genuinely hard and under-represented (4.8% of the data, and visually close to
-"minimal" in wildfire imagery), so it is low-confidence. Sqrt-dampened inverse-frequency class
-weights make the model engage all three tiers rather than collapsing to a minimal/complete
-binary — the model only *suggests* a tier + confidence, and the reporter confirms or overrides.
-A destroyed structure scores `complete` at high confidence; a borderline case below the
-confidence floor → abstains, no suggestion.
+**Why 90.2% and not the old 94.5%:** the wildfire-only model scored 94.5% but its "partial" tier was
+near-useless (F1 **0.226**) — the headline was inflated by a bimodal test (almost all easy
+minimal/complete, only 91 partials). Adding Φ-Net's earthquake partials makes the test **harder and
+more representative** (288 partials + real earthquake photos), so the honest overall drops a little
+while the metric that matters improves sharply: **partial F1 0.226 → 0.531 (0.662 on real
+earthquakes), macro-F1 0.717 → 0.797.** The model only *suggests* a tier + confidence; the reporter
+confirms or overrides, so a still-imperfect middle tier never decides the grade.
 
 ## Reproduce
 
 ```bash
 uv venv --python 3.12 .venv && source .venv/bin/activate
 uv pip install "tensorflow>=2.16,<2.18" datasets pillow numpy scikit-learn coremltools
-python train_damage.py   # → out/damage_classifier.tflite (+ Core ML), labels.txt, confusion_matrix.txt
+# Download Φ-Net Task 7 (request at apps.peer.berkeley.edu/phi-net) and point at it:
+PHINET_TASK7_DIR=~/Downloads/task7 OUT=out python train_damage.py   # → out/damage_classifier.tflite (+ Core ML), confusion_matrix.txt
+# (Φ-Net Task 7 is required by this recipe; SMOKE=1 runs a tiny pipeline check.)
 ```
 
 `train_damage.py` writes `out/` : `damage_classifier.tflite`, `DamageClassifier.mlpackage`,

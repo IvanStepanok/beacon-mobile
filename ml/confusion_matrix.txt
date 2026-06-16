@@ -1,17 +1,18 @@
-Test accuracy: 0.945  (95% CI [0.9378, 0.9524])  n=3736
+COMBINED test accuracy: 0.902 (95% CI [0.8933, 0.9112]) n=4234
 
-Confusion matrix (rows=true, cols=pred) [['minimal', 'partial', 'complete']]:
-[[1655   59   44]
- [  60   21   10]
- [  17   15 1855]]
+Confusion (rows=true,cols=pred) [['minimal', 'partial', 'complete']]:
+[[1750  116   99]
+ [  82  162   44]
+ [  29   44 1908]]
 
               precision    recall  f1-score   support
 
-     minimal      0.956     0.941     0.948      1758
-     partial      0.221     0.231     0.226        91
-    complete      0.972     0.983     0.977      1887
+     minimal      0.940     0.891     0.915      1965
+     partial      0.503     0.562     0.531       288
+    complete      0.930     0.963     0.946      1981
 
-    accuracy                          0.945      3736
-   macro avg      0.716     0.718     0.717      3736
-weighted avg      0.946     0.945     0.945      3736
+    accuracy                          0.902      4234
+   macro avg      0.791     0.805     0.797      4234
+weighted avg      0.906     0.902     0.903      4234
 
+Φ-Net-only (earthquake) PARTIAL tier: {'precision': 0.586, 'recall': 0.761, 'f1': 0.662, 'support': 197}
