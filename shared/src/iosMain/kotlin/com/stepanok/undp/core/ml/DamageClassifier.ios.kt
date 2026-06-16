@@ -26,7 +26,7 @@ private fun tierOf(identifier: String): DamageTier? = when (identifier.lowercase
  * iOS advisory damage classifier (B2): on-device, OFFLINE Core ML (MobileNetV3-Small) inference via
  * Vision — the same VN* pattern as the B1 redactor. The model is an IMAGE-input classifier (Vision
  * scales the photo to 224×224 with ScaleFill to match how it was trained; preprocessing is baked
- * into the model). Abstains below the 0.55 floor, on a missing model, or any failure; never throws.
+ * into the model). Abstains below the 0.45 floor, on a missing model, or any failure; never throws.
  */
 private class IosDamageClassifier : DamageClassifier {
 

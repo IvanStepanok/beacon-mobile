@@ -3,7 +3,7 @@ package com.stepanok.undp.core.ml
 import com.stepanok.undp.domain.model.DamageTier
 
 /** Confidence below which the classifier ABSTAINS — too weak to surface to the reporter. */
-const val AI_CONFIDENCE_FLOOR: Float = 0.55f
+const val AI_CONFIDENCE_FLOOR: Float = 0.45f
 
 /**
  * An advisory, on-device damage-tier suggestion (B2). [tier] == null means ABSTAIN — no model

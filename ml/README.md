@@ -6,7 +6,7 @@ running **on-device, fully offline** on both platforms from the same trained wei
 - iOS: `iosApp/iosApp/DamageClassifier.mlmodelc` (Core ML via Vision `VNCoreMLRequest`).
 
 Its output is **advisory only**: it pre-highlights a tier for the reporter to confirm or change, and
-abstains below a 0.55 confidence floor. The human grade is always authoritative (the brief's
+abstains below a 0.45 confidence floor. The human grade is always authoritative (the brief's
 anti-"solely generative AI" stance). Verified end-to-end on both a destroyed structure (→ complete
 @ ~99.9% on Android and iOS) and a borderline one (→ minimal below the floor → abstains).
 
