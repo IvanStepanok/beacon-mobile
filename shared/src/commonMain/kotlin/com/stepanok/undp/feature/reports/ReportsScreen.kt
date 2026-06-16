@@ -70,12 +70,8 @@ object ReportsScreen : Screen {
 
         Column(Modifier.fillMaxSize().background(colors.bg)) {
             Column(Modifier.safeTopPadding().padding(horizontal = 20.dp).padding(top = 14.dp)) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(Res.string.reports_title), style = BeaconTheme.typography.titleL, color = colors.ink)
-                    Box(
-                        Modifier.size(40.dp).clip(CircleShape).background(colors.surface).clickable { },
-                        contentAlignment = Alignment.Center,
-                    ) { Icon(BeaconIcons.Download, contentDescription = "Export", tint = colors.ink2, modifier = Modifier.size(18.dp)) }
                 }
                 Text(
                     stringResource(Res.string.reports_summary, state.total, state.syncedCount),
