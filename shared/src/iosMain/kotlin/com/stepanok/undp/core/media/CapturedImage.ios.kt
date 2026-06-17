@@ -27,7 +27,7 @@ actual fun CapturedImage(path: String, modifier: Modifier) {
         }.getOrNull()
     }
     if (bitmap != null) {
-        Image(bitmap = bitmap, contentDescription = null, modifier = modifier, contentScale = ContentScale.Crop)
+        Image(bitmap = bitmap, contentDescription = null, modifier = modifier, contentScale = ContentScale.Fit)
     } else {
         Box(modifier.background(Color(0xFFE6DCF6)))
     }
