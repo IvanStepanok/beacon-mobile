@@ -68,6 +68,9 @@ class RemoteReportRepository(
     // Location-first scope: nothing loads until the map sets it (no hardcoded crisis).
     private var scopeCrisisId: String? = null
     private var scopeBounds: MapBounds? = null
+    // The map's live viewport. When set, pins follow the visible region (all crises in view);
+    // it never overwrites scopeCrisisId, so a submitted report still stamps the right crisis.
+    private var pinBounds: MapBounds? = null
 
     override val isSyncing: StateFlow<Boolean> = _isSyncing.asStateFlow()
 
@@ -99,11 +102,22 @@ class RemoteReportRepository(
         refresh()
     }
 
+    override suspend fun setPinViewport(bounds: MapBounds?) {
+        pinBounds = bounds
+        refresh()
+    }
+
     private suspend fun refresh() {
         val cid = scopeCrisisId
         val bbox = scopeBounds
-        if (cid == null && bbox == null) return // no scope yet → keep feed empty
-        runCatching { api.latestPerBuilding(cid, bbox?.toQuery()).map { it.toDomain() } }
+        val vp = pinBounds
+        // Pins follow the map VIEWPORT once the user has panned (region pins across all crises);
+        // before that, the initial crisis/location scope. scopeCrisisId is deliberately left
+        // untouched by panning so a submitted report still stamps the active crisis.
+        val pinCid = if (vp != null) null else cid
+        val pinBbox = (vp ?: bbox)?.toQuery()
+        if (pinCid == null && pinBbox == null) return // no scope yet → keep feed empty
+        runCatching { api.latestPerBuilding(pinCid, pinBbox).map { it.toDomain() } }
             .onSuccess { _all.value = it }
         // Area hotspots are crisis-scoped; without a crisis there is nothing to group.
         if (cid != null) {

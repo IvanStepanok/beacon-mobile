@@ -13,7 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlin.math.pow
 import org.maplibre.compose.camera.CameraPosition
 import org.maplibre.compose.camera.rememberCameraState
 import org.maplibre.compose.expressions.dsl.asNumber
@@ -56,6 +58,10 @@ class BeaconMapController {
     /** The map's live centre, updated as the user pans/zooms. Lets a screen offer "download the
      *  area I'm looking at" instead of being tied to the (often-wrong on emulators) GPS location. */
     val currentCenter = MutableStateFlow<GeoPoint?>(null)
+
+    /** The map's live visible extent, debounced to camera-settle. Drives viewport-scoped report
+     *  loading: pins (and their counts) follow whatever region the user pans to. */
+    val currentBounds = MutableStateFlow<GeoBounds?>(null)
 }
 
 @Composable
@@ -106,6 +112,20 @@ fun BeaconMap(
     LaunchedEffect(cameraState, controller) {
         snapshotFlow { cameraState.position.target }
             .collect { target -> controller.currentCenter.value = GeoPoint(target.latitude, target.longitude) }
+    }
+
+    // Publish the visible extent (debounced to camera-settle) so screens can scope reports to the
+    // region currently on screen. A generous box around the centre, sized from the current zoom.
+    LaunchedEffect(cameraState, controller) {
+        snapshotFlow { cameraState.position }
+            .debounce(350)
+            .collect { pos ->
+                val half = (360.0 / 2.0.pow(pos.zoom)) * 1.3
+                val lat = pos.target.latitude
+                val lng = pos.target.longitude
+                controller.currentBounds.value =
+                    GeoBounds(minLng = lng - half, minLat = lat - half, maxLng = lng + half, maxLat = lat + half)
+            }
     }
 
     val featuresJson = remember(reports) { reports.toGeoJson() }

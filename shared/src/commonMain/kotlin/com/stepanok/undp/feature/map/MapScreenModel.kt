@@ -250,6 +250,16 @@ class MapScreenModel(
     private fun boundsAround(lat: Double, lng: Double, d: Double = 0.45): MapBounds =
         MapBounds(minLng = lng - d, minLat = lat - d, maxLng = lng + d, maxLat = lat + d)
 
+    /** The map settled on a new viewport — load reports for the region now on screen (pins + the
+     *  damage counts both follow). Crisis association for new reports is left untouched. */
+    fun onViewportChanged(b: com.stepanok.undp.map.GeoBounds) {
+        screenModelScope.launch {
+            reportRepository.setPinViewport(
+                MapBounds(minLng = b.minLng, minLat = b.minLat, maxLng = b.maxLng, maxLat = b.maxLat),
+            )
+        }
+    }
+
     override fun onIntent(intent: MapIntent) {
         when (intent) {
             MapIntent.DismissCrisis -> setState { copy(crisisDismissed = true) }

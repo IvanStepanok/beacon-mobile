@@ -35,6 +35,13 @@ interface ReportRepository {
      * so a user anywhere loads only what's near them, never another region's data.
      */
     suspend fun setMapScope(crisisId: String?, bounds: MapBounds?)
+    /**
+     * Viewport bbox the map is currently showing. When set, pins follow the visible region
+     * (all crises in view) instead of the initial crisis/location scope — so panning to
+     * another region loads that region's reports. Leaves the crisis-stamping scope untouched.
+     * Pass null to fall back to the [setMapScope] scope.
+     */
+    suspend fun setPinViewport(bounds: MapBounds?)
     /** Ordered damage history for one building (latest + timeline). */
     fun observeBuildingTimeline(buildingId: String): Flow<BuildingTimeline>
     /** Reports grouped by area for prioritization. */

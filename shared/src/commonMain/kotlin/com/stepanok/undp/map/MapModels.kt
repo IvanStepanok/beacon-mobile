@@ -4,6 +4,9 @@ import com.stepanok.undp.domain.model.DamageTier
 
 data class GeoPoint(val lat: Double, val lng: Double)
 
+/** Visible map extent (WGS84). Drives viewport-scoped pin loading as the user pans the map. */
+data class GeoBounds(val minLng: Double, val minLat: Double, val maxLng: Double, val maxLat: Double)
+
 /** A damage report reduced to what the map needs to render a pin. */
 data class ReportPin(
     val id: String,

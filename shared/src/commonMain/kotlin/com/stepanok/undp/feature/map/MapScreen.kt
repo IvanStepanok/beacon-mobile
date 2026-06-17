@@ -135,6 +135,12 @@ object MapScreen : Screen {
             c != null && state.offlineBoxes.any { c.lat in it.south..it.north && c.lng in it.west..it.east }
         }
 
+        // Load reports for whatever region the map is showing — pins + damage counts follow the
+        // viewport as the user pans (the controller debounces these to camera-settle).
+        LaunchedEffect(mapController) {
+            mapController.currentBounds.collect { b -> if (b != null) model.onViewportChanged(b) }
+        }
+
         Box(Modifier.fillMaxSize()) {
             BeaconMap(
                 reports = pins,
