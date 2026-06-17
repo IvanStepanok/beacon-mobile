@@ -31,8 +31,10 @@ import org.maplibre.compose.layers.SymbolLayer
 import org.maplibre.compose.map.MaplibreMap
 import org.maplibre.compose.sources.GeoJsonData
 import org.maplibre.compose.sources.GeoJsonOptions
+import org.maplibre.compose.sources.TileSetOptions
 import org.maplibre.compose.sources.getBaseSource
 import org.maplibre.compose.sources.rememberGeoJsonSource
+import org.maplibre.compose.sources.rememberVectorSource
 import org.maplibre.compose.style.BaseStyle
 import org.maplibre.compose.util.ClickResult
 import org.maplibre.spatialk.geojson.Feature
@@ -72,6 +74,11 @@ fun BeaconMap(
     zoom: Double = MapDefaults.CITY_ZOOM,
     styleUri: String = MapDefaults.OPEN_FREE_MAP_LIBERTY,
     footprints: Boolean = false,
+    /** Optional authoritative footprint vector-tile template ({z}/{x}/{y}) from the backend
+     *  (/tiles/buildings). When set, footprints come from this layer and a tap yields the real
+     *  building id ('bid') with provenance; when null, footprints fall back to the basemap's
+     *  generic OpenMapTiles "building" layer (coverage = OSM coverage). */
+    footprintTilesUrl: String? = null,
     /** Optional "photo was taken here" hint (from a picked photo's EXIF GPS). Drawn as a distinct
      *  hollow ring + dot — a suggestion only; it is NOT a report pin and not the chosen location. */
     photoHint: GeoPoint? = null,
@@ -120,7 +127,14 @@ fun BeaconMap(
             ClickResult.Pass
         },
     ) {
-        // Real building footprints from the basemap's OpenMapTiles "building" source-layer.
+        // Building footprints to tap. The basemap's OpenMapTiles "building" layer is ALWAYS
+        // drawn — it ships inside the downloaded offline pack, so footprints stay tappable with
+        // no signal (the app is offline-first). When an authoritative footprint layer is
+        // configured for the crisis (ingested OSM / Google-Microsoft Open Buildings / gov
+        // shapefile, served as MVT by the backend at /tiles/buildings) it is drawn ON TOP: where
+        // it has coverage and there's connectivity, a tap hits it first and yields the real
+        // building id ('bid') + provenance (it Consumes the click); elsewhere or offline the tap
+        // falls through to the basemap polygon (id = a hash of the ring).
         if (footprints) {
             getBaseSource("openmaptiles")?.let { tiles ->
                 FillLayer(
@@ -149,6 +163,39 @@ fun BeaconMap(
                     sourceLayer = "building",
                     color = const(colors.primary),
                     width = const(0.8.dp),
+                )
+            }
+            if (footprintTilesUrl != null) {
+                val authSource = rememberVectorSource(
+                    tiles = listOf(footprintTilesUrl),
+                    options = TileSetOptions(minZoom = 0, maxZoom = 16),
+                )
+                FillLayer(
+                    id = "beacon-auth-footprints",
+                    source = authSource,
+                    sourceLayer = "buildings",
+                    color = const(colors.primary),
+                    opacity = const(0.30f),
+                    onClick = { features ->
+                        val tapped = features.firstOrNull()
+                        val geom = tapped?.geometry
+                        val bid = tapped?.getStringProperty("bid")
+                        val centroid = geom?.let { centroidOf(it) }
+                        if (geom != null && centroid != null && bid != null) {
+                            selectedFootprint = geom
+                            if (onFootprintTap != null) onFootprintTap(centroid, bid) else onMapTap?.invoke(centroid)
+                            ClickResult.Consume
+                        } else {
+                            ClickResult.Pass
+                        }
+                    },
+                )
+                LineLayer(
+                    id = "beacon-auth-footprints-outline",
+                    source = authSource,
+                    sourceLayer = "buildings",
+                    color = const(colors.primary),
+                    width = const(1.2.dp),
                 )
             }
             // Highlight the tapped building.

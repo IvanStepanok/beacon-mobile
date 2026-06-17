@@ -40,6 +40,7 @@ import com.stepanok.undp.designsystem.labels.infraLabel
 import com.stepanok.undp.designsystem.theme.BeaconTheme
 import com.stepanok.undp.core.location.RequestLocationPermission
 import com.stepanok.undp.core.media.CapturedImage
+import com.stepanok.undp.core.network.beaconBaseUrl
 import com.stepanok.undp.map.BeaconMap
 import com.stepanok.undp.map.GeoPoint
 import com.stepanok.undp.map.MapDefaults
@@ -146,6 +147,11 @@ fun LocationStep(
                 center = initialCenter ?: MapDefaults.WORLD,
                 zoom = initialZoom,
                 footprints = true,
+                // Authoritative footprint overlay (ingested OSM / Open Buildings / gov shapefile),
+                // drawn over the offline basemap footprints. Where it has coverage and there is
+                // signal, a tap returns the real building id; otherwise the offline basemap
+                // footprints handle the tap. The tile is bbox-scoped, so no crisis filter needed.
+                footprintTilesUrl = "$beaconBaseUrl/api/v1/tiles/buildings/{z}/{x}/{y}",
                 // Show the "photo taken here" ring until the reporter has pinned a building.
                 photoHint = if (draft.buildingId == null) photoHint else null,
                 onMapTap = { p -> onIntent(CaptureIntent.SelectBuilding(p.lat, p.lng)) },
