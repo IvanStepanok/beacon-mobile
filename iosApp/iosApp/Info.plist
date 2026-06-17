@@ -8,6 +8,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Beacon uses your location to place damage reports accurately on the crisis map.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Beacon only uses your location while the app is open, to place your damage reports accurately on the crisis map. It never tracks your location in the background.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Beacon uses the camera so you can photograph building damage for your report.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
